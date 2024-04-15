@@ -19,8 +19,7 @@ class LocalizacaoDto {
   });
 
   LocalizacaoEntity toEntity() {
-    return LocalizacaoEntity(
-        campus: campus, pavilhao: pavilhao, andar: andar, numero: numero);
+    return LocalizacaoEntity(campus: campus, pavilhao: pavilhao, andar: andar, numero: numero);
   }
 
   factory LocalizacaoDto.fromEntity(LocalizacaoEntity localizacao) {
@@ -66,8 +65,7 @@ class LocalizacaoDto {
 
   String toJson() => json.encode(toMap());
 
-  factory LocalizacaoDto.fromJson(String source) =>
-      LocalizacaoDto.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory LocalizacaoDto.fromJson(String source) => LocalizacaoDto.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -78,17 +76,11 @@ class LocalizacaoDto {
   bool operator ==(covariant LocalizacaoDto other) {
     if (identical(this, other)) return true;
 
-    return other.campus == campus &&
-        other.pavilhao == pavilhao &&
-        other.andar == andar &&
-        other.numero == numero;
+    return other.campus == campus && other.pavilhao == pavilhao && other.andar == andar && other.numero == numero;
   }
 
   @override
   int get hashCode {
-    return campus.hashCode ^
-        pavilhao.hashCode ^
-        andar.hashCode ^
-        numero.hashCode;
+    return campus.hashCode ^ pavilhao.hashCode ^ andar.hashCode ^ numero.hashCode;
   }
 }

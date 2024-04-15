@@ -1,12 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
 import 'package:uniespaco/layers/data/dto/horario_dto.dart';
 import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
-import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
 
 class ServicoDto {
   final String id;
@@ -15,7 +12,6 @@ class ServicoDto {
   final UsuarioDto solicitante;
   final List<HorarioDto> periodo;
   final EspacoDto espaco;
-
   ServicoDto({
     required this.id,
     required this.descricao,
@@ -24,28 +20,6 @@ class ServicoDto {
     required this.periodo,
     required this.espaco,
   });
-
-  ServicoEntity toEntity() {
-    return ServicoEntity(
-      id: id,
-      descricao: descricao,
-      status: status,
-      solicitante: solicitante.toEntity(),
-      periodo: periodo.map((e) => e.toEntity()).toList(),
-      espaco: espaco.toEntity(),
-    );
-  }
-
-  factory ServicoDto.fromEntity(ServicoEntity servico) {
-    return ServicoDto(
-      id: servico.id,
-      descricao: servico.descricao,
-      status: servico.status,
-      solicitante: UsuarioDto.fromEntity(servico.solicitante),
-      periodo: servico.periodo.map((e) => HorarioDto.fromEntity(e)).toList(),
-      espaco: EspacoDto.fromEntity(servico.espaco),
-    );
-  }
 
   ServicoDto copyWith({
     String? id,
@@ -81,8 +55,7 @@ class ServicoDto {
       id: map['id'] as String,
       descricao: map['descricao'] as String,
       status: map['status'] as String,
-      solicitante:
-          UsuarioDto.fromMap(map['solicitante'] as Map<String, dynamic>),
+      solicitante: UsuarioDto.fromMap(map['solicitante'] as Map<String, dynamic>),
       periodo: List<HorarioDto>.from(
         (map['periodo'] as List<int>).map<HorarioDto>(
           (x) => HorarioDto.fromMap(x as Map<String, dynamic>),
@@ -94,8 +67,7 @@ class ServicoDto {
 
   String toJson() => json.encode(toMap());
 
-  factory ServicoDto.fromJson(String source) =>
-      ServicoDto.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ServicoDto.fromJson(String source) => ServicoDto.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -106,21 +78,11 @@ class ServicoDto {
   bool operator ==(covariant ServicoDto other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
-        other.descricao == descricao &&
-        other.status == status &&
-        other.solicitante == solicitante &&
-        listEquals(other.periodo, periodo) &&
-        other.espaco == espaco;
+    return other.id == id && other.descricao == descricao && other.status == status && other.solicitante == solicitante && listEquals(other.periodo, periodo) && other.espaco == espaco;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^
-        descricao.hashCode ^
-        status.hashCode ^
-        solicitante.hashCode ^
-        periodo.hashCode ^
-        espaco.hashCode;
+    return id.hashCode ^ descricao.hashCode ^ status.hashCode ^ solicitante.hashCode ^ periodo.hashCode ^ espaco.hashCode;
   }
 }

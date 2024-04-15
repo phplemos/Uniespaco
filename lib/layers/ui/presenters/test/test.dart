@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:uniespaco/layers/presenters/test/test_controller.dart';
-import 'package:uniespaco/layers/presenters/test/test_widget.dart';
-import 'package:uniespaco/layers/shared/dependecies/dependecies.dart';
+import 'package:uniespaco/layers/ui/presenters/test/test_widget.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});
@@ -14,7 +12,7 @@ class _TestPageState extends State<TestPage> {
   late final TestController controller;
   @override
   void initState() {
-    controller = TestControllerImp(listarSetoresCadastradosUseCase: Dependencies.instance.get());
+    //controller = TestControllerImp(listarSetoresCadastradosUseCase: Dependencies.instance.get());
     super.initState();
   }
 

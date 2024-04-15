@@ -1,6 +1,6 @@
 import 'package:uniespaco/layers/domain/usecases/efetuar_login_usecase/efetuar_login_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/efetuar_logout_usecase/efetuar_logout_usecase.dart';
-import 'package:uniespaco/layers/presenters/login/login_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/login/login_widget.dart';
 
 class LoginControllerImpl extends LoginController {
   final EfetuarLoginUseCase _efetuarLoginUseCase;

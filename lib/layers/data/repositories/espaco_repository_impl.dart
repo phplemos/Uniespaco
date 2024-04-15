@@ -15,7 +15,7 @@ class EspacoRepositoryImpl implements EspacoRepository {
     try {
       final response = await dataSource.get(tabela: 'espaco');
       final resultToDto = response.map((e) => EspacoDto.fromMap(e)).toList();
-      return Right(resultToDto.map((e) => e.toEntity()).toList());
+      return Right(resultToDto.map((e) => EspacoEntity.fromDto(e)).toList());
     } catch (e) {
       return Left(Exception('Erro ao serializar o espaco'));
     }
@@ -37,7 +37,7 @@ class EspacoRepositoryImpl implements EspacoRepository {
     try {
       final response = await dataSource.getItemById(tabela: 'espaco', itemId: idEspaco);
       final espacoDto = EspacoDto.fromMap(response);
-      return Right(espacoDto.toEntity());
+      return Right(EspacoEntity.fromDto(espacoDto));
     } catch (e) {
       return Left(Exception('Erro ao serializar o espaco'));
     }
@@ -46,8 +46,7 @@ class EspacoRepositoryImpl implements EspacoRepository {
   @override
   Future<Either<Exception, bool>> save({required EspacoEntity espacoEntity}) async {
     try {
-      var espacoDto = EspacoDto.fromEntity(espacoEntity);
-      var result = await dataSource.save(tabela: 'espaco', item: espacoDto.toMap());
+      var result = await dataSource.save(tabela: 'espaco', item: espacoEntity.toDto().toMap());
       return Right(result);
     } catch (e) {
       return Left(Exception('Erro ao cadastrar o espaço'));

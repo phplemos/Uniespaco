@@ -96,7 +96,7 @@ class GoogleAuthImpl implements GoogleAuth {
       final User? user = auth.currentUser;
       final response = await dataSource.getItemById(tabela: 'usuario', itemId: user!.uid);
       final usuario = UsuarioDto.fromMap(response);
-      return usuario.toEntity();
+      return UsuarioEntity.fromDto(usuario);
     } catch (e) {
       throw Exception('Erro ao buscar usuario');
     }

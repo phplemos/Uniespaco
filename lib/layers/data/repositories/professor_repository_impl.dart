@@ -12,9 +12,9 @@ class ProfessorRepositoryImpl implements ProfessorRepository {
   @override
   Future<Either<Exception, List<UsuarioEntity>>> getAll() async {
     try {
-      final response = await dataSource.get(tabela: 'professor');
+      final response = await dataSource.getItensByCampo(tabela: 'usuario', campo: 'tipoUsuario', referencia: 'professor');
       final professoresToDto = response.map((e) => UsuarioDto.fromMap(e)).toList();
-      return Right(professoresToDto.map((e) => e.toEntity()).toList());
+      return Right(professoresToDto.map((e) => UsuarioEntity.fromDto(e)).toList());
     } catch (e) {
       return Left(Exception('Erro ao serializar o espaco'));
     }
@@ -29,8 +29,7 @@ class ProfessorRepositoryImpl implements ProfessorRepository {
   @override
   Future<Either<Exception, bool>> save({required UsuarioEntity professorEntity}) async {
     try {
-      var professorDto = UsuarioDto.fromEntity(professorEntity);
-      var result = await dataSource.save(tabela: 'professor', item: professorDto.toMap());
+      var result = await dataSource.save(tabela: 'usuario', item: professorEntity.toDto().toMap());
       return Right(result);
     } catch (e) {
       return Left(Exception('Erro ao cadastrar o espaço'));

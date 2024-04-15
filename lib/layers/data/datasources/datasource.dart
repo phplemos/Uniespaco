@@ -3,7 +3,7 @@ abstract class DataSource {
 
   Future<Map<String, dynamic>> getItemById({required String tabela, required String itemId});
 
-  Future<List<Map<String, dynamic>>> getItensByCampoEquals({required String tabela, required String campo, required Object obj});
+  Future<List<Map<String, dynamic>>> getItensByCampo({required String tabela, required String campo, required String referencia});
 
   Future<bool> save({required String tabela, required Map<String, dynamic> item});
 

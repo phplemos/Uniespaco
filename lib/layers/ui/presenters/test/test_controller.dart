@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_setores_cadastrados_usecase/listar_setores_cadastrados_usecase.dart';
-import 'package:uniespaco/layers/presenters/test/test_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/test/test_widget.dart';
 
 class TestControllerImp extends TestController {
   final ListarSetoresCadastradosUseCase listarSetoresCadastradosUseCase;

@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
-import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 
 class UsuarioDto {
   // Atributos comum a todos
@@ -37,47 +36,13 @@ class UsuarioDto {
     this.espacoGerido,
   });
 
-  UsuarioEntity toEntity() {
-    return UsuarioEntity(
-      id: id,
-      nome: nome,
-      email: email,
-      telefone: telefone,
-      photoUrl: photoUrl,
-      tipoUsuario: tipoUsuario,
-      departamento: departamento?.toEntity(),
-      sigla: sigla,
-      isDepartamento: isDepartamento,
-      espacoGerido: espacoGerido?.toEntity(),
-    );
-  }
-
-  factory UsuarioDto.fromEntity(UsuarioEntity usuario) {
-    return UsuarioDto(
-      id: usuario.id,
-      nome: usuario.nome,
-      email: usuario.email,
-      telefone: usuario.telefone,
-      photoUrl: usuario.photoUrl,
-      tipoUsuario: usuario.tipoUsuario,
-      departamento: usuario.departamento != null ? UsuarioDto.fromEntity(usuario.departamento!) : null,
-      sigla: usuario.sigla,
-      isDepartamento: usuario.isDepartamento,
-      espacoGerido: usuario.espacoGerido != null
-          ? EspacoDto.fromEntity(
-              usuario.espacoGerido!,
-            )
-          : null,
-    );
-  }
-
   UsuarioDto copyWith({
     String? id,
     String? nome,
     String? email,
     String? telefone,
-    String? tipoUsuario,
     String? photoUrl,
+    String? tipoUsuario,
     UsuarioDto? departamento,
     String? sigla,
     bool? isDepartamento,
@@ -120,10 +85,10 @@ class UsuarioDto {
       telefone: map['telefone'] as String,
       photoUrl: map['photoUrl'] as String,
       tipoUsuario: map['tipoUsuario'] as String,
-      departamento: map['departamento'] != null ? UsuarioDto.fromMap(map['departamento'] as Map<String, dynamic>) : null,
+      departamento: map['departamento'] != null ? UsuarioDto.fromMap(map['departamento'] as Map<String,dynamic>) : null,
       sigla: map['sigla'] != null ? map['sigla'] as String : null,
       isDepartamento: map['isDepartamento'] != null ? map['isDepartamento'] as bool : null,
-      espacoGerido: map['espacoGerido'] != null ? EspacoDto.fromMap(map['espacoGerido'] as Map<String, dynamic>) : null,
+      espacoGerido: map['espacoGerido'] != null ? EspacoDto.fromMap(map['espacoGerido'] as Map<String,dynamic>) : null,
     );
   }
 
@@ -133,18 +98,37 @@ class UsuarioDto {
 
   @override
   String toString() {
-    return 'UsuarioDto(id: $id, nome: $nome, email: $email, telefone: $telefone, photoUrl: $photoUrl tipoUsuario: $tipoUsuario, departamento: $departamento, sigla: $sigla, isDepartamento: $isDepartamento, espacoGerido: $espacoGerido)';
+    return 'UsuarioDto(id: $id, nome: $nome, email: $email, telefone: $telefone, photoUrl: $photoUrl, tipoUsuario: $tipoUsuario, departamento: $departamento, sigla: $sigla, isDepartamento: $isDepartamento, espacoGerido: $espacoGerido)';
   }
 
   @override
   bool operator ==(covariant UsuarioDto other) {
     if (identical(this, other)) return true;
-
-    return other.id == id && other.nome == nome && other.email == email && other.telefone == telefone && other.photoUrl == photoUrl && other.tipoUsuario == tipoUsuario && other.departamento == departamento && other.sigla == sigla && other.isDepartamento == isDepartamento && other.espacoGerido == espacoGerido;
+  
+    return 
+      other.id == id &&
+      other.nome == nome &&
+      other.email == email &&
+      other.telefone == telefone &&
+      other.photoUrl == photoUrl &&
+      other.tipoUsuario == tipoUsuario &&
+      other.departamento == departamento &&
+      other.sigla == sigla &&
+      other.isDepartamento == isDepartamento &&
+      other.espacoGerido == espacoGerido;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ nome.hashCode ^ email.hashCode ^ telefone.hashCode ^ photoUrl.hashCode ^ tipoUsuario.hashCode ^ departamento.hashCode ^ sigla.hashCode ^ isDepartamento.hashCode ^ espacoGerido.hashCode;
+    return id.hashCode ^
+      nome.hashCode ^
+      email.hashCode ^
+      telefone.hashCode ^
+      photoUrl.hashCode ^
+      tipoUsuario.hashCode ^
+      departamento.hashCode ^
+      sigla.hashCode ^
+      isDepartamento.hashCode ^
+      espacoGerido.hashCode;
   }
 }

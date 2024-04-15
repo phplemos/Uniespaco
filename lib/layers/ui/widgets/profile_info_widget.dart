@@ -56,17 +56,17 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text("Cadastrar professor"),
+            title: const Text("Sinalizar professor"),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/cadastro_professor');
+              Navigator.pushReplacementNamed(context, '/sinalizar_professor');
               //Navegar para outra página
             },
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text("Cadastrar setor"),
+            title: const Text("Sinalizar setor"),
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/cadastro_setor');
+              Navigator.pushReplacementNamed(context, '/sinalizar_setor');
               //Navegar para outra página
             },
           ),
