@@ -1,3 +1,4 @@
+import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/equipamento_entity.dart';
 import 'package:uniespaco/layers/domain/entities/localizacao_entity.dart';
@@ -27,4 +28,28 @@ class EspacoEntity {
     required this.agenda,
     this.servicos,
   });
+
+  EspacoDto toDto() {
+    return EspacoDto(
+      id: id,
+      localizacao: localizacao.toDto(),
+      capacidadePessoas: capacidadePessoas,
+      equipamentoDisponivel: equipamentoDisponivel?.map((e) => e.toDto()).toList(),
+      acessibilidade: acessibilidade,
+      agenda: agenda.toDto(),
+      servicos: servicos?.map((e) => e.toDto()).toList(),
+    );
+  }
+
+  factory EspacoEntity.fromDto(EspacoDto espacoDto) {
+    return EspacoEntity(
+      id: espacoDto.id,
+      localizacao: LocalizacaoEntity.fromDto(espacoDto.localizacao),
+      capacidadePessoas: espacoDto.capacidadePessoas,
+      equipamentoDisponivel: espacoDto.equipamentoDisponivel?.map((e) => EquipamentoEntity.fromDto(e)).toList(),
+      acessibilidade: espacoDto.acessibilidade,
+      agenda: AgendaEntity.fromDto(espacoDto.agenda),
+      servicos: espacoDto.servicos?.map((e) => ServicoEntity.fromDto(e)).toList(),
+    );
+  }
 }

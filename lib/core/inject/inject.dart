@@ -39,10 +39,12 @@ import 'package:uniespaco/layers/domain/usecases/vincular_gestor_de_reserva_ao_e
 import 'package:uniespaco/layers/domain/usecases/vincular_gestor_de_reserva_ao_espaco_usecase/vincular_gestor_de_reserva_ao_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestor_de_servico_ao_espaco_usecase/vincular_gestor_de_servico_ao_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestor_de_servico_ao_espaco_usecase/vincular_gestor_de_servico_ao_espaco_usecase_impl.dart';
-import 'package:uniespaco/layers/presenters/home/home_controller.dart';
-import 'package:uniespaco/layers/presenters/home/home_widget.dart';
-import 'package:uniespaco/layers/presenters/login/login_controller.dart';
-import 'package:uniespaco/layers/presenters/login/login_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/home/home_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/login/login_widget.dart';
 
 class Inject {
   static void init() {
@@ -71,7 +73,21 @@ class Inject {
     getIt.registerLazySingleton<VincularGestorDeServicoAoEspacoUseCase>(() => VincularGestorDeServicoAoEspacoUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<VerInformacaoDoUsuarioUseCase>(() => VerInformacaoDoUsuarioUseCaseImpl(usuarioRepository: getIt()));
     //controllers
-    getIt.registerFactory<LoginController>(() => LoginControllerImpl(efetuarLoginUseCase: getIt(), efetuarLogoutUseCase: getIt()));
-    getIt.registerFactory<HomeController>(() => HomeControllerImpl(listarTodosEspacosUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt(), efetuarLogoutUseCase: getIt()));
+    getIt.registerFactory<LoginController>(() => LoginControllerImpl(
+          efetuarLoginUseCase: getIt(),
+          efetuarLogoutUseCase: getIt(),
+        ));
+    getIt.registerFactory<HomeController>(() => HomeControllerImpl(
+          listarTodosEspacosUseCase: getIt(),
+          verInformacaoDoUsuarioUseCase: getIt(),
+          efetuarLogoutUseCase: getIt(),
+        ));
+    getIt.registerFactory<CadastroEspacoController>(() => CadastroEspacoControllerImpl(
+          cadastrarEspacoUseCase: getIt(),
+          listarProfessoresCadastradosUseCase: getIt(),
+          listarSetoresCadastradosUseCase: getIt(),
+          verInformacaoDoUsuarioUseCase: getIt(),
+          efetuarLogoutUseCase: getIt(),
+        ));
   }
 }

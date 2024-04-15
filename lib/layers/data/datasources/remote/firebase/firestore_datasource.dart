@@ -11,7 +11,7 @@ class FirestoreDataSourceImpl implements DataSource {
       final result = response.docs.map((e) => e.data()).toList();
       return result;
     } catch (e) {
-      throw Exception('Erro ao recuperar os espaços no banco');
+      throw Exception('Erro ao recuperar os dados no banco');
     }
   }
 
@@ -21,21 +21,25 @@ class FirestoreDataSourceImpl implements DataSource {
       final response = await db.collection(tabela).doc(itemId).get();
       return response.data() ?? {};
     } catch (e) {
-      throw Exception('Erro ao recuperar os espaços no banco');
+      throw Exception('Erro ao recuperar os dados no banco');
     }
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getItensByCampoEquals({required String tabela, required String campo, required Object obj}) {
-    // TODO: implement getItensByCampoEquals
-    throw UnimplementedError();
+  Future<List<Map<String, dynamic>>> getItensByCampo({required String tabela, required String campo, required String referencia}) async {
+    try {
+      final response = await db.collection(tabela).where(campo, isEqualTo: referencia).get();
+      return response.docs.map((e) => e.data()).toList();
+    } catch (e) {
+      throw Exception('Erro ao recuperar os dados no banco');
+    }
   }
 
   @override
   Future<bool> save({required String tabela, required Map<String, dynamic> item}) async {
     try {
       // Verifica se tem um id ja especificado
-      if (item['id'] != null) {
+      if (item['id'] != null && item['id'] != '') {
         await db.collection(tabela).doc(item['id']).set(item);
       } else {
         var id = db.collection(tabela).doc().id;

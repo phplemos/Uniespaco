@@ -12,9 +12,9 @@ class SetorRepositoryImpl extends SetorRepository {
   @override
   Future<Either<Exception, List<UsuarioEntity>>> getAll() async {
     try {
-      final response = await dataSource.get(tabela: 'setor');
-      final setoresToDto = response.map((e) => UsuarioDto.fromMap(e)).toList();
-      return Right(setoresToDto.map((e) => e.toEntity()).toList());
+      final response = await dataSource.getItensByCampo(tabela: 'usuario', campo: 'tipoUsuario', referencia: 'setor');
+      final professoresToDto = response.map((e) => UsuarioDto.fromMap(e)).toList();
+      return Right(professoresToDto.map((e) => UsuarioEntity.fromDto(e)).toList());
     } catch (e) {
       return Left(Exception('Erro ao serializar o espaco'));
     }
@@ -29,8 +29,7 @@ class SetorRepositoryImpl extends SetorRepository {
   @override
   Future<Either<Exception, bool>> save({required UsuarioEntity setorEntity}) async {
     try {
-      var setorDto = UsuarioDto.fromEntity(setorEntity);
-      var result = await dataSource.save(tabela: 'professor', item: setorDto.toMap());
+      var result = await dataSource.save(tabela: 'professor', item: setorEntity.toDto().toMap());
       return Right(result);
     } catch (e) {
       return Left(Exception('Erro ao cadastrar o espaço'));
