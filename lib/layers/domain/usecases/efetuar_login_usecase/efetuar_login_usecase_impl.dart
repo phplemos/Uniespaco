@@ -5,11 +5,10 @@ import 'package:uniespaco/layers/domain/usecases/efetuar_login_usecase/efetuar_l
 class EfetuarLoginUseCaseImpl implements EfetuarLoginUseCase {
   final UsuarioRepository _usuarioRepository;
 
-  EfetuarLoginUseCaseImpl(this._usuarioRepository);
+  EfetuarLoginUseCaseImpl({required UsuarioRepository usuarioRepository}) : _usuarioRepository = usuarioRepository;
 
   @override
   Future<Either<Exception, bool>> call() {
     return _usuarioRepository.login();
   }
-  
 }

@@ -6,7 +6,7 @@ import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consul
 class ConsultarEspacoUseCaseImpl implements ConsultarEspacoUseCase {
   final EspacoRepository _espacoRepository;
 
-  ConsultarEspacoUseCaseImpl(this._espacoRepository);
+  ConsultarEspacoUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
 
   @override
   Future<Either<Exception, EspacoEntity>> call({required String idEspaco}) {

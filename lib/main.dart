@@ -1,10 +1,10 @@
-import 'package:flutter/widgets.dart';
-import 'package:uniespaco/core/firebase_config.dart';
-import 'package:uniespaco/layers/presenters/home/home.dart';
-import 'package:uniespaco/layers/shared/dependecies/setup_dependencies.dart';
+import 'package:flutter/material.dart';
+import 'package:uniespaco/core/firebase_configs/firebase_config.dart';
+import 'package:uniespaco/core/inject/inject.dart';
+import 'package:uniespaco/layers/presenters/app.dart';
 
-void main() {
-  FirebaseConfig.init();
-  setupDependencies();
-  runApp(const HomePage());
+void main() async {
+  await FirebaseConfig.init();
+  Inject.init();
+  runApp(const AppWidget());
 }

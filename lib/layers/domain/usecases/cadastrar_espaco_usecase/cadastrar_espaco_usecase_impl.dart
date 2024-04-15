@@ -6,7 +6,7 @@ import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadast
 class CadastrarEspacoUseCaseImpl implements CadastrarEspacoUseCase {
   final EspacoRepository _espacoRepository;
 
-  CadastrarEspacoUseCaseImpl(this._espacoRepository);
+  CadastrarEspacoUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
 
   @override
   Future<Either<Exception, bool>> call({required EspacoEntity espacoEntity}) {

@@ -1,13 +1,64 @@
-import 'package:flutter/foundation.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-abstract class LoginController extends ChangeNotifier {}
+abstract class LoginController extends ChangeNotifier {
+  Future<bool> login();
+  Future<void> logout();
+}
 
 class LoginWidget extends StatelessWidget {
-  const LoginWidget({super.key});
+  final LoginController controller;
+  const LoginWidget({
+    super.key,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    String googleImg = 'lib/core/assets/images/google.png';
+    String uniespacoImg = 'lib/core/assets/images/uniespaco.png';
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 100.0),
+              child: Image.asset(uniespacoImg, width: 300, height: 300),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 50, bottom: 20),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 12.0),
+                    child: Text('Acessar com o Google'),
+                  ),
+                  InkWell(
+                    child: Image.asset(googleImg, width: 50, height: 50),
+                    onTap: () async {
+                      var result = await controller.login();
+                      if (result) {
+                        if (context.mounted) {
+                          Navigator.pushReplacementNamed(context, '/home');
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Dominio incorreto!'),
+                            ),
+                          );
+                          controller.logout();
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -6,7 +6,7 @@ import 'package:uniespaco/layers/domain/usecases/listar_todos_espacos_usecase/li
 class ListarTodosEspacosUseCaseImpl implements ListarTodosEspacosUseCase {
   final EspacoRepository _espacoRepository;
 
-  ListarTodosEspacosUseCaseImpl(this._espacoRepository);
+  ListarTodosEspacosUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
 
   @override
   Future<Either<Exception, List<EspacoEntity>>> call() {

@@ -6,8 +6,8 @@ import 'package:uniespaco/layers/domain/usecases/cadastrar_professor_usecase/cad
 class CadastrarProfessorUseCaseImpl implements CadastrarProfessorUseCase {
   final ProfessorRepository _professorRepository;
 
-  CadastrarProfessorUseCaseImpl(this._professorRepository);
-  
+  CadastrarProfessorUseCaseImpl({required ProfessorRepository professorRepository}) : _professorRepository = professorRepository;
+
   @override
   Future<Either<Exception, bool>> call({required UsuarioEntity professorEntity}) {
     return _professorRepository.save(professorEntity: professorEntity);

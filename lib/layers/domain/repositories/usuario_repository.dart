@@ -9,5 +9,5 @@ abstract class UsuarioRepository {
 
   Future<Either<Exception, bool>> login();
 
-  Future<Either<Exception, bool>> logout();
+  Future<Either<Exception, void>> logout();
 }
