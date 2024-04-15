@@ -5,10 +5,11 @@ import 'package:uniespaco/layers/domain/usecases/efetuar_logout_usecase/efetuar_
 class EfetuarLogoutUseCaseImpl implements EfetuarLogoutUseCase {
   final UsuarioRepository _usuarioRepository;
 
-  EfetuarLogoutUseCaseImpl(this._usuarioRepository);
+  EfetuarLogoutUseCaseImpl({required UsuarioRepository usuarioRepository}) : _usuarioRepository = usuarioRepository;
+
 
   @override
-  Future<Either<Exception, bool>> call() {
+  Future<Either<Exception, void>> call() {
     return _usuarioRepository.logout();
   }
 }

@@ -7,6 +7,7 @@ class UsuarioEntity {
   final String nome;
   final String email;
   final String telefone;
+  final String photoUrl;
 
   // Atributos de seleção de tipo de usuario
   final String tipoUsuario;
@@ -26,6 +27,7 @@ class UsuarioEntity {
     required this.nome,
     required this.email,
     required this.telefone,
+    required this.photoUrl,
     required this.tipoUsuario,
     this.departamento,
     this.sigla,

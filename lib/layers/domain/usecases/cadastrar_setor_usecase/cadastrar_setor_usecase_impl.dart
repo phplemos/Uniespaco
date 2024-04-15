@@ -6,7 +6,7 @@ import 'package:uniespaco/layers/domain/usecases/cadastrar_setor_usecase/cadastr
 class CadastrarSetorUseCaseImpl implements CadastrarSetorUseCase {
   final SetorRepository _setorRepository;
 
-  CadastrarSetorUseCaseImpl(this._setorRepository);
+  CadastrarSetorUseCaseImpl({required SetorRepository setorRepository}) : _setorRepository = setorRepository;
 
   @override
   Future<Either<Exception, bool>> call({required UsuarioEntity setorEntity}) {

@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
 
 abstract class EfetuarLogoutUseCase {
-  Future<Either<Exception, bool>> call();
+  Future<Either<Exception, void>> call();
 }

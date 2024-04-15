@@ -11,13 +11,13 @@ main() {
         nome: 'Pedro',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     var gestorServicoMock = UsuarioEntity(
         id: '1',
         nome: 'Henrique',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     List<HorarioEntity> horarios = [];
     //Criando instancia de Agenda
     var agenda = AgendaEntity(
@@ -35,13 +35,13 @@ main() {
         nome: 'Pedro',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     var gestorServicoMock = UsuarioEntity(
         id: '1',
         nome: 'Henrique',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     List<HorarioEntity> horarios = [];
     //Criando instancia de Agenda
     var agenda = AgendaEntity(
@@ -60,13 +60,13 @@ main() {
         nome: 'Pedro',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     var gestorServicoMock = UsuarioEntity(
         id: '1',
         nome: 'Henrique',
         email: 'teste@gmail.com',
         telefone: '73991295315',
-        tipoUsuario: '');
+        tipoUsuario: '', photoUrl: '');
     var reservado = HorarioEntity(
         inicio: DateTime(2020), fim: DateTime(2022), isReserved: true);
     List<HorarioEntity> horarios = [reservado];
