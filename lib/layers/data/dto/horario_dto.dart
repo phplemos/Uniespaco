@@ -2,15 +2,17 @@
 import 'dart:convert';
 
 import 'package:uniespaco/layers/data/dto/reserva_dto.dart';
+import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 
 class HorarioDto {
-  final DateTime inicio;
+  final String inicio;
 
-  final DateTime fim;
+  final String fim;
 
   final bool isReserved;
 
   final ReservaDto? solicitanteReserva;
+
   HorarioDto({
     required this.inicio,
     required this.fim,
@@ -19,8 +21,8 @@ class HorarioDto {
   });
 
   HorarioDto copyWith({
-    DateTime? inicio,
-    DateTime? fim,
+    String? inicio,
+    String? fim,
     bool? isReserved,
     ReservaDto? solicitanteReserva,
   }) {
@@ -32,10 +34,28 @@ class HorarioDto {
     );
   }
 
+  HorarioEntity toEntity() {
+    return HorarioEntity(
+      inicio: inicio,
+      fim: fim,
+      isReserved: isReserved,
+      solicitanteReserva: solicitanteReserva?.toEntity(),
+    );
+  }
+
+  factory HorarioDto.fromEntity(HorarioEntity horarioEntity) {
+    return HorarioDto(
+      inicio: horarioEntity.inicio,
+      fim: horarioEntity.fim,
+      isReserved: horarioEntity.isReserved,
+      solicitanteReserva: horarioEntity.solicitanteReserva != null ? ReservaDto.fromEntity(horarioEntity.solicitanteReserva!) : null,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'inicio': inicio.millisecondsSinceEpoch,
-      'fim': fim.millisecondsSinceEpoch,
+      'inicio': inicio,
+      'fim': fim,
       'isReserved': isReserved,
       'solicitanteReserva': solicitanteReserva?.toMap(),
     };
@@ -43,8 +63,8 @@ class HorarioDto {
 
   factory HorarioDto.fromMap(Map<String, dynamic> map) {
     return HorarioDto(
-      inicio: DateTime.fromMillisecondsSinceEpoch(map['inicio'] as int),
-      fim: DateTime.fromMillisecondsSinceEpoch(map['fim'] as int),
+      inicio: map['inicio'],
+      fim: map['fim'],
       isReserved: map['isReserved'] as bool,
       solicitanteReserva: map['solicitanteReserva'] != null ? ReservaDto.fromMap(map['solicitanteReserva'] as Map<String, dynamic>) : null,
     );

@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:uniespaco/layers/domain/entities/equipamento_entity.dart';
 
 class EquipamentoDto {
@@ -23,12 +24,12 @@ class EquipamentoDto {
     );
   }
 
-  factory EquipamentoDto.fromEntity(EquipamentoEntity equipamento) {
+  factory EquipamentoDto.fromEntity(EquipamentoEntity equipamentoEntity) {
     return EquipamentoDto(
-      id: equipamento.id,
-      nome: equipamento.nome,
-      tipo: equipamento.tipo,
-      numTombo: equipamento.numTombo,
+      id: equipamentoEntity.id,
+      nome: equipamentoEntity.nome,
+      tipo: equipamentoEntity.tipo,
+      numTombo: equipamentoEntity.numTombo,
     );
   }
 
@@ -66,8 +67,7 @@ class EquipamentoDto {
 
   String toJson() => json.encode(toMap());
 
-  factory EquipamentoDto.fromJson(String source) =>
-      EquipamentoDto.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory EquipamentoDto.fromJson(String source) => EquipamentoDto.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -78,10 +78,7 @@ class EquipamentoDto {
   bool operator ==(covariant EquipamentoDto other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
-        other.nome == nome &&
-        other.tipo == tipo &&
-        other.numTombo == numTombo;
+    return other.id == id && other.nome == nome && other.tipo == tipo && other.numTombo == numTombo;
   }
 
   @override

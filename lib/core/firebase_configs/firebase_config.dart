@@ -8,5 +8,6 @@ class FirebaseConfig {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
   }
 }

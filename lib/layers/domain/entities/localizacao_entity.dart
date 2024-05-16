@@ -1,5 +1,3 @@
-import 'package:uniespaco/layers/data/dto/localizacao_dto.dart';
-
 class LocalizacaoEntity {
   final String campus;
 
@@ -8,7 +6,6 @@ class LocalizacaoEntity {
   final int andar;
 
   final int numero;
-
   LocalizacaoEntity({
     required this.campus,
     required this.pavilhao,
@@ -16,21 +13,20 @@ class LocalizacaoEntity {
     required this.numero,
   });
 
-  LocalizacaoDto toDto() {
-    return LocalizacaoDto(
-      campus: campus,
-      pavilhao: pavilhao,
-      andar: andar,
-      numero: numero,
-    );
+  @override
+  String toString() {
+    return 'LocalizacaoEntity(campus: $campus, pavilhao: $pavilhao, andar: $andar, numero: $numero)';
   }
 
-  factory LocalizacaoEntity.fromDto(LocalizacaoDto localizacaoDto) {
-    return LocalizacaoEntity(
-      campus: localizacaoDto.campus,
-      pavilhao: localizacaoDto.pavilhao,
-      andar: localizacaoDto.andar,
-      numero: localizacaoDto.numero,
-    );
+  @override
+  bool operator ==(covariant LocalizacaoEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.campus == campus && other.pavilhao == pavilhao && other.andar == andar && other.numero == numero;
+  }
+
+  @override
+  int get hashCode {
+    return campus.hashCode ^ pavilhao.hashCode ^ andar.hashCode ^ numero.hashCode;
   }
 }

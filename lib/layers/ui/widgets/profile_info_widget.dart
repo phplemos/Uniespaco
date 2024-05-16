@@ -1,18 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:uniespaco/layers/shared/usuario_provider.dart';
 
 class ProfileInfoWidget extends StatefulWidget {
-  final String accountEmail;
-  final String accountName;
-  final String currentAccountPicture;
-  final Function logout;
-
   const ProfileInfoWidget({
     super.key,
-    required this.accountEmail,
-    required this.accountName,
-    required this.currentAccountPicture,
-    required this.logout,
   });
 
   @override
@@ -20,73 +13,65 @@ class ProfileInfoWidget extends StatefulWidget {
 }
 
 class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
+  late final UsuarioProvider usuario = GetIt.I.get();
+
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      shadowColor: Colors.blue,
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountEmail: Text(widget.accountEmail),
-            accountName: Text(widget.accountName),
-            currentAccountPicture: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image(
-                image: NetworkImage(widget.currentAccountPicture),
+    return AnimatedBuilder(
+      animation: usuario,
+      builder: (context, child) {
+        return Drawer(
+          shadowColor: Colors.blue,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountEmail: Text(usuario.value?.email ?? 'Error'),
+                accountName: Text(usuario.value?.nome ?? 'Error'),
+                currentAccountPicture: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: usuario.value?.photoUrl != null ? Image(image: NetworkImage(usuario.value!.photoUrl)) : const Icon(Icons.home),
+                ),
+                decoration: const BoxDecoration(color: Colors.blue),
               ),
-            ),
-            decoration: const BoxDecoration(color: Colors.blue),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Cadastrar espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/cadastro_espaco');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Precadastro Usuario"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/cadastro_usuario');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Vincular Gestor ao espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/vincular_gestor_ao_espaco');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout_rounded),
+                title: const Text("Logout"),
+                onTap: (){
+                  usuario.logout();
+                  if(context.mounted){
+                    Navigator.pushReplacementNamed(context, '/');
+                  }
+                },
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Visualizar minhas solicitações de manutenção"),
-            onTap: () {
-              Navigator.pushNamed(context, '/visualizar_servicos');
-              //Navegar para outra página
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Cadastrar espaco"),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/cadastro_espaco');
-              //Navegar para outra página
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Sinalizar professor"),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/sinalizar_professor');
-              //Navegar para outra página
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Sinalizar setor"),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/sinalizar_setor');
-              //Navegar para outra página
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Ver Espaços"),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, '/visualizar_espaco');
-              //Navegar para outra página
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout_rounded),
-            title: const Text("Logout"),
-            onTap: () {
-              widget.logout();
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

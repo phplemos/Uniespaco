@@ -1,13 +1,14 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, constant_identifier_names
-
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 import 'package:uniespaco/layers/data/dto/agenda_dto.dart';
 import 'package:uniespaco/layers/data/dto/equipamento_dto.dart';
 import 'package:uniespaco/layers/data/dto/localizacao_dto.dart';
 import 'package:uniespaco/layers/data/dto/servico_dto.dart';
+import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 
 class EspacoDto {
   final String id;
@@ -20,9 +21,10 @@ class EspacoDto {
 
   final bool acessibilidade;
 
-  final AgendaDto agenda;
+  Map<DateTime, Map<String, AgendaDto>> agenda;
 
   final List<ServicoDto>? servicos;
+
   EspacoDto({
     required this.id,
     required this.localizacao,
@@ -39,7 +41,7 @@ class EspacoDto {
     int? capacidadePessoas,
     List<EquipamentoDto>? equipamentoDisponivel,
     bool? acessibilidade,
-    AgendaDto? agenda,
+    Map<DateTime, Map<String, AgendaDto>>? agenda,
     List<ServicoDto>? servicos,
   }) {
     return EspacoDto(
@@ -53,6 +55,30 @@ class EspacoDto {
     );
   }
 
+  EspacoEntity toEntity() {
+    return EspacoEntity(
+      id: id,
+      localizacao: localizacao.toEntity(),
+      capacidadePessoas: capacidadePessoas,
+      equipamentoDisponivel: equipamentoDisponivel?.map((e) => e.toEntity()).toList(),
+      acessibilidade: acessibilidade,
+      agenda: agenda.map((key, value) => MapEntry(key, value.map((key, value) => MapEntry(key, value.toEntity())))),
+      servicos: servicos?.map((e) => e.toEntity()).toList(),
+    );
+  }
+
+  factory EspacoDto.fromEntity(EspacoEntity espacoEntity) {
+    return EspacoDto(
+      id: espacoEntity.id,
+      localizacao: LocalizacaoDto.fromEntity(espacoEntity.localizacao),
+      capacidadePessoas: espacoEntity.capacidadePessoas,
+      equipamentoDisponivel: espacoEntity.equipamentoDisponivel?.map((e) => EquipamentoDto.fromEntity(e)).toList(),
+      acessibilidade: espacoEntity.acessibilidade,
+      agenda: espacoEntity.agenda.map((key, value) => MapEntry(key, value.map((key, value) => MapEntry(key, AgendaDto.fromEntity(value))))),
+      servicos: espacoEntity.servicos?.map((e) => ServicoDto.fromEntity(e)).toList(),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -60,7 +86,7 @@ class EspacoDto {
       'capacidadePessoas': capacidadePessoas,
       'equipamentoDisponivel': equipamentoDisponivel?.map((x) => x.toMap()).toList(),
       'acessibilidade': acessibilidade,
-      'agenda': agenda.toMap(),
+      'agenda': agenda.map((key, value) => MapEntry(key.toString(), value.map((key, value) => MapEntry(key, value.toMap())))),
       'servicos': servicos?.map((x) => x.toMap()).toList(),
     };
   }
@@ -72,13 +98,19 @@ class EspacoDto {
       capacidadePessoas: map['capacidadePessoas'] as int,
       equipamentoDisponivel: map['equipamentoDisponivel'] != null
           ? List<EquipamentoDto>.from(
-              (map['equipamentoDisponivel'] ).map<EquipamentoDto?>(
+              (map['equipamentoDisponivel']).map<EquipamentoDto?>(
                 (x) => EquipamentoDto.fromMap(x as Map<String, dynamic>),
               ),
             )
           : null,
       acessibilidade: map['acessibilidade'] as bool,
-      agenda: AgendaDto.fromMap(map['agenda'] as Map<String, dynamic>),
+      agenda: map['agenda'].isNotEmpty
+          ? Map<DateTime, Map<String, AgendaDto>>.from((map['agenda'] as Map<String, dynamic>).map<DateTime, Map<String, AgendaDto>>((String key, value) {
+              //CRIAR A CONVERSAO DE YYYY-MM-DD PARA DATETIME
+              DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+              return MapEntry(dateFormat.parse(key), (value as Map<String, dynamic>).map<String, AgendaDto>((String key, value) => MapEntry(key, AgendaDto.fromMap(value as Map<String, dynamic>))));
+            }))
+          : {},
       servicos: map['servicos'] != null
           ? List<ServicoDto>.from(
               (map['servicos']).map<ServicoDto?>(
@@ -102,22 +134,17 @@ class EspacoDto {
   bool operator ==(covariant EspacoDto other) {
     if (identical(this, other)) return true;
 
-    return other.id == id && other.localizacao == localizacao && other.capacidadePessoas == capacidadePessoas && listEquals(other.equipamentoDisponivel, equipamentoDisponivel) && other.acessibilidade == acessibilidade && other.agenda == agenda && listEquals(other.servicos, servicos);
+    return other.id == id &&
+        other.localizacao == localizacao &&
+        other.capacidadePessoas == capacidadePessoas &&
+        listEquals(other.equipamentoDisponivel, equipamentoDisponivel) &&
+        other.acessibilidade == acessibilidade &&
+        mapEquals(other.agenda, agenda) &&
+        listEquals(other.servicos, servicos);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^ localizacao.hashCode ^ capacidadePessoas.hashCode ^ equipamentoDisponivel.hashCode ^ acessibilidade.hashCode ^ agenda.hashCode ^ servicos.hashCode;
   }
-}
-
-enum Campus {
-  JEQUIE(text: "Jequié"),
-  VITORIADACONQUISTA(text: "Vitória da Conquista"),
-  ITAPETINGA(text: "Itapetinga"),
-  CAMPUS(text: "Campus");
-
-  final String? text;
-
-  const Campus({this.text});
 }

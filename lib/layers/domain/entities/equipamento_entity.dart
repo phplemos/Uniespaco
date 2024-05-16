@@ -1,11 +1,8 @@
-import 'package:uniespaco/layers/data/dto/equipamento_dto.dart';
-
 class EquipamentoEntity {
   final String id;
   final String nome;
   final String tipo;
   final String numTombo;
-
   EquipamentoEntity({
     required this.id,
     required this.nome,
@@ -13,21 +10,21 @@ class EquipamentoEntity {
     required this.numTombo,
   });
 
-  EquipamentoDto toDto() {
-    return EquipamentoDto(
-      id: id,
-      nome: nome,
-      tipo: tipo,
-      numTombo: numTombo,
-    );
+
+  @override
+  String toString() {
+    return 'EquipamentoEntity(id: $id, nome: $nome, tipo: $tipo, numTombo: $numTombo)';
   }
 
-  factory EquipamentoEntity.fromDto(EquipamentoDto equipamentoDto) {
-    return EquipamentoEntity(
-      id: equipamentoDto.id,
-      nome: equipamentoDto.nome,
-      tipo: equipamentoDto.tipo,
-      numTombo: equipamentoDto.numTombo,
-    );
+  @override
+  bool operator ==(covariant EquipamentoEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id && other.nome == nome && other.tipo == tipo && other.numTombo == numTombo;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ nome.hashCode ^ tipo.hashCode ^ numTombo.hashCode;
   }
 }

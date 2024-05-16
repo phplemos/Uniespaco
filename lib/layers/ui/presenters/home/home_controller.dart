@@ -1,31 +1,34 @@
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
-import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
-import 'package:uniespaco/layers/domain/usecases/efetuar_logout_usecase/efetuar_logout_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_todos_espacos_usecase/listar_todos_espacos_usecase.dart';
-import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase.dart';
-import 'package:uniespaco/layers/ui/presenters/home/home_widget.dart';
+
+abstract class HomeController extends ChangeNotifier {
+
+  List<EspacoEntity>? _espacos;
+
+  List<EspacoEntity>? get espacos => _espacos;
+
+  set espacos(List<EspacoEntity>? espacos) {
+    _espacos = espacos;
+    notifyListeners();
+  }
+
+  void init();
+}
 
 class HomeControllerImpl extends HomeController {
   final ListarTodosEspacosUseCase listarTodosEspacosUseCase;
-  final VerInformacaoDoUsuarioUseCase verInformacaoDoUsuarioUseCase;
-  final EfetuarLogoutUseCase efetuarLogoutUseCase;
 
-  HomeControllerImpl({required this.listarTodosEspacosUseCase, required this.verInformacaoDoUsuarioUseCase, required this.efetuarLogoutUseCase});
-
-  @override
-  Future<UsuarioEntity> getUsuario() async {
-    var response = await verInformacaoDoUsuarioUseCase();
-    return response.fold((error) => throw Exception('Erro ao recuperar usuario'), (success) => success);
+  HomeControllerImpl({required this.listarTodosEspacosUseCase});
+  factory HomeControllerImpl.fromGetIt() {
+    return HomeControllerImpl(
+      listarTodosEspacosUseCase: GetIt.I.get<ListarTodosEspacosUseCase>(),
+    );
   }
-
   @override
-  Future<void> logout() async {
-    await efetuarLogoutUseCase();
-  }
-
-  @override
-  Future<List<EspacoEntity>> getEspacos() async {
-    var response = await listarTodosEspacosUseCase();
-    return response.fold((l) => [], (r) => r);
+  init() async {
+    var responseEspacos = await listarTodosEspacosUseCase();
+    responseEspacos.fold((error) => throw Exception('Erro ao recuperar espacos'), (success) => espacos = success);
   }
 }

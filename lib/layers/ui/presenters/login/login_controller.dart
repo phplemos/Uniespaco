@@ -1,12 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/domain/usecases/efetuar_login_usecase/efetuar_login_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/efetuar_logout_usecase/efetuar_logout_usecase.dart';
-import 'package:uniespaco/layers/ui/presenters/login/login_widget.dart';
+
+abstract class LoginController extends ChangeNotifier {
+  String googleImg = 'lib/core/assets/images/google.png';
+  String uniespacoImg = 'lib/core/assets/images/uniespaco.png';
+  Future<bool> login();
+  logout();
+}
 
 class LoginControllerImpl extends LoginController {
   final EfetuarLoginUseCase _efetuarLoginUseCase;
   final EfetuarLogoutUseCase _efetuarLogoutUseCase;
-
-  late String? errorMsg;
 
   LoginControllerImpl({required EfetuarLoginUseCase efetuarLoginUseCase, required EfetuarLogoutUseCase efetuarLogoutUseCase})
       : _efetuarLoginUseCase = efetuarLoginUseCase,
@@ -19,14 +24,13 @@ class LoginControllerImpl extends LoginController {
       if (success) {
         return true;
       }
-      errorMsg = 'Favor verificar se dominio pertence a "@uesb.edu.br"';
       return false;
     });
   }
 
   @override
-  Future<void> logout() async {
+  logout() async {
     var result = await _efetuarLogoutUseCase();
-    return result.fold((error) => false, (success) => null);
+    result.fold((error) => false, (success) => null);
   }
 }
