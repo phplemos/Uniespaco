@@ -79,9 +79,16 @@ class GoogleAuthImpl implements GoogleAuth {
   @override
   Future<void> verificarRegistro({required Map<String, dynamic> usuarioInfo}) async {
     try {
-      var response = await dataSource.getItemById(tabela: 'usuario', itemId: usuarioInfo['id']);
-      if (response.isEmpty) {
-        usuarioInfo.putIfAbsent('tipoUsuario', () => 'comum');
+      // Verifica se o usuario ja está cadastrado
+      var responseItemById = await dataSource.getItemById(tabela: 'usuario', itemId: usuarioInfo['id']);
+      if (responseItemById.isEmpty) {
+        // Busca email em lista de precadastro
+        var responsePreCadastro = await dataSource.getItensByCampoEspecifico(tabela: 'precadastro', campo: 'email', referencia: usuarioInfo['email']);
+        if (responsePreCadastro.isEmpty) {
+          usuarioInfo.putIfAbsent('tipoUsuario', () => 'comum');
+          dataSource.save(tabela: 'usuario', item: usuarioInfo);
+        }
+        usuarioInfo.putIfAbsent('tipoUsuario', () => responsePreCadastro.first['tipoUsuario']);
         dataSource.save(tabela: 'usuario', item: usuarioInfo);
       }
       return;
@@ -95,8 +102,7 @@ class GoogleAuthImpl implements GoogleAuth {
     try {
       final User? user = auth.currentUser;
       final response = await dataSource.getItemById(tabela: 'usuario', itemId: user!.uid);
-      final usuario = UsuarioDto.fromMap(response);
-      return UsuarioEntity.fromDto(usuario);
+      return UsuarioDto.fromMap(response).toEntity();
     } catch (e) {
       throw Exception('Erro ao buscar usuario');
     }

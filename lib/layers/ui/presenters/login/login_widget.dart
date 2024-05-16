@@ -1,10 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
-abstract class LoginController extends ChangeNotifier {
-  Future<bool> login();
-  Future<void> logout();
-}
+import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
 
 class LoginWidget extends StatelessWidget {
   final LoginController controller;
@@ -15,15 +11,13 @@ class LoginWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String googleImg = 'lib/core/assets/images/google.png';
-    String uniespacoImg = 'lib/core/assets/images/uniespaco.png';
     return SingleChildScrollView(
       child: Center(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 100.0),
-              child: Image.asset(uniespacoImg, width: 300, height: 300),
+              child: Image.asset(controller.uniespacoImg, width: 300, height: 300),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 50, bottom: 20),
@@ -34,24 +28,20 @@ class LoginWidget extends StatelessWidget {
                     child: Text('Acessar com o Google'),
                   ),
                   InkWell(
-                    child: Image.asset(googleImg, width: 50, height: 50),
                     onTap: () async {
                       var result = await controller.login();
                       if (result) {
-                        if (context.mounted) {
-                          Navigator.pushReplacementNamed(context, '/home');
-                        }
+                        if (context.mounted) Navigator.pushReplacementNamed(context, '/home');
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Dominio incorreto!'),
-                            ),
+                            const SnackBar(content: Text('Dominio incorreto!')),
                           );
-                          controller.logout();
                         }
+                        controller.logout();
                       }
                     },
+                    child: Image.asset(controller.googleImg, width: 50, height: 50),
                   ),
                 ],
               ),

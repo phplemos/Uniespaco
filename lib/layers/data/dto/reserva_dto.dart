@@ -6,14 +6,17 @@ import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
 import 'package:uniespaco/layers/data/dto/horario_dto.dart';
 import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
+import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 
 class ReservaDto {
+
   final String id;
   final EspacoDto espaco;
   final UsuarioDto solicitante;
   final String descricao;
   final String status;
   final List<HorarioDto> periodo;
+
   ReservaDto({
     required this.id,
     required this.espaco,
@@ -41,6 +44,28 @@ class ReservaDto {
     );
   }
 
+  ReservaEntity toEntity() {
+    return ReservaEntity(
+      id: id,
+      espaco: espaco.toEntity(),
+      solicitante: solicitante.toEntity(),
+      descricao: descricao,
+      status: status,
+      periodo: periodo.map((e) => e.toEntity()).toList(),
+    );
+  }
+
+  factory ReservaDto.fromEntity(ReservaEntity reservaEntity) {
+    return ReservaDto(
+      id: reservaEntity.id,
+      espaco: EspacoDto.fromEntity(reservaEntity.espaco),
+      solicitante: UsuarioDto.fromEntity(reservaEntity.solicitante),
+      descricao: reservaEntity.descricao,
+      status: reservaEntity.status,
+      periodo: reservaEntity.periodo.map((e) => HorarioDto.fromEntity(e)).toList(),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -60,7 +85,7 @@ class ReservaDto {
       descricao: map['descricao'] as String,
       status: map['status'] as String,
       periodo: List<HorarioDto>.from(
-        (map['periodo'] as List<int>).map<HorarioDto>(
+        (map['periodo']).map<HorarioDto>(
           (x) => HorarioDto.fromMap(x as Map<String, dynamic>),
         ),
       ),

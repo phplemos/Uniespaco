@@ -1,4 +1,5 @@
-import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/equipamento_entity.dart';
 import 'package:uniespaco/layers/domain/entities/localizacao_entity.dart';
@@ -15,10 +16,9 @@ class EspacoEntity {
 
   final bool acessibilidade;
 
-  final AgendaEntity agenda;
+  Map<DateTime, Map<String, AgendaEntity>> agenda;
 
   final List<ServicoEntity>? servicos;
-
   EspacoEntity({
     required this.id,
     required this.localizacao,
@@ -29,27 +29,31 @@ class EspacoEntity {
     this.servicos,
   });
 
-  EspacoDto toDto() {
-    return EspacoDto(
-      id: id,
-      localizacao: localizacao.toDto(),
-      capacidadePessoas: capacidadePessoas,
-      equipamentoDisponivel: equipamentoDisponivel?.map((e) => e.toDto()).toList(),
-      acessibilidade: acessibilidade,
-      agenda: agenda.toDto(),
-      servicos: servicos?.map((e) => e.toDto()).toList(),
-    );
+  @override
+  String toString() {
+    return 'EspacoEntity(id: $id, localizacao: $localizacao, capacidadePessoas: $capacidadePessoas, equipamentoDisponivel: $equipamentoDisponivel, acessibilidade: $acessibilidade, agenda: $agenda, servicos: $servicos)';
   }
 
-  factory EspacoEntity.fromDto(EspacoDto espacoDto) {
-    return EspacoEntity(
-      id: espacoDto.id,
-      localizacao: LocalizacaoEntity.fromDto(espacoDto.localizacao),
-      capacidadePessoas: espacoDto.capacidadePessoas,
-      equipamentoDisponivel: espacoDto.equipamentoDisponivel?.map((e) => EquipamentoEntity.fromDto(e)).toList(),
-      acessibilidade: espacoDto.acessibilidade,
-      agenda: AgendaEntity.fromDto(espacoDto.agenda),
-      servicos: espacoDto.servicos?.map((e) => ServicoEntity.fromDto(e)).toList(),
-    );
+  @override
+  bool operator ==(covariant EspacoEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id && other.localizacao == localizacao && other.capacidadePessoas == capacidadePessoas && listEquals(other.equipamentoDisponivel, equipamentoDisponivel) && other.acessibilidade == acessibilidade && mapEquals(other.agenda, agenda) && listEquals(other.servicos, servicos);
   }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ localizacao.hashCode ^ capacidadePessoas.hashCode ^ equipamentoDisponivel.hashCode ^ acessibilidade.hashCode ^ agenda.hashCode ^ servicos.hashCode;
+  }
+}
+
+enum Campus {
+  JEQUIE(text: "Jequié"),
+  VITORIADACONQUISTA(text: "Vitória da Conquista"),
+  ITAPETINGA(text: "Itapetinga"),
+  CAMPUS(text: "Campus");
+
+  final String? text;
+
+  const Campus({this.text});
 }

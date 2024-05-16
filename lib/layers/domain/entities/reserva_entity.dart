@@ -1,4 +1,4 @@
-import 'package:uniespaco/layers/data/dto/reserva_dto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
@@ -20,25 +20,21 @@ class ReservaEntity {
     required this.periodo,
   });
 
-  ReservaDto toDto() {
-    return ReservaDto(
-      id: id,
-      espaco: espaco.toDto(),
-      solicitante: solicitante.toDto(),
-      descricao: descricao,
-      status: status,
-      periodo: periodo.map((e) => e.toDto()).toList(),
-    );
+
+  @override
+  String toString() {
+    return 'ReservaEntity(id: $id, espaco: $espaco, solicitante: $solicitante, descricao: $descricao, status: $status, periodo: $periodo)';
   }
 
-  factory ReservaEntity.fromDto(ReservaDto reservaDto) {
-    return ReservaEntity(
-      id: reservaDto.id,
-      espaco: EspacoEntity.fromDto(reservaDto.espaco),
-      solicitante: UsuarioEntity.fromDto(reservaDto.solicitante),
-      descricao: reservaDto.descricao,
-      status: reservaDto.status,
-      periodo: reservaDto.periodo.map((e) => HorarioEntity.fromDto(e)).toList(),
-    );
+  @override
+  bool operator ==(covariant ReservaEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id && other.espaco == espaco && other.solicitante == solicitante && other.descricao == descricao && other.status == status && listEquals(other.periodo, periodo);
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ espaco.hashCode ^ solicitante.hashCode ^ descricao.hashCode ^ status.hashCode ^ periodo.hashCode;
   }
 }

@@ -9,15 +9,18 @@ abstract class EspacoRepository {
 
   Future<Either<Exception, bool>> save({required EspacoEntity espacoEntity});
 
-  Future<Either<Exception, bool>> vincularGestorServicoEspaco(
-      {required UsuarioEntity gestorServico,
-      required EspacoEntity espacoEntity});
-
-  Future<Either<Exception, bool>> vincularGestorReservaEspaco(
-      {required UsuarioEntity gestorReserva,
-      required EspacoEntity espacoEntity});
+  Future<Either<Exception, bool>> vincularGestoresEspaco({
+    required DateTime dayToInit,
+    required DateTime dayToEnd,
+    required EspacoEntity espacoEntity,
+    required Map<String, Map<String, UsuarioEntity>> gestores,
+  });
 
   Future<Either<Exception, List<UsuarioEntity>>> getAllGestoresReserva();
 
   Future<Either<Exception, List<UsuarioEntity>>> getAllGestoresServico();
+
+  Future<Either<Exception, List<EspacoEntity>>> getEspacosPorCampus({required Campus campus});
+
+  Future<List<EspacoEntity>> getEspacosPorPesquisa({required String? query});
 }

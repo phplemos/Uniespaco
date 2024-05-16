@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
+import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
-import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_controller.dart';
+import 'package:uuid/uuid.dart';
 
 class FormularioCadastroEspacoWidget extends StatefulWidget {
   const FormularioCadastroEspacoWidget({super.key, required this.controller});
@@ -12,55 +13,9 @@ class FormularioCadastroEspacoWidget extends StatefulWidget {
 }
 
 class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspacoWidget> {
-  final List<CheckBoxModel> equipamentosSalaDeAula = [
-    CheckBoxModel(texto: "Mesas e cadeiras"),
-    CheckBoxModel(texto: "Quadro branco ou lousa"),
-    CheckBoxModel(texto: "Projetor"),
-    CheckBoxModel(texto: "Armários"),
-    CheckBoxModel(texto: "Armazenamento para materiais"),
-    CheckBoxModel(texto: "Papelaria"),
-    CheckBoxModel(texto: "Equipamentos para tecnologia educacional"),
-    CheckBoxModel(texto: "Equipamentos de segurança"),
-    CheckBoxModel(texto: "Computadores"),
-    CheckBoxModel(texto: "Laptops"),
-    CheckBoxModel(texto: "Tablets"),
-    CheckBoxModel(texto: "Projetores"),
-    CheckBoxModel(texto: "Softwares educacionais"),
-    CheckBoxModel(texto: "Instrumentos musicais"),
-    CheckBoxModel(texto: "Partituras"),
-    CheckBoxModel(texto: "Equipamentos de gravação"),
-    CheckBoxModel(texto: "Materiais de desenho"),
-    CheckBoxModel(texto: "Pintura"),
-    CheckBoxModel(texto: "Escultura"),
-    CheckBoxModel(texto: "Materiais de laboratório"),
-    CheckBoxModel(texto: "Equipamentos de segurança"),
-    CheckBoxModel(texto: "Equipamentos esportivos"),
-    CheckBoxModel(texto: "Uniformes"),
-  ];
-  // Equipamentos de laboratório
-  final List<String> equipamentosLaboratorio = [
-    'Bancadas',
-    'Balanças',
-    'Pipetas',
-    'Béqueres',
-    'Erlenmeyers',
-    'Provetas',
-    'Microscópios',
-    'Equipamentos de segurança',
-  ];
-
-  // Variaveis de formulário
   final _formKey = GlobalKey<FormState>();
-  final List<Campus> listaDeCampus = [Campus.JEQUIE, Campus.VITORIADACONQUISTA, Campus.ITAPETINGA];
-  Campus _campus = Campus.CAMPUS;
-  final TextEditingController _pavilhao = TextEditingController();
-  final TextEditingController _andar = TextEditingController();
-  final TextEditingController _numero = TextEditingController();
+  Campus campus = Campus.CAMPUS;
   List<CheckBoxModel> itensSelecionados = [];
-  final TextEditingController _capacidadePessoas = TextEditingController();
-  bool _isAcessivel = false;
-  String _tipoEspaco = 'Sala';
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -70,9 +25,9 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
         child: Column(
           children: [
             const Text(
-              "Informações sobre localização",
-              style: TextStyle(fontSize: 18),
+              "Cadastrar Espaço",
             ),
+            const Divider(),
             const SizedBox(
               height: 20,
             ),
@@ -82,13 +37,13 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Campus:"),
                   DropdownButton<Campus>(
-                      value: _campus,
+                    isExpanded: true,
+                      value: campus,
                       onChanged: (newValue) {
                         setState(() {
                           if (newValue != null) {
-                            _campus = newValue;
+                            campus = newValue;
                           }
                         });
                       },
@@ -103,67 +58,40 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: _pavilhao,
+              controller: widget.controller.pavilhao,
               decoration: const InputDecoration(
                 label: Text("Pavilhão"),
                 border: OutlineInputBorder(),
               ),
-              validator: (String? text) {
-                if (text?.isEmpty ?? true) {
-                  return 'Campo Obrigatório';
-                }
-                final exp = RegExp(r"^[a-zA-Z0-9 ]+$");
-                if (!exp.hasMatch(text!)) {
-                  return 'Caractere invalido!';
-                }
-
-                return null;
-              },
+              validator: widget.controller.validatorText,
             ),
             const SizedBox(
               height: 10,
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: _andar,
+              controller: widget.controller.andar,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 label: Text("Andar"),
                 border: OutlineInputBorder(),
               ),
-              validator: (String? text) {
-                if (text?.isEmpty ?? true) {
-                  return 'Campo Obrigatório';
-                }
-                final exp = RegExp(r"^(?=.*\d)\d{1,}$");
-                if (!exp.hasMatch(text!)) {
-                  return 'Caractere invalido!';
-                }
-                return null;
-              },
+              validator: widget.controller.validatorNumber,
             ),
             const SizedBox(
               height: 10,
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: _numero,
+              controller: widget.controller.numero,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 label: Text("Numero"),
                 border: OutlineInputBorder(),
               ),
-              validator: (String? text) {
-                if (text?.isEmpty ?? true) {
-                  return 'Campo Obrigatório';
-                }
-                final exp = RegExp(r"^(?=.*\d)\d{1,}$");
-                if (!exp.hasMatch(text!)) {
-                  return 'Caractere invalido!';
-                }
-                return null;
-              },
+              validator: widget.controller.validatorNumber,
             ),
+            SizedBox(height: 20,),
             const Text(
               "Informações sobre Itens do espaço",
               style: TextStyle(fontSize: 18),
@@ -184,10 +112,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                   const SizedBox(
                     width: 10,
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton(onPressed: _vincularGestorEspaco, child: const Text("Vincular Gestor ao Espaço")),
-                  ),
+
                 ],
               ),
             ),
@@ -198,33 +123,23 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
             ),
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              controller: _capacidadePessoas,
+              controller: widget.controller.capacidadePessoas,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 label: Text("Capacidade de Pessoas"),
                 border: OutlineInputBorder(),
               ),
-              validator: (String? text) {
-                if (text?.isEmpty ?? true) {
-                  return 'Campo Obrigatório';
-                }
-                final exp = RegExp(r"^(?=.*\d)\d{1,}$");
-                if (!exp.hasMatch(text!)) {
-                  return 'Caractere invalido!';
-                }
-
-                return null;
-              },
+              validator: widget.controller.validatorNumber,
             ),
             Row(
               children: [
                 Expanded(
                   child: CheckboxListTile(
                     title: const Text("Acessibilidade"),
-                    value: _isAcessivel,
+                    value: widget.controller.isAcessivel,
                     onChanged: (newValue) {
                       setState(() {
-                        _isAcessivel = newValue!;
+                        widget.controller.isAcessivel = newValue!;
                       });
                     },
                     controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
@@ -235,7 +150,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                     children: [
                       const Text("Tipo de Espaço"),
                       DropdownButton<String>(
-                        value: _tipoEspaco,
+                        value: widget.controller.tipoEspaco,
                         items: ['Sala', 'Laboratorio']
                             .map((e) => DropdownMenuItem<String>(
                                   value: e,
@@ -244,7 +159,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                             .toList(),
                         onChanged: (value) {
                           setState(() {
-                            _tipoEspaco = value!;
+                            widget.controller.tipoEspaco = value!;
                           });
                         },
                       ),
@@ -256,32 +171,16 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
             ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  if (_campus == Campus.CAMPUS) {
+                  if (campus == Campus.CAMPUS) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Escolha um campus!')));
                   } else {
-                    var usuario = await widget.controller.getUsuario();
-                    var espaco = {
-                      'id': '',
-                      'numero': int.tryParse(_numero.text),
-                      'localizacao': {'campus': _campus.text, 'pavilhao': _pavilhao.text, 'andar': int.tryParse(_andar.text), 'numero': int.tryParse(_andar.text)},
-                      'capacidadePessoas': int.tryParse(_capacidadePessoas.text),
+                    final Map<String, dynamic> espaco = {
+                      'id': const Uuid().v4(),
+                      'localizacao': {'campus': campus.text, 'pavilhao': widget.controller.pavilhao.text, 'andar': int.tryParse(widget.controller.andar.text), 'numero': int.tryParse(widget.controller.numero.text)},
+                      'capacidadePessoas': int.tryParse(widget.controller.capacidadePessoas.text),
                       'equipamentoDisponivel': [],
-                      'acessibilidade': _isAcessivel,
-                      'agenda': {
-                        'id': '1',
-                        'gestorServico': usuario.toDto().toMap(),
-                        'gestorReserva': usuario.toDto().toMap(),
-                        'horarios': <Map<String, dynamic>>[
-                          {
-                            'inicio': 1681771260000,
-                            'fim': 1681771260000,
-                            'isReserved': false,
-                            'solicitanteReserva': null,
-                          }
-                        ],
-                      },
+                      'acessibilidade': widget.controller.isAcessivel,
                       'servicos': [],
-                      'image': ""
                     };
                     widget.controller.save(map: espaco);
                     if (context.mounted) {
@@ -304,6 +203,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          final equipamentos = widget.controller.listaEquipamentos;
           return AlertDialog(
             title: const Text("Selecionar os itens que contem na sala"),
             content: SingleChildScrollView(
@@ -313,20 +213,20 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                     width: MediaQuery.of(context).size.width - 100,
                     height: MediaQuery.of(context).size.height - 100,
                     child: ListView.builder(
-                      itemCount: equipamentosSalaDeAula.length,
+                      itemCount: equipamentos.length,
                       shrinkWrap: true,
                       itemBuilder: (context, int index) {
                         return CheckboxListTile(
-                          title: Text(equipamentosSalaDeAula[index].texto),
-                          value: equipamentosSalaDeAula[index].checked,
+                          title: Text(equipamentos[index].texto),
+                          value: equipamentos[index].checked,
                           onChanged: (value) {
                             setState(() {
-                              equipamentosSalaDeAula[index].checked = value!;
+                              equipamentos[index].checked = value!;
                             });
                             if (value!) {
-                              itensSelecionados.add(equipamentosSalaDeAula[index]);
+                              itensSelecionados.add(equipamentos[index]);
                             } else {
-                              itensSelecionados.removeWhere((element) => element.texto == equipamentosSalaDeAula[index].texto);
+                              itensSelecionados.removeWhere((element) => element.texto == equipamentos[index].texto);
                             }
                           },
                         );

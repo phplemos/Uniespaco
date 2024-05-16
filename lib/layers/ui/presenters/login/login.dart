@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,16 +11,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late final LoginController controller;
-
-  @override
-  void initState() {
-    controller = GetIt.I.get<LoginController>();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    late final LoginController controller = GetIt.I.get<LoginController>();
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {

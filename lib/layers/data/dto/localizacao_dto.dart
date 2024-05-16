@@ -18,19 +18,6 @@ class LocalizacaoDto {
     required this.numero,
   });
 
-  LocalizacaoEntity toEntity() {
-    return LocalizacaoEntity(campus: campus, pavilhao: pavilhao, andar: andar, numero: numero);
-  }
-
-  factory LocalizacaoDto.fromEntity(LocalizacaoEntity localizacao) {
-    return LocalizacaoDto(
-      campus: localizacao.campus,
-      pavilhao: localizacao.pavilhao,
-      andar: localizacao.andar,
-      numero: localizacao.numero,
-    );
-  }
-
   LocalizacaoDto copyWith({
     String? campus,
     String? pavilhao,
@@ -42,6 +29,24 @@ class LocalizacaoDto {
       pavilhao: pavilhao ?? this.pavilhao,
       andar: andar ?? this.andar,
       numero: numero ?? this.numero,
+    );
+  }
+
+  LocalizacaoEntity toEntity() {
+    return LocalizacaoEntity(
+      campus: campus,
+      pavilhao: pavilhao,
+      andar: andar,
+      numero: numero,
+    );
+  }
+
+  factory LocalizacaoDto.fromEntity(LocalizacaoEntity localizacaoEntity) {
+    return LocalizacaoDto(
+      campus: localizacaoEntity.campus,
+      pavilhao: localizacaoEntity.pavilhao,
+      andar: localizacaoEntity.andar,
+      numero: localizacaoEntity.numero,
     );
   }
 

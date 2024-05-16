@@ -1,6 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
+import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 
 class UsuarioEntity {
   // Atributos comum a todos
@@ -23,46 +22,34 @@ class UsuarioEntity {
   // Atributod de usuario gestor
   final EspacoEntity? espacoGerido;
 
-  UsuarioEntity({
-    required this.id,
-    required this.nome,
-    required this.email,
-    required this.telefone,
-    required this.photoUrl,
-    required this.tipoUsuario,
-    this.departamento,
-    this.sigla,
-    this.isDepartamento,
-    this.espacoGerido,
-  });
+  final Map<DateTime, List<ReservaEntity>>? reservas;
 
-  UsuarioDto toDto() {
-    return UsuarioDto(
-      id: id,
-      nome: nome,
-      email: email,
-      telefone: telefone,
-      photoUrl: photoUrl,
-      tipoUsuario: tipoUsuario,
-      departamento: departamento?.toDto(),
-      sigla: sigla,
-      isDepartamento: isDepartamento,
-      espacoGerido: espacoGerido?.toDto(),
-    );
+  UsuarioEntity({required this.id, required this.nome, required this.email, required this.telefone, required this.photoUrl, required this.tipoUsuario, this.departamento, this.sigla, this.isDepartamento, this.espacoGerido, this.reservas});
+
+  @override
+  String toString() {
+    return 'UsuarioEntity(id: $id, nome: $nome, email: $email, telefone: $telefone, photoUrl: $photoUrl, tipoUsuario: $tipoUsuario, departamento: $departamento, sigla: $sigla, isDepartamento: $isDepartamento, espacoGerido: $espacoGerido, reservas: ${reservas.toString()})';
   }
 
-  factory UsuarioEntity.fromDto(UsuarioDto usuarioDto) {
-    return UsuarioEntity(
-      id: usuarioDto.id,
-      nome: usuarioDto.nome,
-      email: usuarioDto.email,
-      telefone: usuarioDto.telefone,
-      photoUrl: usuarioDto.photoUrl,
-      tipoUsuario: usuarioDto.tipoUsuario,
-      departamento: usuarioDto.departamento != null ? UsuarioEntity.fromDto(usuarioDto.departamento!) : null,
-      sigla: usuarioDto.sigla,
-      isDepartamento: usuarioDto.isDepartamento,
-      espacoGerido: usuarioDto.espacoGerido != null ? EspacoEntity.fromDto(usuarioDto.espacoGerido!) : null,
-    );
+  @override
+  bool operator ==(covariant UsuarioEntity other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.nome == nome &&
+        other.email == email &&
+        other.telefone == telefone &&
+        other.photoUrl == photoUrl &&
+        other.tipoUsuario == tipoUsuario &&
+        other.departamento == departamento &&
+        other.sigla == sigla &&
+        other.isDepartamento == isDepartamento &&
+        other.espacoGerido == espacoGerido &&
+        other.reservas == reservas;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ nome.hashCode ^ email.hashCode ^ telefone.hashCode ^ photoUrl.hashCode ^ tipoUsuario.hashCode ^ departamento.hashCode ^ sigla.hashCode ^ isDepartamento.hashCode ^ espacoGerido.hashCode ^ reservas.hashCode;
   }
 }

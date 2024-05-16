@@ -1,9 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+
 import 'package:uniespaco/layers/data/dto/espaco_dto.dart';
 import 'package:uniespaco/layers/data/dto/horario_dto.dart';
 import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
+import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
 
 class ServicoDto {
   final String id;
@@ -36,6 +39,28 @@ class ServicoDto {
       solicitante: solicitante ?? this.solicitante,
       periodo: periodo ?? this.periodo,
       espaco: espaco ?? this.espaco,
+    );
+  }
+
+  ServicoEntity toEntity() {
+    return ServicoEntity(
+      id: id,
+      descricao: descricao,
+      status: status,
+      solicitante: solicitante.toEntity(),
+      periodo: periodo.map((e) => e.toEntity()).toList(),
+      espaco: espaco.toEntity(),
+    );
+  }
+
+  factory ServicoDto.fromEntity(ServicoEntity servicoEntity) {
+    return ServicoDto(
+      id: servicoEntity.id,
+      descricao: servicoEntity.descricao,
+      status: servicoEntity.status,
+      solicitante: UsuarioDto.fromEntity(servicoEntity.solicitante),
+      periodo: servicoEntity.periodo.map((e) => HorarioDto.fromEntity(e)).toList(),
+      espaco: EspacoDto.fromEntity(servicoEntity.espaco),
     );
   }
 

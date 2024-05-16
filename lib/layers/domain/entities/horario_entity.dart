@@ -1,15 +1,13 @@
-import 'package:uniespaco/layers/data/dto/horario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 
 class HorarioEntity {
-  final DateTime inicio;
+  final String inicio;
 
-  final DateTime fim;
+  final String fim;
 
   final bool isReserved;
 
   final ReservaEntity? solicitanteReserva;
-
   HorarioEntity({
     required this.inicio,
     required this.fim,
@@ -17,16 +15,29 @@ class HorarioEntity {
     this.solicitanteReserva,
   });
 
-  HorarioDto toDto() {
-    return HorarioDto(inicio: inicio, fim: fim, isReserved: isReserved, solicitanteReserva: solicitanteReserva?.toDto());
+
+
+  @override
+  String toString() {
+    return 'HorarioEntity(inicio: $inicio, fim: $fim, isReserved: $isReserved, solicitanteReserva: $solicitanteReserva)';
   }
 
-  factory HorarioEntity.fromDto(HorarioDto horarioDto) {
-    return HorarioEntity(
-      inicio: horarioDto.inicio,
-      fim: horarioDto.fim,
-      isReserved: horarioDto.isReserved,
-      solicitanteReserva: horarioDto.solicitanteReserva != null ? ReservaEntity.fromDto(horarioDto.solicitanteReserva!) : null,
-    );
+  @override
+  bool operator ==(covariant HorarioEntity other) {
+    if (identical(this, other)) return true;
+  
+    return 
+      other.inicio == inicio &&
+      other.fim == fim &&
+      other.isReserved == isReserved &&
+      other.solicitanteReserva == solicitanteReserva;
+  }
+
+  @override
+  int get hashCode {
+    return inicio.hashCode ^
+      fim.hashCode ^
+      isReserved.hashCode ^
+      solicitanteReserva.hashCode;
   }
 }

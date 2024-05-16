@@ -25,8 +25,18 @@ class FirestoreDataSourceImpl implements DataSource {
     }
   }
 
+ /* @override
+  Future<List<Map<String, dynamic>>> getItensByCampo({required String tabela, required String itemId, required String campo}) async {
+    try {
+      final response = await db.collection(tabela).doc(itemId).get();
+      return response.docs.map((e) => e.data()).toList();
+    } catch (e) {
+      throw Exception('Erro ao recuperar os dados no banco');
+    }
+  }
+*/
   @override
-  Future<List<Map<String, dynamic>>> getItensByCampo({required String tabela, required String campo, required String referencia}) async {
+  Future<List<Map<String, dynamic>>> getItensByCampoEspecifico({required String tabela, required String campo, required String referencia}) async {
     try {
       final response = await db.collection(tabela).where(campo, isEqualTo: referencia).get();
       return response.docs.map((e) => e.data()).toList();
@@ -52,9 +62,13 @@ class FirestoreDataSourceImpl implements DataSource {
   }
 
   @override
-  Future<bool> update({required String tabela, required Map<String, dynamic> item}) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<bool> update({required String tabela, required Map<String, dynamic> item}) async {
+    try {
+      await db.collection(tabela).doc(item['id']).set(item);
+      return true;
+    } catch (e) {
+      throw Exception('Erro ao persistir no banco');
+    }
   }
 
   @override
@@ -62,4 +76,14 @@ class FirestoreDataSourceImpl implements DataSource {
     // TODO: implement delete
     throw UnimplementedError();
   }
+
+/*  @override
+  Future<List<Map<String, dynamic>>> pesquisaStream({required String tabela, required String campo, required String query}) async {
+    try {
+      final response = await db.collection(tabela).where(campo, arrayContains: query).get();
+      return response.docs.map((e) => e.data()).toList();
+    } catch (e) {
+      throw Exception('Erro ao recuperar os dados no banco');
+    }
+  }*/
 }
