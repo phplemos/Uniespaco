@@ -1,17 +1,17 @@
 import 'package:dartz/dartz.dart';
-import 'package:uniespaco/layers/data/datasources/datasource.dart';
 import 'package:uniespaco/layers/data/datasources/google_auth.dart';
-import 'package:uniespaco/layers/data/dto/PreCadastroUsuarioDto.dart';
+import 'package:uniespaco/layers/data/datasources/remote/firebase/precadastro/precadastro_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/precadastro_usuario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/repositories/usuario_repository.dart';
 
 class UsuarioRepositoryImpl implements UsuarioRepository {
-  final DataSource dataSource;
+  final PrecadastroFirebaseDataSource precadastroFirebaseDataSource;
+
   final GoogleAuth googleAuth;
 
   UsuarioRepositoryImpl({
-    required this.dataSource,
+    required this.precadastroFirebaseDataSource,
     required this.googleAuth,
   });
 
@@ -32,7 +32,8 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
       }
       return const Right(false);
     } catch (e) {
-      return Left(Exception("Erro ao efetuar o login!"));
+      return Left(
+        Exception("Erro ao efetuar o login!"));
     }
   }
 
@@ -55,7 +56,7 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   Future<Either<Exception, bool>> preCadastroUsuario({required PreCadastroUsuarioEntity preCadastroUsuarioEntity}) async {
     try {
-      var result = await dataSource.save(tabela: 'precadastro', item: PreCadastroUsuarioDto.fromEntity(preCadastroUsuarioEntity).toMap());
+      var result = await precadastroFirebaseDataSource.createPrecadastro(precadastro: preCadastroUsuarioEntity);
       return Right(result);
     } catch (e) {
       return Left(Exception('Erro ao cadastrar o espaço'));

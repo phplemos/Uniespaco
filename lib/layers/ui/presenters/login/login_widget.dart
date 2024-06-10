@@ -35,10 +35,9 @@ class LoginWidget extends StatelessWidget {
                       } else {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Dominio incorreto!')),
+                            const SnackBar(content: Text('Apenas email "@uesb.edu.br"!')),
                           );
                         }
-                        controller.logout();
                       }
                     },
                     child: Image.asset(controller.googleImg, width: 50, height: 50),

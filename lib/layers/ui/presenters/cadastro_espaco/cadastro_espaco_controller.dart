@@ -26,7 +26,7 @@ abstract class CadastroEspacoController extends ChangeNotifier {
 
   Future<void> save({required Map<String, dynamic> map});
 
-  Future<List<UsuarioEntity>> getGestores();
+  Future<List<UsuarioEntity?>> getGestores();
 
   String? validatorText(String? text);
 
@@ -85,12 +85,12 @@ class CadastroEspacoControllerImpl extends CadastroEspacoController {
   }
 
   @override
-  Future<List<UsuarioEntity>> getGestores() async {
-    List<UsuarioEntity> gestores = [];
+  Future<List<UsuarioEntity?>> getGestores() async {
+    List<UsuarioEntity?> gestores = [];
     var responseSetores = await listarSetoresCadastradosUseCase();
     var responseProfessores = await listarProfessoresCadastradosUseCase();
-    responseSetores.fold((l) => [], (r) => gestores.addAll(r));
-    responseProfessores.fold((l) => [], (r) => gestores.addAll(r));
+    responseSetores.fold((error) => [], (success) => gestores.addAll(success));
+    responseProfessores.fold((error) => [], (success) => gestores.addAll(success));
     return gestores;
   }
 

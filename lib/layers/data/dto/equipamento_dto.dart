@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uniespaco/layers/domain/entities/equipamento_entity.dart';
 
 class EquipamentoDto {
@@ -45,6 +46,25 @@ class EquipamentoDto {
       tipo: tipo ?? this.tipo,
       numTombo: numTombo ?? this.numTombo,
     );
+  }
+
+  factory EquipamentoDto.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) {
+    final data = snapshot.data();
+    return EquipamentoDto(
+      id: data?['id'],
+      nome: data?['nome'],
+      tipo: data?['tipo'],
+      numTombo: data?['numTombo'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'nome': nome,
+      'tipo': tipo,
+      'numTombo': numTombo,
+    };
   }
 
   Map<String, dynamic> toMap() {

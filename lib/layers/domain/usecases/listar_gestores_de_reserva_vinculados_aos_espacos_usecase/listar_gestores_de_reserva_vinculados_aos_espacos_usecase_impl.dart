@@ -10,7 +10,7 @@ class ListarGestoresDeReservaVinculadosAosEspacosUseCaseImpl implements ListarGe
   ListarGestoresDeReservaVinculadosAosEspacosUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
 
   @override
-  Future<Either<Exception, List<UsuarioEntity>>> call() {
+  Future<Either<Exception, List<UsuarioEntity?>>> call() {
     return _espacoRepository.getAllGestoresReserva();
   }
 }

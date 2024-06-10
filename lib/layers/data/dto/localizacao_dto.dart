@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uniespaco/layers/domain/entities/localizacao_entity.dart';
 
 class LocalizacaoDto {
@@ -30,6 +31,25 @@ class LocalizacaoDto {
       andar: andar ?? this.andar,
       numero: numero ?? this.numero,
     );
+  }
+
+  factory LocalizacaoDto.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) {
+    final data = snapshot.data();
+    return LocalizacaoDto(
+      campus: data?['campus'],
+      pavilhao: data?['pavilhao'],
+      andar: data?['andar'],
+      numero: data?['numero'],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return <String, dynamic>{
+      'campus': campus,
+      'pavilhao': pavilhao,
+      'andar': andar,
+      'numero': numero,
+    };
   }
 
   LocalizacaoEntity toEntity() {

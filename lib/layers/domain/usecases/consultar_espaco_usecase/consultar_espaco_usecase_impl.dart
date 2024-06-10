@@ -9,7 +9,7 @@ class ConsultarEspacoUseCaseImpl implements ConsultarEspacoUseCase {
   ConsultarEspacoUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
 
   @override
-  Future<Either<Exception, EspacoEntity>> call({required String idEspaco}) {
+  Future<Either<Exception, EspacoEntity?>> call({required String idEspaco}) {
     return _espacoRepository.getById(idEspaco: idEspaco);
   }
 }

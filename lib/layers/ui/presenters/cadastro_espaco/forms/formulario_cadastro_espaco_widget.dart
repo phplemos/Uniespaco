@@ -38,7 +38,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButton<Campus>(
-                    isExpanded: true,
+                      isExpanded: true,
                       value: campus,
                       onChanged: (newValue) {
                         setState(() {
@@ -91,7 +91,9 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
               ),
               validator: widget.controller.validatorNumber,
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             const Text(
               "Informações sobre Itens do espaço",
               style: TextStyle(fontSize: 18),
@@ -112,7 +114,6 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                   const SizedBox(
                     width: 10,
                   ),
-
                 ],
               ),
             ),
@@ -249,7 +250,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
   }
 
   void _vincularGestorEspaco() {
-    final Future<List<UsuarioEntity>> professores = widget.controller.getGestores();
+    final Future<List<UsuarioEntity?>> professores = widget.controller.getGestores();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -265,7 +266,7 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
-                    child: FutureBuilder<List<UsuarioEntity>?>(
+                    child: FutureBuilder<List<UsuarioEntity?>?>(
                         future: professores,
                         builder: (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {

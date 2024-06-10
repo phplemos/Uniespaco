@@ -1,40 +1,37 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dartz/dartz.dart';
-import 'package:uniespaco/layers/data/datasources/datasource.dart';
-import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
+
+import 'package:uniespaco/layers/data/datasources/remote/firebase/usuario/usuario_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/repositories/professor_repository.dart';
 
 class ProfessorRepositoryImpl implements ProfessorRepository {
-  final DataSource dataSource;
+  UsuarioFirebaseDataSource usuarioDatasource;
 
-  ProfessorRepositoryImpl({required this.dataSource});
+  ProfessorRepositoryImpl({
+    required this.usuarioDatasource,
+  });
 
   @override
-  Future<Either<Exception, List<UsuarioEntity>>> getAll() async {
+  Future<Either<Exception, List<UsuarioEntity?>>> getAll() async {
     try {
-      // Busca na tabela de usuarios os usuarios com o campo tipoUsuario professor
-      final response = await dataSource.getItensByCampoEspecifico(tabela: 'usuario', campo: 'tipoUsuario', referencia: 'professor');
-      // converte o retorno de map para entity
-      final professoresEntity = response.map((e) => UsuarioDto.fromMap(e).toEntity()).toList();
-      return Right(professoresEntity);
+      final usuarios = await usuarioDatasource.getAllUsuarios();
+      final professores = usuarios.where((usuario) => usuario!.tipoUsuario == 'professor').toList();
+      return Right(professores);
     } catch (e) {
-      return Left(Exception('Erro ao serializar o espaco'));
+      throw Exception('Erro ao buscar os setores');
     }
   }
 
   @override
-  Future<Either<Exception, UsuarioEntity>> getById({required String id}) {
+  Future<Either<Exception, UsuarioEntity?>> getById({required String id}) {
     // TODO: implement getById
     throw UnimplementedError();
   }
 
   @override
-  Future<Either<Exception, bool>> save({required UsuarioEntity professorEntity}) async {
-    try {
-      var result = await dataSource.save(tabela: 'usuario', item: UsuarioDto.fromEntity(professorEntity).toMap());
-      return Right(result);
-    } catch (e) {
-      return Left(Exception('Erro ao cadastrar o espaço'));
-    }
+  Future<Either<Exception, bool>> save({required UsuarioEntity professorEntity}) {
+    // TODO: implement save
+    throw UnimplementedError();
   }
 }
