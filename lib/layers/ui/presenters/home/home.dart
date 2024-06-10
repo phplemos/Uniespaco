@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final HomeController controller = HomeControllerImpl.fromGetIt();
+  final HomeController controller = HomeControllerImpl.fromGetIt();
 
   @override
   void initState() {

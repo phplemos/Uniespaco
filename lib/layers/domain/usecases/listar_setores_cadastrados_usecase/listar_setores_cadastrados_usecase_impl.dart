@@ -9,7 +9,7 @@ class ListarSetoresCadastradosUseCaseImpl implements ListarSetoresCadastradosUse
   ListarSetoresCadastradosUseCaseImpl({required SetorRepository setorRepository}) : _setorRepository = setorRepository;
 
   @override
-  Future<Either<Exception, List<UsuarioEntity>>> call() {
+  Future<Either<Exception, List<UsuarioEntity?>>> call() {
     return _setorRepository.getAll();
   }
 }

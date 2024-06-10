@@ -9,7 +9,7 @@ class ListarProfessoresCadastradosUseCaseImpl implements ListarProfessoresCadast
   ListarProfessoresCadastradosUseCaseImpl({required ProfessorRepository professorRepository}) : _professorRepository = professorRepository;
 
   @override
-  Future<Either<Exception, List<UsuarioEntity>>> call() {
+  Future<Either<Exception, List<UsuarioEntity?>>> call() {
     return _professorRepository.getAll();
   }
 }

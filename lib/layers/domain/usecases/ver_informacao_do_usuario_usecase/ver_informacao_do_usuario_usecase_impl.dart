@@ -9,7 +9,7 @@ class VerInformacaoDoUsuarioUseCaseImpl implements VerInformacaoDoUsuarioUseCase
   VerInformacaoDoUsuarioUseCaseImpl({required UsuarioRepository usuarioRepository}) : _usuarioRepository = usuarioRepository;
 
   @override
-  Future<Either<Exception, UsuarioEntity>> call() {
+  Future<Either<Exception, UsuarioEntity?>> call() {
     return _usuarioRepository.get();
   }
 }

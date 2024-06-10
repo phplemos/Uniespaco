@@ -4,7 +4,8 @@ import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco.d
 import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login.dart';
-import 'package:uniespaco/layers/ui/presenters/vincular_gestor_ao_espaco/vincular_gestor_ao_espaco.dart';
+import 'package:uniespaco/layers/ui/presenters/vincular_gestor_reserva_ao_espaco/vincular_gestor_reserva_ao_espaco.dart';
+import 'package:uniespaco/layers/ui/presenters/vincular_gestor_servico_ao_espaco/vincular_gestor_servico_ao_espaco.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -17,8 +18,8 @@ class AppWidget extends StatelessWidget {
         '/': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
         '/cadastro_espaco': (context) => const CadastroEspacoPage(),
-        '/vincular_gestor_ao_espaco': (context) =>
-            const VincularGestorAoEspacoPage(),
+        '/vincular_gestor_reserva_ao_espaco': (context) => const VincularGestorReservaAoEspacoPage(),
+        '/vincular_gestor_servico_ao_espaco': (context) => const VincularGestorServicoAoEspacoPage(),
         '/cadastro_usuario': (context) => const CadastroUsuarioPage(),
       },
     );

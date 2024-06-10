@@ -11,7 +11,7 @@ class ListarTodasReservasUsuarioUseCaseImpl implements ListarTodasReservasUsuari
   ListarTodasReservasUsuarioUseCaseImpl({required this.reservaRepository});
 
   @override
-  Future<Either<Exception, Map<DateTime, List<ReservaEntity>>>> call({required UsuarioEntity usuarioEntity}) {
+  Future<Either<Exception, Map<DateTime, List<ReservaEntity?>>>> call({required UsuarioEntity usuarioEntity}) {
     return reservaRepository.getAll(usuario: usuarioEntity);
   }
 }

@@ -9,7 +9,7 @@ class ListarReservasUsuarioPorDiaUseCaseImpl implements ListarReservasUsuarioPor
 
   ListarReservasUsuarioPorDiaUseCaseImpl({required this.reservaRepository});
 
-  Future<Either<Exception, Map<DateTime, List<ReservaEntity>>>> call({required UsuarioEntity usuarioEntity, required DateTime day}) {
+  Future<Either<Exception, Map<DateTime, List<ReservaEntity?>>>> call({required UsuarioEntity usuarioEntity, required DateTime day}) {
     return reservaRepository.getByDay(usuario: usuarioEntity, day: day);
   }
 }

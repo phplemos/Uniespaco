@@ -25,13 +25,12 @@ class TestControllerImp extends TestController {
   String get title => "${_itens.length} Itens";
 
   refresh() async {
-    Either<Exception, List<UsuarioEntity>> response =
-        await listarSetoresCadastradosUseCase();
+    Either<Exception, List<UsuarioEntity?>> response = await listarSetoresCadastradosUseCase();
     response.fold((l) {
       _erroMsg = 'Erro';
       notifyListeners();
     }, (r) {
-      _itens = r.map((e) => e.nome).toList();
+      _itens = r.map((e) => e!.nome).toList();
       notifyListeners();
     });
   }

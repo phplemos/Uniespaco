@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco.dart';
 
-
 class ListarEspacosWidget extends StatefulWidget {
   final HomeController controller;
 
@@ -46,12 +45,12 @@ class _ListarEspacosWidgetState extends State<ListarEspacosWidget> {
                     child: Card(
                       child: ListTile(
                         leading: const Icon(Icons.add_alert),
-                        title: Text("Numero: ${widget.controller.espacos![index].localizacao.numero}"),
-                        subtitle: Text('Modulo: ${widget.controller.espacos![index].localizacao.pavilhao}'),
+                        title: Text("Numero: ${widget.controller.espacos![index]!.localizacao.numero}"),
+                        subtitle: Text('Modulo: ${widget.controller.espacos![index]!.localizacao.pavilhao}'),
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos![index])));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos![index]!)));
                     },
                   );
                 },

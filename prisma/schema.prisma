@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "dart run orm"
+  output   = "../lib/layers/data/datasources/remote/mysql"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+// Models
+model Turno {
+  id       String   @id @default(uuid()) @db.VarChar(36)
+  nome     String   @unique
+  agenda   Agenda[]
+  espacoId String
+  espaco   Espaco   @relation(fields: [espacoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Agenda {
+  id         String    @id @default(uuid()) @db.VarChar(36)
+  observacao String?
+  turnoId    String
+  turno      Turno     @relation(fields: [turnoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  horarios   Horario[]
+}
+
+model Horario {
+  id                  String   @id @default(uuid()) @db.VarChar(36)
+  inicio              String
+  fim                 String
+  agendaId            String
+  agenda              Agenda   @relation(fields: [agendaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  gestorServicoId     String
+  gestorServico       Usuario? @relation("gestorServico", fields: [gestorServicoId], references: [id])
+  gestorReservaId     String
+  gestorReserva       Usuario? @relation("gestorReserva", fields: [gestorReservaId], references: [id])
+  isReserved          Boolean
+  reservaSolicitadaId String
+  reservaSolicitada   Reserva  @relation(fields: [reservaSolicitadaId], references: [id])
+  servicoSolicitadoId String
+  servicoSolicitado   Servico  @relation(fields: [servicoSolicitadoId], references: [id])
+}
+
+model Espaco {
+  id                    String        @id @default(uuid()) @db.VarChar(36)
+  localizacaoId         String        @unique
+  localizacao           Localizacao   @relation(fields: [localizacaoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  capacidadePessoas     Int
+  equipamentoDisponivel Equipamento[]
+  acessibilidade        Boolean
+  turnos                Turno[]
+  reservas              Reserva[]
+  servicos              Servico[]
+}
+
+model Localizacao {
+  id       String  @id @default(uuid()) @db.VarChar(36)
+  campus   String
+  pavilhao String
+  andar    Int
+  numero   Int
+  espaco   Espaco?
+}
+
+model Equipamento {
+  id       String @id @default(uuid()) @db.VarChar(36)
+  nome     String
+  tipo     String
+  numTombo String
+  espacoId String
+  espaco   Espaco @relation(fields: [espacoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model PrecadastroUsuario {
+  id          String @id @default(uuid()) @db.VarChar(36)
+  email       String @unique
+  tipoUsuario String
+}
+
+model Reserva {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  espacoId      String
+  espaco        Espaco    @relation(fields: [espacoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  solicitanteId String
+  solicitante   Usuario   @relation(fields: [solicitanteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  descricao     String
+  status        String
+  periodo       Horario[]
+}
+
+model Servico {
+  id            String    @id @default(uuid()) @db.VarChar(36)
+  espacoId      String
+  espaco        Espaco    @relation(fields: [espacoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  solicitanteId String
+  solicitante   Usuario   @relation(fields: [solicitanteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  descricao     String
+  status        String
+  periodo       Horario[]
+}
+
+model Usuario {
+  id                    String    @id @default(uuid()) @db.VarChar(36)
+  nome                  String
+  email                 String    @unique
+  telefone              String?
+  photoUrl              String
+  tipoUsuario           String
+  departamentoId        String?   @unique
+  departamento          Usuario?  @relation("pertenceAoDepartamento", fields: [departamentoId], references: [id])
+  departamentoSetor     Usuario?  @relation("pertenceAoDepartamento")
+  sigla                 String
+  isDepartamento        Boolean
+  gestorReservaHorarios Horario[] @relation(name: "gestorReserva")
+  gestorServicoHorarios Horario[] @relation(name: "gestorServico")
+  reservas              Reserva[]
+  servicos              Servico[]
+}

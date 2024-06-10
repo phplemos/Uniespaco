@@ -1,13 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-
 import 'package:uniespaco/layers/data/dto/agenda_dto.dart';
 import 'package:uniespaco/layers/data/dto/equipamento_dto.dart';
 import 'package:uniespaco/layers/data/dto/localizacao_dto.dart';
-import 'package:uniespaco/layers/data/dto/servico_dto.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 
 class EspacoDto {
@@ -23,8 +21,6 @@ class EspacoDto {
 
   Map<DateTime, Map<String, AgendaDto>> agenda;
 
-  final List<ServicoDto>? servicos;
-
   EspacoDto({
     required this.id,
     required this.localizacao,
@@ -32,7 +28,6 @@ class EspacoDto {
     this.equipamentoDisponivel,
     required this.acessibilidade,
     required this.agenda,
-    this.servicos,
   });
 
   EspacoDto copyWith({
@@ -42,7 +37,6 @@ class EspacoDto {
     List<EquipamentoDto>? equipamentoDisponivel,
     bool? acessibilidade,
     Map<DateTime, Map<String, AgendaDto>>? agenda,
-    List<ServicoDto>? servicos,
   }) {
     return EspacoDto(
       id: id ?? this.id,
@@ -51,8 +45,41 @@ class EspacoDto {
       equipamentoDisponivel: equipamentoDisponivel ?? this.equipamentoDisponivel,
       acessibilidade: acessibilidade ?? this.acessibilidade,
       agenda: agenda ?? this.agenda,
-      servicos: servicos ?? this.servicos,
     );
+  }
+
+  factory EspacoDto.fromFirestore(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) {
+    final data = snapshot.data();
+    return EspacoDto(
+      id: data?['id'],
+      localizacao: LocalizacaoDto.fromMap(data!['localizacao']),
+      capacidadePessoas: data['capacidadePessoas'],
+      equipamentoDisponivel: data['equipamentoDisponivel'] != null
+          ? List<EquipamentoDto>.from(
+              (data['equipamentoDisponivel']).map<EquipamentoDto?>(
+                (x) => EquipamentoDto.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      acessibilidade: data['acessibilidade'],
+      agenda: data['agenda'].isNotEmpty
+          ? Map<DateTime, Map<String, AgendaDto>>.from((data['agenda'] as Map<String, dynamic>).map<DateTime, Map<String, AgendaDto>>((String key, value) {
+              //CRIAR A CONVERSAO DE YYYY-MM-DD PARA DATETIME
+              DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+              return MapEntry(dateFormat.parse(key), (value as Map<String, dynamic>).map<String, AgendaDto>((String key, value) => MapEntry(key, AgendaDto.fromMap(value as Map<String, dynamic>))));
+            }))
+          : {},
+    );
+  }
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'localizacao': localizacao.toMap(),
+      'capacidadePessoas': capacidadePessoas,
+      'equipamentoDisponivel': equipamentoDisponivel?.map((x) => x.toMap()).toList(),
+      'acessibilidade': acessibilidade,
+      'agenda': agenda.map((key, value) => MapEntry(key.toString(), value.map((key, value) => MapEntry(key, value.toMap())))),
+    };
   }
 
   EspacoEntity toEntity() {
@@ -63,7 +90,6 @@ class EspacoDto {
       equipamentoDisponivel: equipamentoDisponivel?.map((e) => e.toEntity()).toList(),
       acessibilidade: acessibilidade,
       agenda: agenda.map((key, value) => MapEntry(key, value.map((key, value) => MapEntry(key, value.toEntity())))),
-      servicos: servicos?.map((e) => e.toEntity()).toList(),
     );
   }
 
@@ -75,7 +101,6 @@ class EspacoDto {
       equipamentoDisponivel: espacoEntity.equipamentoDisponivel?.map((e) => EquipamentoDto.fromEntity(e)).toList(),
       acessibilidade: espacoEntity.acessibilidade,
       agenda: espacoEntity.agenda.map((key, value) => MapEntry(key, value.map((key, value) => MapEntry(key, AgendaDto.fromEntity(value))))),
-      servicos: espacoEntity.servicos?.map((e) => ServicoDto.fromEntity(e)).toList(),
     );
   }
 
@@ -87,7 +112,6 @@ class EspacoDto {
       'equipamentoDisponivel': equipamentoDisponivel?.map((x) => x.toMap()).toList(),
       'acessibilidade': acessibilidade,
       'agenda': agenda.map((key, value) => MapEntry(key.toString(), value.map((key, value) => MapEntry(key, value.toMap())))),
-      'servicos': servicos?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -111,13 +135,6 @@ class EspacoDto {
               return MapEntry(dateFormat.parse(key), (value as Map<String, dynamic>).map<String, AgendaDto>((String key, value) => MapEntry(key, AgendaDto.fromMap(value as Map<String, dynamic>))));
             }))
           : {},
-      servicos: map['servicos'] != null
-          ? List<ServicoDto>.from(
-              (map['servicos']).map<ServicoDto?>(
-                (x) => ServicoDto.fromMap(x as Map<String, dynamic>),
-              ),
-            )
-          : null,
     );
   }
 
@@ -127,24 +144,18 @@ class EspacoDto {
 
   @override
   String toString() {
-    return 'EspacoDto(id: $id, localizacao: $localizacao, capacidadePessoas: $capacidadePessoas, equipamentoDisponivel: $equipamentoDisponivel, acessibilidade: $acessibilidade, agenda: $agenda, servicos: $servicos)';
+    return 'EspacoDto(id: $id, localizacao: $localizacao, capacidadePessoas: $capacidadePessoas, equipamentoDisponivel: $equipamentoDisponivel, acessibilidade: $acessibilidade, agenda: $agenda)';
   }
 
   @override
   bool operator ==(covariant EspacoDto other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
-        other.localizacao == localizacao &&
-        other.capacidadePessoas == capacidadePessoas &&
-        listEquals(other.equipamentoDisponivel, equipamentoDisponivel) &&
-        other.acessibilidade == acessibilidade &&
-        mapEquals(other.agenda, agenda) &&
-        listEquals(other.servicos, servicos);
+    return other.id == id && other.localizacao == localizacao && other.capacidadePessoas == capacidadePessoas && listEquals(other.equipamentoDisponivel, equipamentoDisponivel) && other.acessibilidade == acessibilidade && mapEquals(other.agenda, agenda);
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ localizacao.hashCode ^ capacidadePessoas.hashCode ^ equipamentoDisponivel.hashCode ^ acessibilidade.hashCode ^ agenda.hashCode ^ servicos.hashCode;
+    return id.hashCode ^ localizacao.hashCode ^ capacidadePessoas.hashCode ^ equipamentoDisponivel.hashCode ^ acessibilidade.hashCode ^ agenda.hashCode ;
   }
 }

@@ -7,5 +7,6 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   await FirebaseConfig.init();
   Inject.init();
+  // Inicializando o formato em PT-BR do calendario de seleção 
   initializeDateFormatting().then((_) => runApp(const AppWidget()));
 }

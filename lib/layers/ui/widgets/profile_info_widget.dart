@@ -52,18 +52,26 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
               ),
               ListTile(
                 leading: const Icon(Icons.person),
-                title: const Text("Vincular Gestor ao espaco"),
+                title: const Text("Vincular Gestor de Reserva ao espaco"),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/vincular_gestor_ao_espaco');
+                  Navigator.pushReplacementNamed(context, '/vincular_gestor_reserva_ao_espaco');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Vincular Gestor de Servico ao espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/vincular_gestor_servico_ao_espaco');
                   //Navegar para outra página
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.logout_rounded),
                 title: const Text("Logout"),
-                onTap: (){
+                onTap: () {
                   usuario.logout();
-                  if(context.mounted){
+                  if (context.mounted) {
                     Navigator.pushReplacementNamed(context, '/');
                   }
                 },
