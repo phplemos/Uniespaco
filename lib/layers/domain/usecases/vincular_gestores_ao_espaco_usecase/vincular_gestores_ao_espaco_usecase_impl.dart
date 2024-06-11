@@ -10,7 +10,7 @@ class VincularGestoresAoEspacoUsecaseImpl implements VincularGestoresAoEspacoUse
   VincularGestoresAoEspacoUsecaseImpl({required this.espacoRepository});
 
   @override
-  Future<Either<Exception, bool>> call({required EspacoEntity espacoEntity, required Map<String, Map<String, AgendaEntity>> newAgenda}) {
+  Future<Either<Exception, bool>> call({required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) {
     return espacoRepository.vincularGestoresEspaco(espacoEntity: espacoEntity, newAgenda: newAgenda);
   }
 }

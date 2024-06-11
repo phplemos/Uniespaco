@@ -90,8 +90,13 @@ class EspacoRepositoryImpl implements EspacoRepository {
   }
 
   @override
-  Future<Either<Exception, bool>> vincularGestoresEspaco({required EspacoEntity espacoEntity, required Map<String, Map<String, AgendaEntity>> newAgenda}) {
-    // TODO: implement vincularGestoresEspaco
-    throw UnimplementedError();
+  Future<Either<Exception, bool>> vincularGestoresEspaco({required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) async {
+    try {
+      espacoEntity.agenda = newAgenda;
+      await espacoDatasource.updateEspaco(espaco: espacoEntity);
+      return const Right(true);
+    } catch (e) {
+      return Left(Exception('Erro ao vincular os gestores'));
+    }
   }
 }

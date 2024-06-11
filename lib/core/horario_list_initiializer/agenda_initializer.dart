@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:uniespaco/layers/data/dto/agenda_dto.dart';
 import 'package:uniespaco/layers/data/dto/horario_dto.dart';
+
 class AgendaInitializer {
   static Map<String, Map<String, Map<String, dynamic>>> createAgenda({required DateTime dayToInit}) {
     Map<String, Map<String, Map<String, dynamic>>> newAgenda = {};
@@ -52,11 +53,10 @@ class AgendaInitializer {
 
   static List<HorarioDto> getNoite({Map<String, Map<String, String>>? gestores}) {
     return [
-      HorarioDto(inicio: '7:30', fim: '9:10', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
-      HorarioDto(inicio: '9:10', fim: '10:10', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
-      HorarioDto(inicio: '10:10', fim: '11:00', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
-      HorarioDto(inicio: '11:00', fim: '11:50', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
-      HorarioDto(inicio: '11:50', fim: '12:40', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
+      HorarioDto(inicio: '18:20', fim: '19:10', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
+      HorarioDto(inicio: '19:10', fim: '20:00', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
+      HorarioDto(inicio: '20:50', fim: '21:40', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
+      HorarioDto(inicio: '21:40', fim: '22:30', gestorReserva: gestores?['noite']!['reserva']!, gestorServico: gestores?['noite']!['servico']!, isReserved: false),
     ];
   }
 }

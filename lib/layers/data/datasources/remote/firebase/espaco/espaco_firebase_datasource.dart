@@ -33,8 +33,13 @@ class EspacoFirebaseDataSource {
     }
   }
 
-  Future<bool> updateEspaco({required EspacoEntity espacoEntity}) {
-    throw UnimplementedError();
+  Future<bool> updateEspaco({required EspacoEntity espaco}) async {
+    try {
+      await _database.doc(espaco.id).set(EspacoDto.fromEntity(espaco).toMap());
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<bool> deleteEspaco({required String id}) {

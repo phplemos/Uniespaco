@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/core/horario_list_initiializer/agenda_initializer.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/vincular_gestor_servico_ao_espaco/vincular_gestor_servico_ao_espaco_controller.dart';
@@ -20,7 +21,7 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Vincular Gestor de Servico ao espaço'),
+        const Text('Vincular Gestor Servico ao espaço'),
         const Divider(),
         const SizedBox(
           height: 20,
@@ -34,8 +35,9 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
                 widget.controller.campus != Campus.CAMPUS ? _pavilhaoDropDownMenu(context) : Container(),
                 widget.controller.pavilhao != null ? _espacoPorNumeroDropdownMenu(context) : Container(),
                 widget.controller.espaco != null ? _gestorReservaDropdownMenu(context) : Container(),
-                widget.controller.gestorReserva != null ? _diaSemanaDropdownMenu(context) : Container(),
-                widget.controller.diaSemana != null ? _seletorDeHorarios(context) : Container(),
+                widget.controller.gestorServico != null ? _diaSemanaDropdownMenu(context) : Container(),
+                widget.controller.diaSemana != null ? _turnosDropdownMenu(context) : Container(),
+                widget.controller.turno != null ? _seletorDeHorarios(context) : Container(),
                 _horariosSelecionados.isNotEmpty
                     ? ElevatedButton(
                         onPressed: () {
@@ -70,9 +72,9 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
                 if (value! != widget.controller.campus) {
                   widget.controller.pavilhao = null;
                   widget.controller.espaco = null;
-                  widget.controller.gestorReserva = null;
                   widget.controller.gestorServico = null;
                   widget.controller.diaSemana = null;
+                  widget.controller.turno = null;
                   _horariosSelecionados.clear();
                 }
                 widget.controller.campus = value;
@@ -114,9 +116,9 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
                     setState(() {
                       if (value! != widget.controller.pavilhao) {
                         widget.controller.espaco = null;
-                        widget.controller.gestorReserva = null;
                         widget.controller.gestorServico = null;
                         widget.controller.diaSemana = null;
+                        widget.controller.turno = null;
                         _horariosSelecionados.clear();
                         horariosChecked.value.clear();
                       }
@@ -163,9 +165,9 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
                   onChanged: (value) {
                     setState(() {
                       if (value! != widget.controller.espaco) {
-                        widget.controller.gestorReserva = null;
                         widget.controller.gestorServico = null;
                         widget.controller.diaSemana = null;
+                        widget.controller.turno = null;
                         _horariosSelecionados.clear();
                         horariosChecked.value.clear();
                       }
@@ -184,7 +186,7 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
     final gestores = widget.controller.getGestores();
     return Column(
       children: [
-        const Text('Selecionar Gestor De Reserva'),
+        const Text('Selecionar Gestor De Servico'),
         FutureBuilder(
           future: gestores,
           builder: (context, snapshot) {
@@ -200,53 +202,7 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
             } else if (snapshot.hasData) {
               return DropdownButton(
                   isExpanded: true,
-                  hint: Text(widget.controller.gestorReserva?.nome ?? 'Gestor de Reserva'),
-                  items: snapshot.data!
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text('Nome: ${e!.nome}, Email: ${e.email}'),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value! != widget.controller.gestorReserva) {
-                        widget.controller.gestorServico = null;
-                        widget.controller.diaSemana = null;
-                        _horariosSelecionados.clear();
-                        horariosChecked.value.clear();
-                      }
-                      widget.controller.gestorReserva = value;
-                    });
-                  });
-            }
-            return Container();
-          },
-        )
-      ],
-    );
-  }
-
-  Widget _gestorServicoDropdownMenu(BuildContext context) {
-    final gestores = widget.controller.getGestores();
-    return Column(
-      children: [
-        const Text('Selecionar Gestor De Serviço'),
-        FutureBuilder(
-          future: gestores,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return DropdownButton(
-                  isExpanded: true,
-                  items: const [
-                    DropdownMenuItem(
-                      child: Text('Erro ao recuperar'),
-                    ),
-                  ],
-                  onChanged: (value) {});
-            } else if (snapshot.hasData) {
-              return DropdownButton(
-                  isExpanded: true,
-                  hint: Text(widget.controller.gestorServico?.nome ?? 'Gestor Serviço'),
+                  hint: Text(widget.controller.gestorServico?.nome ?? 'Gestor de Servico'),
                   items: snapshot.data!
                       .map((e) => DropdownMenuItem(
                             value: e,
@@ -283,7 +239,7 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
     ];
     return Column(
       children: [
-        const Text('Selecionar Turno'),
+        const Text('Selecionar o dia da semana'),
         DropdownButton(
             isExpanded: true,
             hint: Text(widget.controller.diaSemana ?? 'Dia da Semana'),
@@ -296,6 +252,7 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
             onChanged: (value) {
               setState(() {
                 if (value! != widget.controller.diaSemana) {
+                  widget.controller.turno = null;
                   _horariosSelecionados.clear();
                   horariosChecked.value.clear();
                 }
@@ -306,8 +263,42 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
     );
   }
 
+  Widget _turnosDropdownMenu(BuildContext context) {
+    return Column(
+      children: [
+        const Text('Selecionar Turno'),
+        DropdownButton(
+            isExpanded: true,
+            hint: Text(widget.controller.turno ?? 'Selecione o turno'),
+            items: ['manha', 'tarde', 'noite']
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                widget.controller.turno = value;
+              });
+            }),
+      ],
+    );
+  }
+
   Widget _seletorDeHorarios(BuildContext context) {
-    final horariosPorDiaDaSemana = widget.controller.getAllHorarios();
+    List<HorarioEntity> horariosPorDiaDaSemana = [];
+    switch (widget.controller.turno) {
+      case 'manha':
+        horariosPorDiaDaSemana.addAll(AgendaInitializer.getManha().map((horarios) => horarios.toEntity()).toList());
+        break;
+      case 'tarde':
+        horariosPorDiaDaSemana.addAll(AgendaInitializer.getTarde().map((horarios) => horarios.toEntity()).toList());
+        break;
+      case 'noite':
+        horariosPorDiaDaSemana.addAll(AgendaInitializer.getNoite().map((horarios) => horarios.toEntity()).toList());
+        break;
+      default:
+    }
     return SizedBox(
       height: MediaQuery.of(context).size.height - 200,
       child: GridView.count(
@@ -358,19 +349,42 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
     );
   }
 
-  void vincularGestores(BuildContext context) {
-    final espaco = widget.controller.espaco!;
-    final turno = widget.controller.diaSemana!;
-    final gestorReserva = widget.controller.gestorReserva!;
-    final gestorServico = widget.controller.gestorServico!;
-    /*widget.controller.vincularGestores(
-        turno: turno,
-        espaco: espaco,
-        gestorReserva: gestorServico,
-        gestorServico: gestorReserva);*/
-    if (context.mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gestores vinculados com sucesso!')));
+  void vincularGestores(BuildContext context) async {
+    var response = await widget.controller.vincularGestores(horariosSelecionados: horariosChecked.value);
+    context.mounted ? ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gestores vinculados com sucesso!'))) : null;
+    if (response) {
+      if (context.mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Deseja vincular outro gestor de servico?'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    ElevatedButton(
+                      child: const Text('Vincular'),
+                      onPressed: () {
+                        Navigator.of(context).pushReplacementNamed('/vincular_gestor_servico_ao_espaco');
+                      },
+                    )
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Sair'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 }

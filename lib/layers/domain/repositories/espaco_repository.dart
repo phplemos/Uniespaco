@@ -14,7 +14,7 @@ abstract class EspacoRepository {
 
   Future<Either<Exception, bool>> desfavoritarEspaco({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity});
 
-  Future<Either<Exception, bool>> vincularGestoresEspaco({required EspacoEntity espacoEntity, required Map<String, Map<String, AgendaEntity>> newAgenda});
+  Future<Either<Exception, bool>> vincularGestoresEspaco({required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda});
 
   Future<Either<Exception, List<EspacoEntity?>>> getEspacosFavoritados({required String usuarioId});
 
