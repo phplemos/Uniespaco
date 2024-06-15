@@ -32,7 +32,6 @@ class ReservaFirebaseDataSource {
 
   Future<List<ReservaEntity?>> getAllReservasFromUsuario({required String solicitanteId}) async {
     try {
-      final Map<EspacoEntity, List<ReservaEntity>> reservasPorEspaco = {};
       final response = await _database.where(('solicitanteId', isEqualTo: solicitanteId)).get();
       List<ReservaEntity?> reservas = response.docs.map((snapshot) {
         if (snapshot.data().isNotEmpty) {

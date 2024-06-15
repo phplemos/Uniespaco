@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_reserva_vinculados_aos_espacos/visualizar_gestores_reserva_vinculados_aos_espacos_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_servico_vinculados_aos_espacos/visualizar_gestores_servico_vinculados_aos_espacos_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_servico_vinculados_aos_espacos/visualizar_gestores_servico_vinculados_aos_espacos_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/appbar_widget.dart';

@@ -39,7 +39,6 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  final _formkey = GlobalKey<FormState>();
   DateFormat dateFormat = DateFormat('yyyy-MM-dd');
 
   @override

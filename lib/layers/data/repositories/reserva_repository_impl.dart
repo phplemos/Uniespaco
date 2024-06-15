@@ -30,7 +30,6 @@ class ReservaRepositoryImpl implements ReservaRepository {
       const uuid = Uuid();
       reservaEntity.id = uuid.v4();
       final espacoEntity = await espacoDatasource.getEspacoById(id: reservaEntity.espacoId);
-      Map<String, AgendaEntity> horariosPorTurno = espacoEntity!.agenda[selectedDay]!;
       List<HorarioEntity> horariosManha = [];
       List<HorarioEntity> horariosTarde = [];
       List<HorarioEntity> horariosNoite = [];

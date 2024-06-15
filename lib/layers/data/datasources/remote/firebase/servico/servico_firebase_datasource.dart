@@ -32,7 +32,6 @@ class ServicoFirebaseDataSource {
 
   Future<List<ServicoEntity?>> getAllServicosFromUsuario({required String solicitanteId}) async {
     try {
-      final Map<EspacoEntity, List<ServicoEntity>> servicosPorEspaco = {};
       final response = await _database.where(('solicitanteId', isEqualTo: solicitanteId)).get();
       List<ServicoEntity?> servicos = response.docs.map((snapshot) {
         if (snapshot.data().isNotEmpty) {
