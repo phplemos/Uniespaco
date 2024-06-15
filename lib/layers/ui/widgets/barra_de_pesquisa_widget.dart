@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/shared/espaco_provider.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco.dart';
 
 class BarradePesquisaWidget extends SearchDelegate {
+
   final EspacosProvider pesquisaEspacos = GetIt.I.get();
+
   @override
   String get searchFieldLabel => 'Busca por pavilhão';
 
@@ -44,6 +47,7 @@ class BarradePesquisaWidget extends SearchDelegate {
   }
 }
 
+// ignore: must_be_immutable
 class SuggestionOrResultWidget extends StatelessWidget {
   SuggestionOrResultWidget({
     super.key,
@@ -63,9 +67,12 @@ class SuggestionOrResultWidget extends StatelessWidget {
         return ListView.builder(
           itemCount: suggestionList.length,
           itemBuilder: (context, index) {
-            return ListTile(
-              title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
-              subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
+            return InkWell(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: suggestionList[index]!))),
+              child: ListTile(
+                title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
+                subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
+              ),
             );
           },
         );

@@ -2,38 +2,51 @@ import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 
 class ReservaEntity {
-
-  final String id;
+  String? id;
 
   final String espacoId;
 
   final String solicitanteId;
 
+  final String titulo;
+
   final String descricao;
 
   final String status;
 
+  DateTime dia;
+
   final List<HorarioEntity> periodo;
-  
+
   ReservaEntity({
-    required this.id,
+    this.id,
     required this.espacoId,
     required this.solicitanteId,
+    required this.titulo,
     required this.descricao,
     required this.status,
+    required this.dia,
     required this.periodo,
   });
 
   @override
   String toString() {
-    return 'ReservaEntity(id: $id, espaco: $espacoId, solicitante: $solicitanteId, descricao: $descricao, status: $status, periodo: $periodo)';
+    return 'ReservaEntity(id: $id, espaco: $espacoId, solicitante: $solicitanteId, titulo: $titulo, descricao: $descricao, status: $status, dia: $dia, periodo: $periodo)';
   }
 
   @override
   bool operator ==(other) {
-    return (other is ReservaEntity) && other.id == id && other.espacoId == espacoId && other.solicitanteId == solicitanteId && other.descricao == descricao && other.status == status && listEquals(other.periodo, periodo);
+    return (other is ReservaEntity) &&
+        other.id == id &&
+        other.espacoId == espacoId &&
+        other.solicitanteId == solicitanteId &&
+        other.titulo == titulo &&
+        other.descricao == descricao &&
+        other.status == status &&
+        other.dia == dia &&
+        listEquals(other.periodo, periodo);
   }
 
   @override
-  int get hashCode => id.hashCode ^ espacoId.hashCode ^ solicitanteId.hashCode ^ descricao.hashCode ^ status.hashCode ^ periodo.hashCode;
+  int get hashCode => id.hashCode ^ espacoId.hashCode ^ solicitanteId.hashCode ^ titulo.hashCode ^ descricao.hashCode ^ status.hashCode ^ dia.hashCode ^ periodo.hashCode;
 }

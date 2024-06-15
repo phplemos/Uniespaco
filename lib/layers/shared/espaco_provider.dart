@@ -15,6 +15,7 @@ class EspacosProvider extends ChangeNotifier {
   FavoritarEspacoUseCase favoritarEspacoUseCase;
   DesfavoritarEspacoUseCase desfavoritarEspacoUseCase;
   VerInformacaoDoUsuarioUseCase verInformacaoDoUsuarioUseCase;
+
   //ListarEspacosFavoritadosUseCase listarEspacosFavoritadosUseCase;
 
   List<EspacoEntity?>? _espacos = [];
@@ -55,30 +56,30 @@ class EspacosProvider extends ChangeNotifier {
     init();
   }
 
-  init() async {
+  Future init() async {
     var responseUsuario = await verInformacaoDoUsuarioUseCase();
     responseUsuario.fold((error) => throw Exception('Erro ao recuperar o usuario no EspacoProvider'), (success) => _usuario = success);
 
     var responseEspaco = await listarTodosEspacosUseCase();
     responseEspaco.fold((error) => throw Exception('Erro ao recuperar o espaco no EspacoProvider'), (success) => espacos = success);
   }
-  // TODO: Implementar favoritar espacos
+// TODO: Implementar favoritar espacos
 
-  // listarEspacosFavoritos() async {
-  //   await init();
-  //   return espacos!.where((espaco) => _usuario!.espacosFavoritados!.contains(espaco!.id)).toList();
-  // }
+// listarEspacosFavoritos() async {
+//   await init();
+//   return espacos!.where((espaco) => _usuario!.espacosFavoritados!.contains(espaco!.id)).toList();
+// }
 
-  // favoritarEspaco({required String espacoId}) async {
-  //   await favoritarEspacoUseCase(espacosFavoritados: espacosFavoritos, usuarioEntity: _usuario!);
-  //   init();
-  //   notifyListeners();
-  // }
+// favoritarEspaco({required String espacoId}) async {
+//   await favoritarEspacoUseCase(espacosFavoritados: espacosFavoritos, usuarioEntity: _usuario!);
+//   init();
+//   notifyListeners();
+// }
 
-  // desfavoritarEspaco({required EspacoEntity espaco}) async {
-  //   espacosFavoritos?.remove(espaco);
-  //   await desfavoritarEspacoUseCase(espacosFavoritados: espacosFavoritos, usuarioEntity: _usuario!);
-  //   init();
-  //   notifyListeners();
-  // }
+// desfavoritarEspaco({required EspacoEntity espaco}) async {
+//   espacosFavoritos?.remove(espaco);
+//   await desfavoritarEspacoUseCase(espacosFavoritados: espacosFavoritos, usuarioEntity: _usuario!);
+//   init();
+//   notifyListeners();
+// }
 }

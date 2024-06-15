@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
+import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/components/listar_reservas_widget.dart';
 
 class VisualizarEspacoWidget extends StatefulWidget {
@@ -29,6 +30,18 @@ class _VisualizarEspacoWidgetState extends State<VisualizarEspacoWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SolicitarServicoPage(
+                            espacoEntity: widget.espaco,
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('Solicitar Servico')),
                 TextButton(
                   onPressed: () => Navigator.pop(context, 'Sair'),
                   child: const Text('Solicitar Manutenção'),
@@ -46,7 +59,7 @@ class AppBarVisualizarEspacoWidget extends StatelessWidget {
   final int numero;
   final String pavilhao;
 
-  AppBarVisualizarEspacoWidget({required this.numero, required this.pavilhao}) : super();
+  const AppBarVisualizarEspacoWidget({super.key, required this.numero, required this.pavilhao});
 
   @override
   Widget build(BuildContext context) {
@@ -68,43 +81,3 @@ class AppBarVisualizarEspacoWidget extends StatelessWidget {
     );
   }
 }
-
-// AlertDialog(
-// title: Row(
-// mainAxisAlignment: MainAxisAlignment.center,
-// children: [
-// const CircleAvatar(
-// child: Icon(Icons.school_rounded),
-// ),
-// const SizedBox(
-// width: 20,
-// ),
-// Column(
-// mainAxisAlignment: MainAxisAlignment.start,
-// children: [
-// Text('Sala: ${widget.espaco.localizacao.numero}', style: const TextStyle(fontSize: 14)),
-// Text('Modulo: ${widget.espaco.localizacao.pavilhao}', style: const TextStyle(fontSize: 12))
-// ],
-// )
-// ],
-// ),
-// content: SizedBox(
-// width: 300,
-// height: 400,
-// child: ListarReservasWidget(
-// agenda: widget.espaco.agenda,
-// espaco: widget.espaco,
-// ),
-// ),
-// actions: <Widget>[
-// Row(
-// mainAxisAlignment: MainAxisAlignment.center,
-// children: [
-// TextButton(
-// onPressed: () => Navigator.pop(context, 'Sair'),
-// child: const Text('Sair'),
-// ),
-// ],
-// )
-// ],
-// ),

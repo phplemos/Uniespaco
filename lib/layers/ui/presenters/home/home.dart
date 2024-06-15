@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:uniespaco/layers/ui/widgets/appbar_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/barra_de_pesquisa_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/profile_info_widget.dart';
@@ -13,10 +14,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeController controller = HomeControllerImpl.fromGetIt();
+  final HomeController controller = GetIt.I.get<HomeController>();
 
   @override
-  void initState() {
+  initState() {
     controller.init();
     super.initState();
   }

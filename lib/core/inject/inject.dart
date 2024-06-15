@@ -7,23 +7,25 @@ import 'package:uniespaco/layers/data/datasources/remote/firebase/usuario/usuari
 import 'package:uniespaco/layers/data/repositories/espaco_repository_impl.dart';
 import 'package:uniespaco/layers/data/repositories/professor_repository_impl.dart';
 import 'package:uniespaco/layers/data/repositories/reserva_repository_impl.dart';
+import 'package:uniespaco/layers/data/repositories/servico_repository_impl.dart';
 import 'package:uniespaco/layers/data/repositories/setor_respository_impl.dart';
 import 'package:uniespaco/layers/data/repositories/usuario_repository_impl.dart';
 import 'package:uniespaco/layers/domain/repositories/espaco_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/professor_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/reserva_repository.dart';
+import 'package:uniespaco/layers/domain/repositories/servico_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/setor_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/usuario_repository.dart';
+import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadastrar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadastrar_espaco_usecase_impl.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_professor_usecase/cadastrar_professor_usecase.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_professor_usecase/cadastrar_professor_usecase_imp.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_setor_usecase/cadastrar_setor_usecase.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_setor_usecase/cadastrar_setor_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_usuario_usecase/cadastrar_usuario_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_usuario_usecase/cadastrar_usuario_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/desfavoritar_espaco_usecase/desfavoritar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/desfavoritar_espaco_usecase/desfavoritar_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/efetuar_login_usecase/efetuar_login_usecase.dart';
@@ -52,20 +54,35 @@ import 'package:uniespaco/layers/domain/usecases/listar_espacos_usecase/listar_e
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_usecase/listar_espacos_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_reserva_usecase/solicitar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_reserva_usecase/solicitar_reserva_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/solicitar_servico_usecase/solicitar_reserva_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/solicitar_servico_usecase/solicitar_reserva_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_usecase/vincular_gestores_ao_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_usecase/vincular_gestores_ao_espaco_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/visualizar_reservas_por_espaco_gerido_usecase/visualizar_reservas_por_espaco_gerido_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/visualizar_reservas_por_espaco_gerido_usecase/visualizar_reservas_por_espaco_gerido_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/visualizar_servicos_por_espaco_gerido_usecase/visualizar_servicos_por_espaco_gerido_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/visualizar_servicos_por_espaco_gerido_usecase/visualizar_servicos_por_espaco_gerido_usecase_impl.dart';
 import 'package:uniespaco/layers/shared/espaco_provider.dart';
 import 'package:uniespaco/layers/shared/reserva_provider.dart';
 import 'package:uniespaco/layers/shared/usuario_provider.dart';
 import 'package:uniespaco/layers/ui/controllers/listar_reservas_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/avaliar_solicitacao_reserva/avaliar_solicitacao_reserva_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/professores_cadastrados/professores_cadastrados_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/setores_cadastrados/setores_cadastrados_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/vincular_gestor_reserva_ao_espaco/vincular_gestor_reserva_ao_espaco_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/vincular_gestor_servico_ao_espaco/vincular_gestor_servico_ao_espaco_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_reserva_vinculados_aos_espacos/visualizar_gestores_reserva_vinculados_aos_espacos_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_servico_vinculados_aos_espacos/visualizar_gestores_servico_vinculados_aos_espacos_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_reservas_por_espaco_gerido/visualizar_reservas_por_espaco_gerido_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_servicos_por_espaco_gerido/visualizar_servicos_por_espaco_gerido_controller.dart';
 
 class Inject {
   static void init() {
@@ -85,15 +102,14 @@ class Inject {
     getIt.registerLazySingleton<SetorRepository>(() => SetorRepositoryImpl(usuarioDatasource: getIt()));
 
     getIt.registerLazySingleton<ReservaRepository>(() => ReservaRepositoryImpl());
+    getIt.registerLazySingleton<ServicoRepository>(() => ServicoRepositoryImpl());
     //usecases
     getIt.registerLazySingleton<CadastrarEspacoUseCase>(() => CadastrarEspacoUseCaseImpl(espacoRepository: getIt()));
-    getIt.registerLazySingleton<CadastrarProfessorUseCase>(() => CadastrarProfessorUseCaseImpl(professorRepository: getIt()));
-    getIt.registerLazySingleton<CadastrarSetorUseCase>(() => CadastrarSetorUseCaseImpl(setorRepository: getIt()));
     getIt.registerLazySingleton<ConsultarEspacoUseCase>(() => ConsultarEspacoUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<EfetuarLoginUseCase>(() => EfetuarLoginUseCaseImpl(usuarioRepository: getIt()));
     getIt.registerLazySingleton<EfetuarLogoutUseCase>(() => EfetuarLogoutUseCaseImpl(usuarioRepository: getIt()));
-    getIt.registerLazySingleton<ListarGestoresDeReservaVinculadosAosEspacosUseCase>(() => ListarGestoresDeReservaVinculadosAosEspacosUseCaseImpl(espacoRepository: getIt()));
-    getIt.registerLazySingleton<ListarGestoresDeServicoVinculadosAosEspacosUseCase>(() => ListarGestoresDeServicoVinculadosAosEspacosUseCaseImpl(espacoRepository: getIt()));
+    getIt.registerLazySingleton<ListarGestoresDeReservaVinculadosAosEspacosUseCase>(() => ListarGestoresDeReservaVinculadosAosEspacosUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ListarGestoresDeServicoVinculadosAosEspacosUseCase>(() => ListarGestoresDeServicoVinculadosAosEspacosUseCaseImpl(servicoRepository: getIt()));
     getIt.registerLazySingleton<ListarProfessoresCadastradosUseCase>(() => ListarProfessoresCadastradosUseCaseImpl(professorRepository: getIt()));
     getIt.registerLazySingleton<ListarSetoresCadastradosUseCase>(() => ListarSetoresCadastradosUseCaseImpl(setorRepository: getIt()));
     getIt.registerLazySingleton<ListarEspacosUseCase>(() => ListarEspacosUseCaseImpl(espacoRepository: getIt()));
@@ -107,9 +123,15 @@ class Inject {
     getIt.registerLazySingleton<ListarEspacosFavoritadosUseCase>(() => ListarEspacosFavoritadosUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<FavoritarEspacoUseCase>(() => FavoritarEspacoUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<DesfavoritarEspacoUseCase>(() => DesfavoritarEspacoUseCaseImpl(espacoRepository: getIt()));
+    getIt.registerLazySingleton<SolicitarServicoUseCase>(() => SolicitarServicoUseCaseImpl(servicoRepository: getIt()));
+    getIt.registerLazySingleton<VisualizarReservasPorEspacoGeridoUsecase>(() => VisualizarReservasPorEspacoGeridoUsecaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<VisualizarServicosPorEspacoGeridoUsecase>(() => VisualizarServicosPorEspacoGeridoUsecaseImpl(servicoRepository: getIt()));
+    getIt.registerLazySingleton<ConsultarReservaUseCase>(() => ConsultarReservaUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<BuscarUsuarioPeloIdUsecase>(() => BuscarUsuarioPeloIdUsecaseImpl(usuarioRepository: getIt()));
 
     //providers
-    getIt.registerLazySingleton<UsuarioProvider>(() => UsuarioProvider(verInformacaoDoUsuarioUseCase: getIt(), efetuarLogoutUseCase: getIt()));
+    getIt.registerLazySingleton<UsuarioProvider>(
+        () => UsuarioProvider(verInformacaoDoUsuarioUseCase: getIt(), efetuarLogoutUseCase: getIt(), listarProfessoresCadastradosUseCase: getIt(), listarSetoresCadastradosUseCase: getIt()));
     getIt.registerLazySingleton<EspacosProvider>(() => EspacosProvider(
           listarTodosEspacosPorCampusUseCase: getIt(),
           listarTodosEspacosUseCase: getIt(),
@@ -147,5 +169,19 @@ class Inject {
         ));
     getIt.registerFactory<CadastroUsuarioController>(() => CadastroUsuarioControllerImpl(cadastrarUsuarioUseCase: getIt()));
     getIt.registerFactory<ListarReservasController>(() => ListarReservasControllerImpl());
+    getIt.registerFactory<SolicitarReservaController>(() => SolicitarReservaControllerImpl(solicitarReservaUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt()));
+    getIt.registerFactory<SolicitarServicoController>(() => SolicitarServicoControllerImpl(solicitarServicoUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt()));
+    getIt.registerFactory<VisualizarReservasPorEspacoGeridoController>(
+        () => VisualizarReservasPorEspacoGeridoControllerImpl(visualizarReservasPorEspacoGeridoUsecase: getIt(), usuarioProvider: getIt()));
+    getIt.registerFactory<VisualizarServicosPorEspacoGeridoController>(
+        () => VisualizarServicosPorEspacoGeridoControllerImpl(visualizarServicosPorEspacoGeridoUsecase: getIt(), usuarioProvider: getIt()));
+    getIt.registerFactory<ProfessoresCadastradosController>(() => ProfessoresCadastradosControllerImpl(usuarioProvider: getIt()));
+    getIt.registerFactory<SetoresCadastradosController>(() => SetoresCadastradosControllerImpl(usuarioProvider: getIt()));
+    getIt.registerFactory<VisualizarGestoresReservaVinculadosAosEspacosController>(
+        () => VisualizarGestoresReservaVinculadosAosEspacosControllerImpl(listarGestoresDeReservaVinculadosAosEspacosUseCase: getIt()));
+    getIt.registerFactory<VisualizarGestoresServicoVinculadosAosEspacosController>(
+        () => VisualizarGestoresServicoVinculadosAosEspacosControllerImpl(listarGestoresDeServicoVinculadosAosEspacosUseCase: getIt()));
+    getIt.registerFactory<AvaliarSolicitacaoReservaController>(
+        () => AvaliarSolicitacaoReservaControllerImpl(consultarReservaUseCase: getIt(), consultarEspacoUseCase: getIt(), buscarUsuarioPeloIdUsecase: getIt()));
   }
 }

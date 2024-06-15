@@ -17,48 +17,32 @@ class ListarEspacosWidget extends StatefulWidget {
 class _ListarEspacosWidgetState extends State<ListarEspacosWidget> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.controller,
-      builder: (context, child) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height - 200,
-          padding: const EdgeInsets.all(2),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Espaços:"),
-                    ),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height - 200,
+      padding: const EdgeInsets.all(2),
+      child: Column(
+        children: [
+          Expanded(
+              child: ListView.builder(
+            itemCount: widget.controller.espacos?.length ?? 0,
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                child: Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.add_alert),
+                    title: Text("Numero: ${widget.controller.espacos![index]!.localizacao.numero}"),
+                    subtitle: Text('Modulo: ${widget.controller.espacos![index]!.localizacao.pavilhao}'),
                   ),
-                ],
-              ),
-              Expanded(
-                  child: ListView.builder(
-                itemCount: widget.controller.espacos?.length ?? 0,
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    child: Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.add_alert),
-                        title: Text("Numero: ${widget.controller.espacos![index]!.localizacao.numero}"),
-                        subtitle: Text('Modulo: ${widget.controller.espacos![index]!.localizacao.pavilhao}'),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos![index]!)));
-                    },
-                  );
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos![index]!)));
                 },
-              ))
-            ],
-          ),
-        );
-      },
+              );
+            },
+          ))
+        ],
+      ),
     );
   }
 }
