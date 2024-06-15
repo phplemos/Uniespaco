@@ -14,6 +14,15 @@ import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_use
 abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
   Campus campus = Campus.CAMPUS;
 
+  String? _turno;
+
+  String? get turno => _turno;
+
+  set turno(String? turno) {
+    _turno = turno;
+    notifyListeners();
+  }
+
   String? diaSemana;
 
   String? pavilhao;
@@ -36,12 +45,6 @@ abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
 
   UsuarioEntity? get gestorReserva => _gestorReserva;
 
-  UsuarioEntity? _gestorServico;
-
-  set gestorServico(UsuarioEntity? gestor) {
-    _gestorServico = gestor;
-    notifyListeners();
-  }
 
   Map<String, AgendaEntity>? _agendaTurno;
 
@@ -52,7 +55,6 @@ abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
 
   Map<String, AgendaEntity>? get agendaTurno => _agendaTurno;
 
-  UsuarioEntity? get gestorServico => _gestorServico;
 
   Future<UsuarioEntity?> getUsuario();
 
@@ -60,7 +62,7 @@ abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
 
   Future<List<UsuarioEntity?>> getGestores();
 
-  Future<bool> vincularGestores({required EspacoEntity espacoEntity, required Map<String, Map<String, AgendaEntity>> newAgenda});
+  Future<bool> vincularGestores({required Map<String, bool> horariosSelecionados});
 
   List<HorarioEntity> getAllHorarios();
 
@@ -107,8 +109,90 @@ class VincularGestorReservaAoEspacoControllerImpl extends VincularGestorReservaA
   }
 
   @override
-  Future<bool> vincularGestores({required EspacoEntity espacoEntity, required Map<String, Map<String, AgendaEntity>> newAgenda}) async {
-    throw UnimplementedError();
+  Future<bool> vincularGestores({required Map<String, bool> horariosSelecionados}) async {
+    final agenda = espaco!.agenda;
+    final diasDaSemana = {
+      'Segunda': DateTime.monday,
+      'Terça': DateTime.tuesday,
+      'Quarta': DateTime.wednesday,
+      'Quinta': DateTime.thursday,
+      'Sexta': DateTime.friday,
+      'Sabado': DateTime.saturday,
+      'Domingo': DateTime.sunday,
+    };
+    var diaComparator = diasDaSemana[diaSemana];
+    List<String> horariosManha = [];
+    List<String> horariosTarde = [];
+    List<String> horariosNoite = [];
+    horariosSelecionados.forEach((key, value) {
+      if (key == '7:30' || key == '9:10' || key == '10:10' || key == '11:00' || key == '11:80') {
+        if (value) {
+          horariosManha.add(key);
+        }
+      } else if (key == '13:10' || key == '14:00' || key == '14:50' || key == '15:50' || key == '16:40' || key == '17:30') {
+        if (value) {
+          horariosTarde.add(key);
+        }
+      } else {
+        if (value) {
+          horariosNoite.add(key);
+        }
+      }
+    });
+    agenda.updateAll((dia, agenda) {
+      // Verifica se o dia da chave e correspondente ao dia selecionado.
+      if (dia.weekday == diaComparator) {
+        // Verifica se há seleção nos horarios da manha
+        if (horariosManha.isNotEmpty) {
+          // Atualiza o valor da chave da noite que tem uma agendaEntity como valor
+          agenda.update('manha', (agendaTurno) {
+            // Atualiza a lista de horarios e coloca o id do gestor caso usuario tenha marcado checkbox
+            agendaTurno.horarios = agendaTurno.horarios.map((horario) {
+              if (horariosSelecionados[horario.inicio]!) {
+                // Atribuindo gestor ao horario
+                horario.gestorReserva = _gestorReserva!.id;
+                return horario;
+              }
+              return horario;
+            }).toList();
+            return agendaTurno;
+          });
+        }
+        if (horariosTarde.isNotEmpty) {
+          // Atualiza o valor da chave da noite que tem uma agendaEntity como valor
+          agenda.update('tarde', (agendaTurno) {
+            // Atualiza a lista de horarios e coloca o id do gestor caso usuario tenha marcado checkbox
+            agendaTurno.horarios = agendaTurno.horarios.map((horario) {
+              if (horariosSelecionados[horario.inicio]!) {
+                // Atribuindo gestor ao horario
+                horario.gestorReserva = _gestorReserva!.id;
+                return horario;
+              }
+              return horario;
+            }).toList();
+            return agendaTurno;
+          });
+        }
+        if (horariosNoite.isNotEmpty) {
+          // Atualiza o valor da chave da noite que tem uma agendaEntity como valor
+          agenda.update('noite', (agendaTurno) {
+            // Atualiza a lista de horarios e coloca o id do gestor caso usuario tenha marcado checkbox
+            agendaTurno.horarios = agendaTurno.horarios.map((horario) {
+              if (horariosSelecionados[horario.inicio]!) {
+                // Atribuindo gestor ao horario
+                horario.gestorReserva = _gestorReserva!.id;
+                return horario;
+              }
+              return horario;
+            }).toList();
+            return agendaTurno;
+          });
+        }
+      }
+      return agenda;
+    });
+    final response = await vincularGestoresAoEspacoUsecase(espacoEntity: espaco!, newAgenda: agenda);
+    return response.fold((error) => false, (success) => true);
   }
 
   @override

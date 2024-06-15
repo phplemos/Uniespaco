@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class FirestoreDataSource {
   final db = FirebaseFirestore.instance;
 

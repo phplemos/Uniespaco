@@ -17,7 +17,8 @@ class HomeWidget extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          ListarEspacosWidget(controller: controller),
+          const Center(heightFactor: 2,child: Text('Espacos',),),
+          ListarEspacosWidget(controller: controller)
         ],
       ),
     );

@@ -1,4 +1,6 @@
 class HorarioEntity {
+  String? id;
+
   final String inicio;
 
   final String fim;
@@ -7,32 +9,41 @@ class HorarioEntity {
 
   String? gestorReserva;
 
-  final bool isReserved;
+  bool isReserved;
 
-  final String? solicitanteReservaId;
+  String? reservaId;
 
-  final String? solicitanteServicoId;
+  String? servicoId;
 
   HorarioEntity({
+    this.id,
     required this.inicio,
     required this.fim,
     required this.gestorReserva,
     required this.gestorServico,
-    required this.isReserved,
-    this.solicitanteReservaId,
-    this.solicitanteServicoId,
+    this.isReserved = false,
+    this.reservaId,
+    this.servicoId,
   });
 
   @override
   String toString() {
-    return 'HorarioEntity(inicio: $inicio, fim: $fim, gestorServico: $gestorServico, gestorReserva: $gestorReserva isReserved: $isReserved, solicitanteReservaId: $solicitanteReservaId, solicitanteServicoId: $solicitanteServicoId)';
+    return 'HorarioEntity( id: $id, inicio: $inicio, fim: $fim, gestorServico: $gestorServico, gestorReserva: $gestorReserva isReserved: $isReserved, reservaId: $reservaId, servicoId: $servicoId)';
   }
 
   @override
   bool operator ==(other) {
-    return (other is HorarioEntity) && other.inicio == inicio && other.fim == fim && other.gestorReserva == gestorReserva && other.gestorServico == gestorServico && other.isReserved == isReserved && other.solicitanteReservaId == solicitanteReservaId && other.solicitanteServicoId == solicitanteServicoId;
+    return (other is HorarioEntity) &&
+        other.id == id &&
+        other.inicio == inicio &&
+        other.fim == fim &&
+        other.gestorReserva == gestorReserva &&
+        other.gestorServico == gestorServico &&
+        other.isReserved == isReserved &&
+        other.reservaId == reservaId &&
+        other.servicoId == servicoId;
   }
 
   @override
-  int get hashCode => inicio.hashCode ^ fim.hashCode ^ gestorReserva.hashCode ^ gestorServico.hashCode ^ isReserved.hashCode ^ solicitanteReservaId.hashCode ^ solicitanteServicoId.hashCode;
+  int get hashCode => id.hashCode ^ inicio.hashCode ^ fim.hashCode ^ gestorReserva.hashCode ^ gestorServico.hashCode ^ isReserved.hashCode ^ reservaId.hashCode ^ servicoId.hashCode;
 }

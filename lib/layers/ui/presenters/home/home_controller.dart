@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/shared/espaco_provider.dart';
 import 'package:uniespaco/layers/shared/usuario_provider.dart';
@@ -23,7 +22,7 @@ abstract class HomeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void init();
+  Future init();
 }
 
 class HomeControllerImpl extends HomeController {
@@ -32,12 +31,9 @@ class HomeControllerImpl extends HomeController {
 
   HomeControllerImpl({required this.espacoProvider, required this.usuarioProvider});
 
-  factory HomeControllerImpl.fromGetIt() {
-    return HomeControllerImpl(espacoProvider: GetIt.I.get<EspacosProvider>(), usuarioProvider: GetIt.I.get<UsuarioProvider>());
-  }
-
   @override
-  init() {
+  init() async {
+    await espacoProvider.init();
     espacos = espacoProvider.espacos;
   }
 }

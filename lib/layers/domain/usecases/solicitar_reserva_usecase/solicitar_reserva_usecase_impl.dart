@@ -9,7 +9,7 @@ class SolicitarReservaUseCaseImpl implements SolicitarReservaUseCase {
   SolicitarReservaUseCaseImpl({required this.reservaRepository});
 
   @override
-  Future<Either<Exception, bool>> call({required ReservaEntity reservaEntity}) {
-    return reservaRepository.save(reservaEntity: reservaEntity);
+  Future<Either<Exception, bool>> call({required ReservaEntity reservaEntity, required DateTime selectedDay}) {
+    return reservaRepository.save(reservaEntity: reservaEntity, selectedDay: selectedDay);
   }
 }

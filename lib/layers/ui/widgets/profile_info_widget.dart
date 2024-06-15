@@ -67,6 +67,54 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver todos professores cadastrados"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/listar_todos_professores_cadastrados');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver todos setores cadastrados"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/listar_todos_setores_cadastrados');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver reservas dos espacos ao qual sou gestor"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/visualizar_reservas_por_espaco_gerido');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver servicos dos espacos ao qual sou gestor"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/visualizar_servicos_por_espaco_gerido');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver gestores de reserva por espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/visualizar_gestores_reserva_vinculados_aos_espacos');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver gestores de servico por espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/visualizar_gestores_servico_vinculados_aos_espacos');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.logout_rounded),
                 title: const Text("Logout"),
                 onTap: () {

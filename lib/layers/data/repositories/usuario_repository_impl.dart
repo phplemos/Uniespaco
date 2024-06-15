@@ -1,12 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:uniespaco/layers/data/datasources/google_auth.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/precadastro/precadastro_firebase_datasource.dart';
+import 'package:uniespaco/layers/data/datasources/remote/firebase/usuario/usuario_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/precadastro_usuario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/repositories/usuario_repository.dart';
 
 class UsuarioRepositoryImpl implements UsuarioRepository {
   final PrecadastroFirebaseDataSource precadastroFirebaseDataSource;
+
+  final usuarioDatasource = UsuarioFirebaseDataSource();
 
   final GoogleAuth googleAuth;
 
@@ -32,8 +35,7 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
       }
       return const Right(false);
     } catch (e) {
-      return Left(
-        Exception("Erro ao efetuar o login!"));
+      return Left(Exception("Erro ao efetuar o login!"));
     }
   }
 
@@ -60,6 +62,15 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
       return Right(result);
     } catch (e) {
       return Left(Exception('Erro ao cadastrar o espaço'));
+    }
+  }
+
+  @override
+  Future<Either<Exception, UsuarioEntity?>> getById({required String usuarioId}) async {
+    try {
+      return Right(await usuarioDatasource.getUsuarioById(id: usuarioId));
+    } catch (e) {
+      throw Exception('Erro ao buscar o usuario');
     }
   }
 }

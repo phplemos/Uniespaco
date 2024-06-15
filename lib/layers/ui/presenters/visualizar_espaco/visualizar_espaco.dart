@@ -5,7 +5,7 @@ import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espa
 class VisualizarEspacoPage extends StatefulWidget {
   final EspacoEntity espacoEntity;
 
-  const VisualizarEspacoPage({required this.espacoEntity}) : super();
+  const VisualizarEspacoPage({super.key, required this.espacoEntity});
 
   @override
   State<VisualizarEspacoPage> createState() => _VisualizarEspacoPageState();

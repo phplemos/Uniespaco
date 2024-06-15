@@ -7,6 +7,7 @@ class ListarEspacosPorCampusUseCaseImpl implements ListarEspacosPorCampusUseCase
   final EspacoRepository _espacoRepository;
 
   ListarEspacosPorCampusUseCaseImpl({required EspacoRepository espacoRepository}) : _espacoRepository = espacoRepository;
+
   @override
   Future<Either<Exception, List<EspacoEntity?>>> call({required Campus campus}) {
     return _espacoRepository.getEspacosPorCampus(campus: campus);
