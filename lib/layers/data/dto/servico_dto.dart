@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:uniespaco/layers/data/dto/horario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
 
@@ -10,8 +11,9 @@ class ServicoDto {
   final String solicitanteId;
   final String titulo;
   final String descricao;
-  final String status;
-  final List<HorarioDto> periodo;
+  String status;
+  DateTime dia;
+  List<HorarioDto?> periodo;
 
   ServicoDto({
     this.id,
@@ -20,6 +22,7 @@ class ServicoDto {
     required this.titulo,
     required this.descricao,
     required this.status,
+    required this.dia,
     required this.periodo,
   });
 
@@ -30,7 +33,8 @@ class ServicoDto {
     String? titulo,
     String? descricao,
     String? status,
-    List<HorarioDto>? periodo,
+    DateTime? dia,
+    List<HorarioDto?>? periodo,
   }) {
     return ServicoDto(
       id: id ?? this.id,
@@ -39,6 +43,7 @@ class ServicoDto {
       titulo: titulo ?? this.titulo,
       descricao: descricao ?? this.descricao,
       status: status ?? this.status,
+      dia: dia ?? this.dia,
       periodo: periodo ?? this.periodo,
     );
   }
@@ -51,7 +56,8 @@ class ServicoDto {
       titulo: titulo,
       descricao: descricao,
       status: status,
-      periodo: periodo.map((e) => e.toEntity()).toList(),
+      dia: dia,
+      periodo: periodo.map((e) => e?.toEntity()).toList(),
     );
   }
 
@@ -63,7 +69,8 @@ class ServicoDto {
       titulo: servicoEntity.titulo,
       descricao: servicoEntity.descricao,
       status: servicoEntity.status,
-      periodo: servicoEntity.periodo.map((e) => HorarioDto.fromEntity(e)).toList(),
+      dia: servicoEntity.dia,
+      periodo: servicoEntity.periodo.map((e) => e != null ? HorarioDto.fromEntity(e) : null).toList(),
     );
   }
 
@@ -75,11 +82,13 @@ class ServicoDto {
       'titulo': titulo,
       'descricao': descricao,
       'status': status,
-      'periodo': periodo.map((x) => x.toMap()).toList(),
+      'dia': dia.toString() as String,
+      'periodo': periodo.map((x) => x?.toMap()).toList(),
     };
   }
 
   factory ServicoDto.fromMap(Map<String, dynamic> map) {
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd');
     return ServicoDto(
       id: map['id'] as String,
       espacoId: map['espacoId'],
@@ -87,6 +96,7 @@ class ServicoDto {
       titulo: map['titulo'],
       descricao: map['descricao'] as String,
       status: map['status'] as String,
+      dia: dateFormat.parse(map['dia']),
       periodo: map['periodo'] != null
           ? List<HorarioDto>.from(
               (map['periodo']).map<HorarioDto>(
@@ -103,7 +113,7 @@ class ServicoDto {
 
   @override
   String toString() {
-    return 'ServicoDto(id: $id, espacoId: $espacoId, titulo: $titulo, solicitanteId: $solicitanteId, descricao: $descricao, status: $status, periodo: $periodo)';
+    return 'ServicoDto(id: $id, espacoId: $espacoId, titulo: $titulo, solicitanteId: $solicitanteId, descricao: $descricao, status: $status, dia: $dia, periodo: $periodo)';
   }
 
   @override
@@ -115,12 +125,13 @@ class ServicoDto {
         other.descricao == descricao &&
         other.status == status &&
         other.solicitanteId == solicitanteId &&
+        other.dia == dia &&
         listEquals(other.periodo, periodo) &&
         other.espacoId == espacoId;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ titulo.hashCode ^ descricao.hashCode ^ status.hashCode ^ solicitanteId.hashCode ^ periodo.hashCode ^ espacoId.hashCode;
+    return id.hashCode ^ titulo.hashCode ^ descricao.hashCode ^ status.hashCode ^ solicitanteId.hashCode ^ dia.hashCode ^ periodo.hashCode ^ espacoId.hashCode;
   }
 }

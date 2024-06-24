@@ -10,6 +10,7 @@ import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva.dart';
+import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico.dart';
 
 class ListarReservasWidget extends StatefulWidget {
   final EspacoEntity espaco;
@@ -199,12 +200,21 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
                   children: [
                     ..._getReservasForDay(_selectedDay!).map(
                       (horario) {
-                        Widget? title = horario.isReserved
-                            ? Text(
-                                "Inicio: ${horario.inicio} - Reservado",
-                                style: const TextStyle(color: Colors.redAccent),
-                              )
-                            : Text("Inicio: ${horario.inicio}", style: const TextStyle(color: Colors.black));
+                        Widget? title;
+                        if (horario.isReserved && horario.reservaId != null) {
+                          title = Text(
+                            "Inicio: ${horario.inicio} - Reservado",
+                            style: const TextStyle(color: Colors.redAccent),
+                          );
+                        } else if (horario.isReserved && horario.servicoId != null) {
+                          title = Text(
+                            "Inicio: ${horario.inicio} - Reservado para manutenção",
+                            style: const TextStyle(color: Colors.redAccent),
+                          );
+                        } else {
+                          title = Text("Inicio: ${horario.inicio}", style: const TextStyle(color: Colors.black));
+                        }
+
                         Widget? subtitle =
                             horario.isReserved ? Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.red)) : Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.black));
 
@@ -304,7 +314,8 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
                   ),
                 ),
               ),
-        _horariosSelecionados.isNotEmpty ? _solicitarReserva() : Container()
+        _horariosSelecionados.isNotEmpty ? _solicitarReserva() : Container(),
+        _solicitarServico()
       ],
     );
   }
@@ -324,6 +335,23 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
           );
         },
         child: const Text('Solicitar reserva'));
+  }
+
+  Widget _solicitarServico() {
+    return ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return SolicitarServicoPage(
+                horariosParaReservar: [],
+                espacoEntity: widget.espaco,
+                selectedDay: _selectedDay!,
+              );
+            },
+          );
+        },
+        child: const Text('Solicitar servico'));
   }
 
   List<HorarioEntity> _getReservasForDay(DateTime day) {

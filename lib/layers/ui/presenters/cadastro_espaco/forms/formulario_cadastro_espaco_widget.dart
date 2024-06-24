@@ -24,8 +24,12 @@ class _FormularioCadastroEspacoWidgetState extends State<FormularioCadastroEspac
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const Text(
-              "Cadastrar Espaço",
+            const Center(
+              heightFactor: 2,
+              child: Text(
+                "Cadastrar espaco",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             const Divider(),
             const SizedBox(

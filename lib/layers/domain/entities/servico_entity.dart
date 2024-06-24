@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 
 class ServicoEntity {
-
   String? id;
   final String espacoId;
   final String solicitanteId;
   final String titulo;
   final String descricao;
-  final String status;
-  final List<HorarioEntity> periodo;
+  String status;
+  DateTime dia;
+  final List<HorarioEntity?> periodo;
 
   ServicoEntity({
     this.id,
@@ -18,6 +18,7 @@ class ServicoEntity {
     required this.titulo,
     required this.descricao,
     required this.status,
+    required this.dia,
     required this.periodo,
   });
 
@@ -28,7 +29,8 @@ class ServicoEntity {
     String? titulo,
     String? descricao,
     String? status,
-    List<HorarioEntity>? periodo,
+    DateTime? dia,
+    List<HorarioEntity?>? periodo,
   }) {
     return ServicoEntity(
       id: id ?? this.id,
@@ -36,6 +38,7 @@ class ServicoEntity {
       descricao: descricao ?? this.descricao,
       status: status ?? this.status,
       solicitanteId: solicitanteId ?? this.solicitanteId,
+      dia: dia ?? this.dia,
       periodo: periodo ?? this.periodo,
       espacoId: espacoId ?? this.espacoId,
     );
@@ -43,7 +46,7 @@ class ServicoEntity {
 
   @override
   String toString() {
-    return 'ServicoEntity(id: $id, titulo: $titulo, descricao: $descricao, status: $status, solicitante: $solicitanteId, periodo: $periodo, espaco: $espacoId)';
+    return 'ServicoEntity(id: $id, titulo: $titulo, descricao: $descricao, status: $status, solicitante: $solicitanteId, dia: $dia, periodo: $periodo, espaco: $espacoId)';
   }
 
   @override
@@ -55,12 +58,13 @@ class ServicoEntity {
         other.descricao == descricao &&
         other.status == status &&
         other.solicitanteId == solicitanteId &&
+        other.dia == dia &&
         listEquals(other.periodo, periodo) &&
         other.espacoId == espacoId;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ titulo.hashCode ^ descricao.hashCode ^ status.hashCode ^ solicitanteId.hashCode ^ periodo.hashCode ^ espacoId.hashCode;
+    return id.hashCode ^ titulo.hashCode ^ descricao.hashCode ^ status.hashCode ^ solicitanteId.hashCode ^ dia.hashCode ^ periodo.hashCode ^ espacoId.hashCode;
   }
 }

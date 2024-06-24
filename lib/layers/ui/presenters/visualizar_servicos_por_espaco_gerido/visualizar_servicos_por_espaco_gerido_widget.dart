@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_servicos_por_espaco_gerido/components/listar_servicos_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_servicos_por_espaco_gerido/visualizar_servicos_por_espaco_gerido_controller.dart';
 
 class VisualizarServicosPorEspacoGeridoWidget extends StatelessWidget {
@@ -10,39 +11,44 @@ class VisualizarServicosPorEspacoGeridoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height - 200,
+      height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.all(2),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Espacos que contem servicos cadastradas:"),
-                ),
-              ),
-            ],
+          const Center(
+            heightFactor: 2,
+            child: Text(
+              "Espacos que contem servicos cadastradas",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
+          const Divider(),
           Expanded(
-              child: ListView.builder(
-            itemCount: controller.espacos.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                child: Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.add_alert),
-                    title: Text("Numero: ${controller.espacos[index]!.localizacao.numero}"),
-                    subtitle: Text('Modulo: ${controller.espacos[index]!.localizacao.pavilhao}'),
+            child: ListView.builder(
+              itemCount: controller.espacos.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  child: Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.add_alert),
+                      title: Text("Numero: ${controller.espacos[index]!.localizacao.numero}"),
+                      subtitle: Text('Modulo: ${controller.espacos[index]!.localizacao.pavilhao}'),
+                    ),
                   ),
-                ),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Placeholder()));
-                },
-              );
-            },
-          ))
+                  onTap: () {
+                    final servicos = controller.servicosPorEspaco[controller.espacos[index]]!;
+                    showDialog(
+                      context: context,
+                      builder: (context) => ListarServicosWidget(
+                        servicos: servicos,
+                        espaco: controller.espacos[index]!,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          )
         ],
       ),
     );

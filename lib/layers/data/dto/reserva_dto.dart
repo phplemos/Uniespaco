@@ -11,8 +11,8 @@ class ReservaDto {
   final String solicitanteId;
   final String titulo;
   final String descricao;
-  final String status;
-  final DateTime dia;
+  String status;
+  DateTime dia;
   final List<HorarioDto> periodo;
 
   ReservaDto({

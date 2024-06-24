@@ -17,8 +17,12 @@ class VisualizarReservasPorEspacoGeridoWidget extends StatelessWidget {
         children: [
           const Center(
             heightFactor: 2,
-            child: Text("Espacos que contem reservas cadastradas"),
+            child: Text(
+              "Espacos que contem reservas cadastradas",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
+          const Divider(),
           Expanded(
             child: ListView.builder(
               itemCount: controller.espacos.length,

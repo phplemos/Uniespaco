@@ -14,6 +14,7 @@ class AvaliarSolicitacaoReservaWidget extends StatelessWidget {
         reservaEntity: controller.reserva!,
         usuarioEntity: controller.usuario!,
         espacoEntity: controller.espaco!,
+        controller: controller,
       ),
     );
   }

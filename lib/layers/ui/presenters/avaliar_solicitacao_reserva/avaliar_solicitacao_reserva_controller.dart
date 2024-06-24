@@ -4,6 +4,7 @@ import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 import 'package:uniespaco/layers/domain/entities/situacao_solicitacao_enum.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
+import 'package:uniespaco/layers/domain/usecases/alterar_situacao_reserva_usecase/alterar_situacao_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase.dart';
@@ -39,14 +40,22 @@ abstract class AvaliarSolicitacaoReservaController extends ChangeNotifier {
   }
 
   Future<void> init({required String usuarioId, required String espacoId});
+
+  Future<bool> atualizarSituacao({required String idReserva, required Situacao situacao});
 }
 
 class AvaliarSolicitacaoReservaControllerImpl extends AvaliarSolicitacaoReservaController {
   final ConsultarEspacoUseCase consultarEspacoUseCase;
   final BuscarUsuarioPeloIdUsecase buscarUsuarioPeloIdUsecase;
   final ConsultarReservaUseCase consultarReservaUseCase;
+  final AlterarSituacaoReservaUsecase alterarSituacaoReservaUsecase;
 
-  AvaliarSolicitacaoReservaControllerImpl({required this.consultarReservaUseCase, required this.buscarUsuarioPeloIdUsecase, required this.consultarEspacoUseCase});
+  AvaliarSolicitacaoReservaControllerImpl({
+    required this.consultarReservaUseCase,
+    required this.buscarUsuarioPeloIdUsecase,
+    required this.consultarEspacoUseCase,
+    required this.alterarSituacaoReservaUsecase,
+  });
 
   init({required String usuarioId, required String espacoId}) async {
     var responseUsuario = await buscarUsuarioPeloIdUsecase(usuarioId: usuarioId);
@@ -60,7 +69,9 @@ class AvaliarSolicitacaoReservaControllerImpl extends AvaliarSolicitacaoReservaC
     }
   }
 
-  atualizarSituacaoReserva(String idReserva, Situacao novaSituacao) {
-
+  @override
+  Future<bool> atualizarSituacao({required String idReserva, required Situacao situacao}) async {
+    var response = await alterarSituacaoReservaUsecase(reservaId: idReserva, situacao: situacao);
+    return response.fold((error) => false, (success) => true);
   }
 }

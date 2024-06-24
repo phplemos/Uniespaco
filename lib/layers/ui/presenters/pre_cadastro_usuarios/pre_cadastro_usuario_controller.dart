@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/domain/entities/precadastro_usuario_entity.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_usuario_usecase/cadastrar_usuario_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/pre_cadastrar_usuario_usecase/pre_cadastrar_usuario_usecase.dart';
 
-abstract class CadastroUsuarioController extends ChangeNotifier {
+abstract class PreCadastroUsuarioController extends ChangeNotifier {
   TextEditingController email = TextEditingController();
   String? _tipoUsuario;
 
@@ -19,17 +19,15 @@ abstract class CadastroUsuarioController extends ChangeNotifier {
   String? validatorEmail(String? text);
 }
 
-class CadastroUsuarioControllerImpl extends CadastroUsuarioController {
-  final CadastrarUsuarioUseCase cadastrarUsuarioUseCase;
+class PreCadastroUsuarioControllerImpl extends PreCadastroUsuarioController {
+  final PreCadastrarUsuarioUseCase cadastrarUsuarioUseCase;
 
-  CadastroUsuarioControllerImpl({required this.cadastrarUsuarioUseCase});
+  PreCadastroUsuarioControllerImpl({required this.cadastrarUsuarioUseCase});
 
   @override
   Future<bool> save() async {
     try {
-      var result = await cadastrarUsuarioUseCase(
-          preCadastroUsuarioEntity: PreCadastroUsuarioEntity(
-              email: email.text, tipoUsuario: tipoUsuario ?? 'comum'));
+      var result = await cadastrarUsuarioUseCase(preCadastroUsuarioEntity: PreCadastroUsuarioEntity(email: email.text, tipoUsuario: tipoUsuario ?? 'comum'));
       return result.fold((l) => false, (r) => true);
     } catch (e) {
       throw Exception("Erro ao salvar");

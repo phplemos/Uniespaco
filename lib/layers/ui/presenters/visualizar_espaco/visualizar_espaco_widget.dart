@@ -30,18 +30,6 @@ class _VisualizarEspacoWidgetState extends State<VisualizarEspacoWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SolicitarServicoPage(
-                            espacoEntity: widget.espaco,
-                          );
-                        },
-                      );
-                    },
-                    child: const Text('Solicitar Servico')),
                 TextButton(
                   onPressed: () => Navigator.pop(context, 'Sair'),
                   child: const Text('Solicitar Manutenção'),
