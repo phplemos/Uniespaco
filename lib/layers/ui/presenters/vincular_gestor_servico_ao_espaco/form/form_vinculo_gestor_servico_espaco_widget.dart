@@ -21,7 +21,13 @@ class _FormVinculoGestorServicoEspacoWidgetState extends State<FormVinculoGestor
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text('Vincular Gestor Servico ao espaço'),
+        const Center(
+          heightFactor: 2,
+          child: Text(
+            "Vincular Gestor Servico ao espaço",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
         const Divider(),
         const SizedBox(
           height: 20,

@@ -16,17 +16,14 @@ class VisualizarGestoresReservaVinculadosAosEspacosWidget extends StatelessWidge
       padding: const EdgeInsets.all(2),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Gestores de Reserva de cada espaco:"),
-                ),
-              ),
-            ],
+          const Center(
+            heightFactor: 2,
+            child: Text(
+              "Visualizar Gestores de reserva vinculados aos espacos",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
+          Divider(),
           Expanded(
             child: ListView.builder(
               itemCount: controller.espacos.length,

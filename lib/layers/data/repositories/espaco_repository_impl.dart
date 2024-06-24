@@ -99,4 +99,24 @@ class EspacoRepositoryImpl implements EspacoRepository {
       return Left(Exception('Erro ao vincular os gestores'));
     }
   }
+
+  @override
+  Future<Either<Exception, bool>> update({required EspacoEntity espacoEntity}) async {
+    try {
+      final result = await espacoDatasource.updateEspaco(espaco: espacoEntity);
+      return Right(result);
+    } catch (e) {
+      return Left(Exception('Erro ao cadastrar o espaço'));
+    }
+  }
+
+  @override
+  Future<Either<Exception, Map<EspacoEntity, List<UsuarioEntity?>>>> getAllGestoresReservaEspaco() async {
+    try {
+      final result = await espacoDatasource.getAllGestoresReservaPorEspaco();
+      return Right(result);
+    } catch (e) {
+      return Left(Exception('Erro ao cadastrar o espaço'));
+    }
+  }
 }

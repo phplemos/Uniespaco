@@ -21,7 +21,7 @@ class ReservaFirebaseDataSource {
           // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
           List<ReservaEntity> reserva = responseReserva.docs.map((snapshot) => ReservaDto.fromMap(snapshot.data()).toEntity()).toList();
           // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
-          reservasPorEspaco[espaco] = reserva;
+          reservasPorEspaco[espaco] = reserva.where((reserva) => theDayHasNotPassed(dia: reserva.dia, other: DateTime.now())).toList();
         }
       });
       return reservasPorEspaco;
@@ -30,14 +30,32 @@ class ReservaFirebaseDataSource {
     }
   }
 
+  Future<Map<EspacoEntity, List<ReservaEntity?>>> getHistoryReservas({required String gestorId}) async {
+    try {
+      // Variavel que vai armazenar o resultado
+      final Map<EspacoEntity, List<ReservaEntity>> reservasPorEspaco = {};
+      // Busca todos os espacos que o usuario é gestor
+      final List<EspacoEntity?> espacoGeridos = await _espacoDatasource.getEspacoByGestorReserva(gestorId: gestorId);
+      // Percorre cada espaço, buscando se tem reservas com o espaco Vinculado
+      await Future.forEach(espacoGeridos, (espaco) async {
+        if (espaco != null) {
+          final responseReserva = await _database.where('espacoId', isEqualTo: espaco.id).get();
+          // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
+          List<ReservaEntity> reserva = responseReserva.docs.map((snapshot) => ReservaDto.fromMap(snapshot.data()).toEntity()).toList();
+          // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
+          reservasPorEspaco[espaco] = reserva;
+        }
+      });
+      return reservasPorEspaco;
+    } catch (e) {
+      throw Exception('Erro ao recuperar o historico das reservas');
+    }
+  }
+
   Future<List<ReservaEntity?>> getAllReservasFromUsuario({required String solicitanteId}) async {
     try {
-      final response = await _database.where(('solicitanteId', isEqualTo: solicitanteId)).get();
-      List<ReservaEntity?> reservas = response.docs.map((snapshot) {
-        if (snapshot.data().isNotEmpty) {
-          return ReservaDto.fromMap(snapshot.data()).toEntity();
-        }
-      }).toList();
+      final response = await _database.where('solicitanteId', isEqualTo: solicitanteId).get();
+      List<ReservaEntity> reservas = response.docs.map((snapshot) => ReservaDto.fromMap(snapshot.data()).toEntity()).toList();
 
       return reservas;
     } catch (e) {
@@ -49,7 +67,9 @@ class ReservaFirebaseDataSource {
     try {
       final response = await _database.get();
       List<ReservaEntity?> reservas = response.docs.map((snapshot) {
-        if (snapshot.data().isNotEmpty) {
+        if (snapshot
+            .data()
+            .isNotEmpty) {
           return ReservaDto.fromMap(snapshot.data()).toEntity();
         }
       }).toList();
@@ -81,11 +101,21 @@ class ReservaFirebaseDataSource {
     }
   }
 
-  Future<bool> updateReserva({required ReservaEntity reservaEntity}) {
-    throw UnimplementedError();
+  Future<bool> updateReserva({required ReservaEntity reservaEntity}) async {
+    try {
+      var reservaMap = ReservaDto.fromEntity(reservaEntity).toMap();
+      await _database.doc(reservaEntity.id).set(reservaMap);
+      return true;
+    } catch (e) {
+      throw Exception('Erro ao persistir a reserva');
+    }
   }
 
   Future<bool> deleteReserva({required String id}) {
     throw UnimplementedError();
+  }
+
+  bool theDayHasNotPassed({required DateTime dia, required DateTime other}) {
+    return dia.year >= other.year && dia.month >= other.month && dia.day >= other.day;
   }
 }

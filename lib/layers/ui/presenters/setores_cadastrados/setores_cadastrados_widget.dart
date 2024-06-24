@@ -15,17 +15,14 @@ class SetoresCadastradosWidget extends StatelessWidget {
       padding: const EdgeInsets.all(2),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Setores cadastrados:"),
-                ),
-              ),
-            ],
+          const Center(
+            heightFactor: 2,
+            child: Text(
+              "Setores cadastrados",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
+          const Divider(),
           Expanded(
               child: ListView.builder(
             itemCount: controller.setores.length,

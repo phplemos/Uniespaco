@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
+import 'package:uniespaco/layers/domain/entities/situacao_solicitacao_enum.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_servico_usecase/solicitar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase.dart';
@@ -46,7 +47,8 @@ class SolicitarServicoControllerImpl extends SolicitarServicoController {
         solicitanteId: usuario!.id,
         titulo: titulo.text,
         descricao: descricao.text,
-        status: 'aguardando analise',
+        status: Situacao.EM_ANALISE.text!,
+        dia: selectedDay,
         periodo: periodo,
       );
       await solicitarServicoUseCase(servicoEntity: servico);

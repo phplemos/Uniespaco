@@ -12,7 +12,7 @@ class ReservaEntity {
 
   final String descricao;
 
-  final String status;
+  String status;
 
   DateTime dia;
 

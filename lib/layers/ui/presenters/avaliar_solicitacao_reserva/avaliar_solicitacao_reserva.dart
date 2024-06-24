@@ -30,23 +30,20 @@ class _AvaliarSolicitacaoReservaPageState extends State<AvaliarSolicitacaoReserv
     return AnimatedBuilder(
         animation: controller,
         builder: (context, widget) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const AppBarWidget(),
-            ),
-            drawer: const ProfileInfoWidget(),
-            body: controller.loading.value
-                ? Container(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : Column(
+          return controller.loading.value
+              ? Container(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : Scaffold(
+                  appBar: AppBar(title: Text('Avaliar solicitação reserva')),
+                  body: Column(
                     children: [
-                      const Center(heightFactor: 2,child: Text('Avaliação de solicitação para reserva')),
+                      const Center(heightFactor: 2, child: Text('Avaliação de solicitação para reserva')),
                       const Divider(),
                       AvaliarSolicitacaoReservaWidget(controller: controller),
                     ],
                   ),
-          );
+                );
         });
   }
 }

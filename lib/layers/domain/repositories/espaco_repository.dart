@@ -10,6 +10,8 @@ abstract class EspacoRepository {
 
   Future<Either<Exception, bool>> save({required EspacoEntity espacoEntity});
 
+  Future<Either<Exception, bool>> update({required EspacoEntity espacoEntity});
+
   Future<Either<Exception, bool>> favoritarEspaco({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity});
 
   Future<Either<Exception, bool>> desfavoritarEspaco({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity});
@@ -23,4 +25,7 @@ abstract class EspacoRepository {
   Future<Either<Exception, List<UsuarioEntity?>>> getAllGestoresServico();
 
   Future<Either<Exception, List<EspacoEntity?>>> getEspacosPorCampus({required Campus campus});
+
+  Future<Either<Exception, Map<EspacoEntity, List<UsuarioEntity?>>>> getAllGestoresReservaEspaco();
+
 }

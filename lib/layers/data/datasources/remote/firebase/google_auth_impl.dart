@@ -27,6 +27,7 @@ class GoogleAuthImpl implements GoogleAuth {
           if (user != null) {
             var dominio = _getDominioEmail(user.email);
             if (dominio != 'uesb.edu.br') {
+              await logout();
               return false;
             } else {
               await verificarRegistro(
@@ -42,7 +43,7 @@ class GoogleAuthImpl implements GoogleAuth {
               return true;
             }
           }
-          logout();
+          await logout();
           return false;
         });
       }
@@ -51,6 +52,7 @@ class GoogleAuthImpl implements GoogleAuth {
         if (user != null) {
           var dominio = _getDominioEmail(user.email);
           if (dominio != 'uesb.edu.br') {
+            await logout();
             return false;
           } else {
             await verificarRegistro(

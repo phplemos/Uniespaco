@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario_controller.dart';
 
 class FormPreCadastroUsuarioWidget extends StatelessWidget {
-  final CadastroUsuarioController controller;
+  final PreCadastroUsuarioController controller;
 
   const FormPreCadastroUsuarioWidget({super.key, required this.controller});
 

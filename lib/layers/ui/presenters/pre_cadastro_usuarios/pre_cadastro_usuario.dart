@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario_controller.dart';
-import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/appbar_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/barra_de_pesquisa_widget.dart';
 import 'package:uniespaco/layers/ui/widgets/profile_info_widget.dart';
 
-class CadastroUsuarioPage extends StatefulWidget {
-  const CadastroUsuarioPage({super.key});
+class PreCadastroUsuarioPage extends StatefulWidget {
+  const PreCadastroUsuarioPage({super.key});
 
   @override
-  State<CadastroUsuarioPage> createState() => _CadastroUsuarioPageState();
+  State<PreCadastroUsuarioPage> createState() => _PreCadastroUsuarioPageState();
 }
 
-class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
-  final CadastroUsuarioController controller =
-      GetIt.I.get<CadastroUsuarioController>();
+class _PreCadastroUsuarioPageState extends State<PreCadastroUsuarioPage> {
+  final PreCadastroUsuarioController controller = GetIt.I.get<PreCadastroUsuarioController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,7 @@ class _CadastroUsuarioPageState extends State<CadastroUsuarioPage> {
             ],
           ),
           drawer: const ProfileInfoWidget(),
-          body: CadastroUsuarioWidget(controller: controller),
+          body: PreCadastroUsuarioWidget(controller: controller),
         );
       },
     );

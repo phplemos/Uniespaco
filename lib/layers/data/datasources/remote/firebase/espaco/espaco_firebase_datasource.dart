@@ -113,7 +113,7 @@ class EspacoFirebaseDataSource {
       espaco.agenda.forEach((key, value) {
         value.forEach((key, value) {
           value.horarios.forEach((horario) {
-            if (horario.gestorServico != null && horario.gestorServico == gestorId) {
+            if (horario.gestorServico == gestorId) {
               espacosGeridos.contains(espaco) ? null : espacosGeridos.add(espaco);
             }
           });

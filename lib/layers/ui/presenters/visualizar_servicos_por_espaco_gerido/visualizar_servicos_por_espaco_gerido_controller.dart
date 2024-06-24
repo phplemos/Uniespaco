@@ -18,8 +18,8 @@ abstract class VisualizarServicosPorEspacoGeridoController extends ChangeNotifie
 
   Map<EspacoEntity, List<ServicoEntity?>> get servicosPorEspaco => _servicosPorEspaco;
 
-  set servicosPorEspaco(Map<EspacoEntity, List<ServicoEntity?>> servicosPorEspaco) {
-    _servicosPorEspaco = servicosPorEspaco;
+  set servicosPorEspaco(Map<EspacoEntity, List<ServicoEntity?>> servicosPorEspacos) {
+    _servicosPorEspaco = servicosPorEspacos;
     notifyListeners();
   }
 
@@ -32,6 +32,7 @@ class VisualizarServicosPorEspacoGeridoControllerImpl extends VisualizarServicos
 
   VisualizarServicosPorEspacoGeridoControllerImpl({required this.visualizarServicosPorEspacoGeridoUsecase, required this.usuarioProvider});
 
+  @override
   init() async {
     await usuarioProvider.init();
     final usuario = usuarioProvider.value;

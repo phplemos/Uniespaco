@@ -16,16 +16,22 @@ import 'package:uniespaco/layers/domain/repositories/reserva_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/servico_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/setor_repository.dart';
 import 'package:uniespaco/layers/domain/repositories/usuario_repository.dart';
+import 'package:uniespaco/layers/domain/usecases/alterar_situacao_reserva_usecase/alterar_situacao_reserva_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/alterar_situacao_reserva_usecase/alterar_situacao_reserva_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/alterar_situacao_servico_usecase/alterar_situacao_servico_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/alterar_situacao_servico_usecase/alterar_situacao_servico_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadastrar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadastrar_espaco_usecase_impl.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_usuario_usecase/cadastrar_usuario_usecase.dart';
-import 'package:uniespaco/layers/domain/usecases/cadastrar_usuario_usecase/cadastrar_usuario_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/cancelar_reserva_usecase/cancelar_reserva_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/cancelar_reserva_usecase/cancelar_reserva_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/consultar_servico_usecase/consultar_servico_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/consultar_servico_usecase/consultar_servico_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/desfavoritar_espaco_usecase/desfavoritar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/desfavoritar_espaco_usecase/desfavoritar_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/efetuar_login_usecase/efetuar_login_usecase.dart';
@@ -52,10 +58,20 @@ import 'package:uniespaco/layers/domain/usecases/listar_espacos_por_campus_useca
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_por_campus_usecase/listar_espacos_por_campus_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_usecase/listar_espacos_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_usecase/listar_espacos_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_todas_reservas_vinculadas_ao_usuario/listar_todas_reservas_vinculadas_ao_usuario_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_todas_reservas_vinculadas_ao_usuario/listar_todas_reservas_vinculadas_ao_usuario_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_todos_servicos_vinculados_ao_usuario/listar_todos_servicos_vinculados_ao_usuario_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_todos_servicos_vinculados_ao_usuario/listar_todos_servicos_vinculados_ao_usuario_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/pre_cadastrar_usuario_usecase/pre_cadastrar_usuario_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/pre_cadastrar_usuario_usecase/pre_cadastrar_usuario_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_reserva_usecase/solicitar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_reserva_usecase/solicitar_reserva_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_servico_usecase/solicitar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/solicitar_servico_usecase/solicitar_reserva_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/ver_historico_reservas_por_espaco_usecase/ver_historico_reservas_por_espaco_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/ver_historico_reservas_por_espaco_usecase/ver_historico_reservas_por_espaco_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/ver_historico_servicos_por_espaco_usecase/ver_historico_servicos_por_espaco_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/ver_historico_servicos_por_espaco_usecase/ver_historico_servicos_por_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_usecase/vincular_gestores_ao_espaco_usecase.dart';
@@ -69,14 +85,18 @@ import 'package:uniespaco/layers/shared/reserva_provider.dart';
 import 'package:uniespaco/layers/shared/usuario_provider.dart';
 import 'package:uniespaco/layers/ui/controllers/listar_reservas_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/avaliar_solicitacao_reserva/avaliar_solicitacao_reserva_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/avaliar_solicitacao_servico/avaliar_solicitacao_servico_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_controller.dart';
-import 'package:uniespaco/layers/ui/presenters/cadastro_usuarios/cadastro_usuario_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/minhas_reservas/minhas_reservas_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/professores_cadastrados/professores_cadastrados_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/setores_cadastrados/setores_cadastrados_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/ver_historico_reservas_por_espaco_gerido/ver_historico_reservas_por_espaco_gerido_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/ver_historico_servicos_por_espaco_gerido/ver_historico_servicos_por_espaco_gerido_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/vincular_gestor_reserva_ao_espaco/vincular_gestor_reserva_ao_espaco_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/vincular_gestor_servico_ao_espaco/vincular_gestor_servico_ao_espaco_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_reserva_vinculados_aos_espacos/visualizar_gestores_reserva_vinculados_aos_espacos_controller.dart';
@@ -116,7 +136,7 @@ class Inject {
     getIt.registerLazySingleton<VerInformacaoDoUsuarioUseCase>(() => VerInformacaoDoUsuarioUseCaseImpl(usuarioRepository: getIt()));
     getIt.registerLazySingleton<ListarEspacosPorCampusUseCase>(() => ListarEspacosPorCampusUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<VincularGestoresAoEspacoUsecase>(() => VincularGestoresAoEspacoUsecaseImpl(espacoRepository: getIt()));
-    getIt.registerLazySingleton<CadastrarUsuarioUseCase>(() => CadastrarUsuarioUseCaseImpl(usuarioRepository: getIt()));
+    getIt.registerLazySingleton<PreCadastrarUsuarioUseCase>(() => PreCadastrarUsuarioUseCaseImpl(usuarioRepository: getIt()));
     getIt.registerLazySingleton<SolicitarReservaUseCase>(() => SolicitarReservaUseCaseImpl(reservaRepository: getIt()));
     getIt.registerLazySingleton<ListarTodasReservasUsuarioUseCase>(() => ListarTodasReservasUsuarioUseCaseImpl(reservaRepository: getIt()));
     getIt.registerLazySingleton<ListarReservasUsuarioPorDiaUseCase>(() => ListarReservasUsuarioPorDiaUseCaseImpl(reservaRepository: getIt()));
@@ -127,7 +147,15 @@ class Inject {
     getIt.registerLazySingleton<VisualizarReservasPorEspacoGeridoUsecase>(() => VisualizarReservasPorEspacoGeridoUsecaseImpl(reservaRepository: getIt()));
     getIt.registerLazySingleton<VisualizarServicosPorEspacoGeridoUsecase>(() => VisualizarServicosPorEspacoGeridoUsecaseImpl(servicoRepository: getIt()));
     getIt.registerLazySingleton<ConsultarReservaUseCase>(() => ConsultarReservaUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ConsultarServicoUsecase>(() => ConsultarServicoUseCaseImpl(servicoRepository: getIt()));
     getIt.registerLazySingleton<BuscarUsuarioPeloIdUsecase>(() => BuscarUsuarioPeloIdUsecaseImpl(usuarioRepository: getIt()));
+    getIt.registerLazySingleton<AlterarSituacaoReservaUsecase>(() => AlterarSituacaoReservaUsecaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<AlterarSituacaoServicoUsecase>(() => AlterarSituacaoServicoUsecaseImpl(servicoRepository: getIt()));
+    getIt.registerFactory<VerHistoricoServicosPorEspacoUseCase>(() => VerHistoricoServicosPorEspacoUseCaseImpl(servicoRepository: getIt()));
+    getIt.registerFactory<VerHistoricoReservasPorEspacoUseCase>(() => VerHistoricoReservasPorEspacoUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerFactory<ListarTodasReservasVinculadasAoUsuarioUseCase>(() => ListarTodasReservasVinculadasAoUsuarioUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerFactory<ListarTodosServicosVinculadosAoUsuarioUsecase>(() => ListarTodosServicosVinculadosAoUsuarioUsecaseImpl(servicoRepository: getIt()));
+    getIt.registerFactory<CancelarReservaUseCase>(() => CancelarReservaUseCaseImpl(reservaRepository: getIt()));
 
     //providers
     getIt.registerLazySingleton<UsuarioProvider>(
@@ -167,7 +195,7 @@ class Inject {
           listarTodosEspacosPorCampusUseCase: getIt(),
           vincularGestoresAoEspacoUsecase: getIt(),
         ));
-    getIt.registerFactory<CadastroUsuarioController>(() => CadastroUsuarioControllerImpl(cadastrarUsuarioUseCase: getIt()));
+    getIt.registerFactory<PreCadastroUsuarioController>(() => PreCadastroUsuarioControllerImpl(cadastrarUsuarioUseCase: getIt()));
     getIt.registerFactory<ListarReservasController>(() => ListarReservasControllerImpl());
     getIt.registerFactory<SolicitarReservaController>(() => SolicitarReservaControllerImpl(solicitarReservaUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt()));
     getIt.registerFactory<SolicitarServicoController>(() => SolicitarServicoControllerImpl(solicitarServicoUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt()));
@@ -182,6 +210,15 @@ class Inject {
     getIt.registerFactory<VisualizarGestoresServicoVinculadosAosEspacosController>(
         () => VisualizarGestoresServicoVinculadosAosEspacosControllerImpl(listarGestoresDeServicoVinculadosAosEspacosUseCase: getIt()));
     getIt.registerFactory<AvaliarSolicitacaoReservaController>(
-        () => AvaliarSolicitacaoReservaControllerImpl(consultarReservaUseCase: getIt(), consultarEspacoUseCase: getIt(), buscarUsuarioPeloIdUsecase: getIt()));
+        () => AvaliarSolicitacaoReservaControllerImpl(consultarReservaUseCase: getIt(), consultarEspacoUseCase: getIt(), buscarUsuarioPeloIdUsecase: getIt(), alterarSituacaoReservaUsecase: getIt()));
+    getIt.registerFactory<AvaliarSolicitacaoServicoController>(
+        () => AvaliarSolicitacaoServicoControllerImpl(consultarServicoUseCase: getIt(), consultarEspacoUseCase: getIt(), buscarUsuarioPeloIdUsecase: getIt(), alterarSituacaoServicoUsecase: getIt()));
+    getIt.registerFactory<VerHistoricoReservasPorEspacoGeridoController>(
+        () => VerHistoricoReservasPorEspacoGeridoControllerImpl(verHistoricoReservasPorEspacoUseCase: getIt(), usuarioProvider: getIt()));
+    getIt.registerFactory<VerHistoricoServicosPorEspacoGeridoController>(
+        () => VerHistoricoServicosPorEspacoGeridoControllerImpl(usuarioProvider: getIt(), verHistoricoServicosPorEspacoUseCase: getIt()));
+    // getIt.registerFactory<VerHistoricoServicosPorEspacoController>(() => VerHistoricoServicosPorEspacoControllerImpl());
+    getIt.registerFactory<MinhasReservasController>(
+        () => MinhasReservasControllerImpl(listarTodasReservasVinculadasAoUsuarioUseCase: getIt(), usuarioProvider: getIt(), cancelarReservaUseCase: getIt()));
   }
 }

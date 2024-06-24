@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/espaco/espaco_firebase_datasource.dart';
+import 'package:uniespaco/layers/data/dto/reserva_dto.dart';
 import 'package:uniespaco/layers/data/dto/servico_dto.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
@@ -21,12 +22,34 @@ class ServicoFirebaseDataSource {
           // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
           List<ServicoEntity> servicos = responseServico.docs.map((snapshot) => ServicoDto.fromMap(snapshot.data()).toEntity()).toList();
           // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
-          servicosPorEspaco[espaco] = servicos;
+          servicosPorEspaco[espaco] = servicos.where((servico) => theDayHasNotPassed(dia: servico.dia, other: DateTime.now())).toList();
         }
       });
       return servicosPorEspaco;
     } catch (e) {
       throw Exception('Erro ao recuperar as reservas');
+    }
+  }
+
+  Future<Map<EspacoEntity, List<ServicoEntity?>>> getHistoryServicos({required String solicitanteId}) async {
+    try {
+      // Variavel que vai armazenar o resultado
+      final Map<EspacoEntity, List<ServicoEntity>> servicosPorEspaco = {};
+      // Busca todos os espacos que o usuario é gestor
+      final List<EspacoEntity?> espacoGeridos = await _espacoDatasource.getEspacoByGestorServico(gestorId: solicitanteId);
+      // Percorre cada espaço, buscando se tem reservas com o espaco Vinculado
+      await Future.forEach(espacoGeridos, (espaco) async {
+        if (espaco != null) {
+          final responseServico = await _database.where('espacoId', isEqualTo: espaco.id).get();
+          // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
+          List<ServicoEntity> servicos = responseServico.docs.map((snapshot) => ServicoDto.fromMap(snapshot.data()).toEntity()).toList();
+          // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
+          servicosPorEspaco[espaco] = servicos;
+        }
+      });
+      return servicosPorEspaco;
+    } catch (e) {
+      throw Exception('Erro ao recuperar o historico dos servicos');
     }
   }
 
@@ -80,11 +103,21 @@ class ServicoFirebaseDataSource {
     }
   }
 
-  Future<bool> updateServico({required ServicoEntity servicoEntity}) {
-    throw UnimplementedError();
+  Future<bool> updateServico({required ServicoEntity servicoEntity}) async {
+    try {
+      var servicoMap = ServicoDto.fromEntity(servicoEntity).toMap();
+      await _database.doc(servicoEntity.id).set(servicoMap);
+      return true;
+    } catch (e) {
+      throw Exception('Erro ao persistir a servico');
+    }
   }
 
   Future<bool> deleteServico({required String id}) {
     throw UnimplementedError();
+  }
+
+  bool theDayHasNotPassed({required DateTime dia, required DateTime other}) {
+    return dia.year >= other.year && dia.month >= other.month && dia.day >= other.day;
   }
 }

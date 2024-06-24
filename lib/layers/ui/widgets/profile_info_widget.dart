@@ -115,6 +115,30 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver historico reserva por espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/ver_historico_reserva');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver historico servico por espaco"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/ver_historico_servico');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("Ver Minhas reservas"),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/minhas_reservas');
+                  //Navegar para outra página
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.logout_rounded),
                 title: const Text("Logout"),
                 onTap: () {
@@ -124,6 +148,7 @@ class _ProfileInfoWidgetState extends State<ProfileInfoWidget> {
                   }
                 },
               ),
+
             ],
           ),
         );

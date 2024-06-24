@@ -3,14 +3,28 @@ import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 import 'package:uniespaco/layers/domain/entities/situacao_solicitacao_enum.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
+import 'package:uniespaco/layers/ui/presenters/avaliar_solicitacao_reserva/avaliar_solicitacao_reserva_controller.dart';
 
 class InformacoesReservaWidget extends StatelessWidget {
   final UsuarioEntity usuarioEntity;
   final ReservaEntity reservaEntity;
   final EspacoEntity espacoEntity;
-  Situacao situacao = Situacao.EM_ANALISE;
+  final AvaliarSolicitacaoReservaController controller;
+  late Situacao situacao;
 
-  InformacoesReservaWidget({super.key, required this.reservaEntity, required this.usuarioEntity, required this.espacoEntity});
+  InformacoesReservaWidget({super.key, required this.reservaEntity, required this.usuarioEntity, required this.espacoEntity, required this.controller}) {
+    switch (reservaEntity.status) {
+      case "Em Analise":
+        situacao = Situacao.EM_ANALISE;
+        break;
+      case "Homologado":
+        situacao = Situacao.HOMOLOGADO;
+        break;
+      case "Cancelada":
+        situacao = Situacao.CANCELADO;
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +45,7 @@ class InformacoesReservaWidget extends StatelessWidget {
           'Situação: ${reservaEntity.status}',
           textAlign: TextAlign.left,
         ),
+        Text('Reserva para o dia: ${reservaEntity.dia}'),
         StatefulBuilder(builder: (context, state) {
           return SizedBox(
             width: MediaQuery.of(context).size.width - 100,
@@ -69,7 +84,17 @@ class InformacoesReservaWidget extends StatelessWidget {
             },
           ),
         ),
-        ElevatedButton(onPressed: () {}, child: const Text('Alterar situacao'))
+        ElevatedButton(
+            onPressed: () async {
+              var response = await controller.atualizarSituacao(idReserva: reservaEntity.id!, situacao: situacao);
+              if (response) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Situação atualizada com sucesso!')));
+                Navigator.of(context).pushReplacementNamed('/home');
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao atualizar, tente novamente!')));
+              }
+            },
+            child: const Text('Alterar situacao'))
       ],
     );
   }
