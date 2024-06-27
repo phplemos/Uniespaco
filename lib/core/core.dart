@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:uniespaco/layers/data/datasources/google_auth.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/usuario/usuario_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
+import 'package:uniespaco/layers/shared/espaco_provider.dart';
 
 class Core {
   final UsuarioFirebaseDataSource usuarioFirebaseDataSource;
@@ -10,13 +11,7 @@ class Core {
 
   Core({required this.googleAuth, required this.usuarioFirebaseDataSource});
 
-  ValueNotifier<bool> _isCompleted = ValueNotifier(false);
-
-  ValueNotifier<bool> get isCompleted => _isCompleted;
-
-  set isCompleted(ValueNotifier<bool> isCompleted) {
-    _isCompleted.value = isCompleted.value;
-  }
+  final ValueNotifier<bool> isCompleted = ValueNotifier(false);
 
   static UsuarioEntity? _user;
 
@@ -25,8 +20,9 @@ class Core {
   Future<void> setUserData() async {
     String idUsuario = await googleAuth.getUsuario().then((usuario) => usuario.id);
     _user = await usuarioFirebaseDataSource.getUsuarioById(id: idUsuario);
+
     if (_user != null) {
-      _isCompleted.value = true;
+      isCompleted.value = true;
     }
   }
 }

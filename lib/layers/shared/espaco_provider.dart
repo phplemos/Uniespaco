@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
@@ -42,10 +43,12 @@ class EspacosProvider extends ChangeNotifier {
   }
 
   Future init() async {
+    GetIt.instance.resetLazySingleton<EspacosProvider>();
     var responseUsuario = await verInformacaoDoUsuarioUseCase();
     responseUsuario.fold((error) => throw Exception('Erro ao recuperar o usuario no EspacoProvider'), (success) => _usuario = success);
 
     var responseEspaco = await listarTodosEspacosUseCase();
     responseEspaco.fold((error) => throw Exception('Erro ao recuperar o espaco no EspacoProvider'), (success) => espacos = success);
+
   }
 }

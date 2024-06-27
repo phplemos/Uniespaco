@@ -1,16 +1,32 @@
+// Teste da entidade Agenda
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:uniespaco/layers/data/dto/agenda_dto.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
+import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 
 main() {
-  test('Testando se o fromDto funciona com parametros nulos', () {
-    var agendaMock = AgendaEntity(id: '1', observacao: null, gestorReserva: null, gestorServico: null, horarios: []);
-    var agendaDto = AgendaDto(id: '1', observacao: null, gestorReserva: null, gestorServico: null, horarios: []);
-    expect(agendaDto.toEntity(), agendaMock);
+
+  test('Valida criação de entidade com todos atributos', () {
+    var mock = AgendaEntity(observacao: 'Mock', horarios: [
+      HorarioEntity(inicio: '7:30', fim: '9:10', gestorReserva: '123', gestorServico: '321'),
+    ]);
+
+    expect(
+        AgendaEntity(observacao: 'Mock', horarios: [
+          HorarioEntity(inicio: '7:30', fim: '9:10', gestorReserva: '123', gestorServico: '321'),
+        ]),
+        mock);
   });
-  test('Testando se o toDto funciona com parametros nulos', () {
-    var agendaMock = AgendaEntity(id: '1', observacao: null, gestorReserva: null, gestorServico: null, horarios: []);
-    var agendaDto = AgendaDto(id: '1', observacao: null, gestorReserva: null, gestorServico: null, horarios: []);
-    expect(agendaDto.toEntity(), agendaMock);
+
+  test('Valida criação de entidade sem observacao', () {
+    var mock = AgendaEntity(horarios: [
+      HorarioEntity(inicio: '7:30', fim: '9:10', gestorReserva: '123', gestorServico: '321'),
+    ]);
+
+    expect(
+        AgendaEntity(horarios: [
+          HorarioEntity(inicio: '7:30', fim: '9:10', gestorReserva: '123', gestorServico: '321'),
+        ]),
+        mock);
   });
 }

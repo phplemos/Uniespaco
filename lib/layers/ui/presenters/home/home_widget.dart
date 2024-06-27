@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uniespaco/layers/ui/presenters/home/components/listar_espacos_favoritos_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/home/components/listar_espacos_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/home/components/minhas_reservas_home_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 
 class HomeWidget extends StatelessWidget {
@@ -24,7 +25,24 @@ class HomeWidget extends StatelessWidget {
               'Espacos Favoritos',
             ),
           ),
-          ListarEspacosFavoritosWidget(controller: controller)
+          Divider(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 3,
+            child: ListarEspacosFavoritosWidget(controller: controller),
+          ),
+          const Center(
+            heightFactor: 2,
+            child: Text(
+              'Minhas Reservas',
+            ),
+          ),
+          Divider(),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 3,
+            child: MinhasReservasHomeWidget(controller: controller),
+          )
         ],
       ),
     );

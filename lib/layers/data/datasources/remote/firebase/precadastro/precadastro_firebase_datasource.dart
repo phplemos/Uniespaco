@@ -15,21 +15,16 @@ class PrecadastroFirebaseDataSource {
   }
 
   Future<PreCadastroUsuarioEntity?> getPrecadastroByEmail({required String email}) async {
-    final response = await _database.where('email', isEqualTo: email).get();
-    final result = response.docs.isNotEmpty
-        ? response.docs
-            .map((precadastro) {
-              return PreCadastroUsuarioDto(email: precadastro.data()['email'], userRole: List<UserRole>.from(precadastro.data()['userRole'].map((userRole) => UserRole.fromMap(userRole)))).toEntity();
-            })
-            .toList()
-            .first
-        : null;
-    return result;
+    final response = await _database.doc(email).get();
+    if (response.exists) {
+      return PreCadastroUsuarioDto(email: response.data()!['email'], userRole: List<UserRole>.from(response.data()!['userRole'].map((userRole) => UserRole.fromMap(userRole)))).toEntity();
+    }
+    return null;
   }
 
   Future<bool> createPrecadastro({required PreCadastroUsuarioEntity precadastro}) async {
     try {
-      await _database.add(PreCadastroUsuarioDto.fromEntity(precadastro).toMap());
+      await _database.doc(precadastro.email).set(PreCadastroUsuarioDto.fromEntity(precadastro).toMap());
       return true;
     } catch (e) {
       return false;
@@ -38,8 +33,7 @@ class PrecadastroFirebaseDataSource {
 
   Future<bool> updatePrecadastro({required PreCadastroUsuarioEntity precadastro}) async {
     try {
-      var response = await _database.where('email', isEqualTo: precadastro.email).get();
-      await _database.doc(response.docs.first.id).set(PreCadastroUsuarioDto.fromEntity(precadastro).toMap());
+      await _database.doc(precadastro.email).set(PreCadastroUsuarioDto.fromEntity(precadastro).toMap());
       return true;
     } catch (e) {
       return false;

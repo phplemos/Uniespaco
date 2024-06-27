@@ -23,6 +23,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void setState(VoidCallback fn) {
+    controller.init();
+    super.setState(fn);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,

@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:uniespaco/layers/ui/presenters/minhas_reservas/components/ver_reserva_widget.dart';
-import 'package:uniespaco/layers/ui/presenters/minhas_reservas/minhas_reservas_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/home/components/ver_reserva_home_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 
-class MinhasReservasWidget extends StatelessWidget {
-  MinhasReservasController controller;
+class MinhasReservasHomeWidget extends StatelessWidget {
+  final HomeController controller;
 
-  MinhasReservasWidget({super.key, required this.controller});
+  const MinhasReservasHomeWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Center(
-          heightFactor: 2,
-          child: Text(
-            "Reservas que solicitei",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        const Divider(),
         Expanded(
           child: ListView.builder(
             itemCount: controller.reservas.length,
@@ -36,7 +28,7 @@ class MinhasReservasWidget extends StatelessWidget {
                     context: context,
                     builder: (context) => Center(
                       child: AlertDialog(
-                        title:VerReservaWidget(
+                        title: VerReservaHomeWidget(
                           reserva: controller.reservas[index]!,
                           controller: controller,
                         ),
@@ -50,5 +42,6 @@ class MinhasReservasWidget extends StatelessWidget {
         )
       ],
     );
+    ;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco.dart';
 
@@ -20,17 +21,6 @@ class _ListarEspacosFavoritosWidgetState extends State<ListarEspacosFavoritosWid
       padding: const EdgeInsets.all(2),
       child: Column(
         children: [
-          Row(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text("Espaços Favoritados:"),
-                ),
-              ),
-            ],
-          ),
           Expanded(
             child: ListView.builder(
               itemCount: widget.controller.espacosFavoritos.length ?? 0,
@@ -41,10 +31,27 @@ class _ListarEspacosFavoritosWidgetState extends State<ListarEspacosFavoritosWid
                       leading: const Icon(Icons.add_alert),
                       title: Text("Numero: ${widget.controller.espacosFavoritos[index]!.localizacao.numero}"),
                       subtitle: Text('Modulo: ${widget.controller.espacosFavoritos[index]!.localizacao.pavilhao}'),
+                      trailing: InkWell(
+                          onTap: () {
+                            setState(() {
+                              widget.controller.desfavoritarEspaco(espacoEntity: widget.controller.espacosFavoritos[index]!);
+                            });
+                          },
+                          child: const Icon(
+                            Icons.favorite_rounded,
+                            color: Colors.red,
+                          )),
                     ),
                   ),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacosFavoritos[index]!)));
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VisualizarEspacoPage(
+                          idEspaco: widget.controller.espacosFavoritos[index]!.id,
+                        ),
+                      ),
+                    );
                   },
                 );
               },
