@@ -26,4 +26,6 @@ abstract class ServicoRepository {
 
   Future<Either<Exception, bool>> cancelarServico({required String servicoId});
 
+  Future<Either<Exception, List<UsuarioEntity?>>> getAllGestoresServico();
+
 }

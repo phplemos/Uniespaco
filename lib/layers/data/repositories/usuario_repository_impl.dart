@@ -21,7 +21,8 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   Future<Either<Exception, UsuarioEntity>> get() async {
     try {
-      return Right(await googleAuth.getUsuario());
+      var response = await googleAuth.getUsuario();
+      return Right(response!);
     } catch (e) {
       return Left(Exception("Erro ao recuperar o usuario!"));
     }

@@ -3,17 +3,17 @@ import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/ver_informacoes_do_usuario/ver_infomacoes_do_usuario.dart';
 
-class ListarGestoresWidget extends StatefulWidget {
+class ListarGestoresReservaWidget extends StatefulWidget {
   final List<UsuarioEntity?> gestores;
   final EspacoEntity espaco;
 
-  const ListarGestoresWidget({super.key, required this.gestores, required this.espaco});
+  const ListarGestoresReservaWidget({super.key, required this.gestores, required this.espaco});
 
   @override
-  State<ListarGestoresWidget> createState() => _ListarGestoresWidgetState();
+  State<ListarGestoresReservaWidget> createState() => _ListarGestoresReservaWidgetState();
 }
 
-class _ListarGestoresWidgetState extends State<ListarGestoresWidget> {
+class _ListarGestoresReservaWidgetState extends State<ListarGestoresReservaWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

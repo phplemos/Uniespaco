@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uniespaco/core/role_handlers.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
+import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/form/form_solicitar_reserva_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva_controller.dart';
 

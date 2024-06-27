@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/espaco/espaco_firebase_datasource.dart';
 import 'package:uniespaco/layers/data/dto/reserva_dto.dart';
+import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
+import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 
 class ReservaFirebaseDataSource {
   final _database = FirebaseFirestore.instance.collection('reserva');
@@ -11,7 +13,7 @@ class ReservaFirebaseDataSource {
   Future<Map<EspacoEntity, List<ReservaEntity?>>> getAllReservasFromUsuarioGestor({required String gestorId}) async {
     try {
       // Variavel que vai armazenar o resultado
-      final Map<EspacoEntity, List<ReservaEntity>> reservasPorEspaco = {};
+      final Map<EspacoEntity, List<ReservaEntity?>> reservasPorEspaco = {};
       // Busca todos os espacos que o usuario é gestor
       final List<EspacoEntity?> espacoGeridos = await _espacoDatasource.getEspacoByGestorReserva(gestorId: gestorId);
       // Percorre cada espaço, buscando se tem reservas com o espaco Vinculado
@@ -19,9 +21,16 @@ class ReservaFirebaseDataSource {
         if (espaco != null) {
           final responseReserva = await _database.where('espacoId', isEqualTo: espaco.id).get();
           // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
-          List<ReservaEntity> reserva = responseReserva.docs.map((snapshot) => ReservaDto.fromMap(snapshot.data()).toEntity()).toList();
+          List<ReservaEntity> reservasDoEspaco = responseReserva.docs.map((snapshot) => ReservaDto.fromMap(snapshot.data()).toEntity()).toList();
           // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
-          reservasPorEspaco[espaco] = reserva.where((reserva) => theDayHasNotPassed(dia: reserva.dia, other: DateTime.now())).toList();
+          var reservasAtuais = reservasDoEspaco.where((reserva) => theDayHasNotPassed(dia: reserva.dia, other: DateTime.now())).toList();
+          List<ReservaEntity?> reservasDoGestor = reservasAtuais.map((reserva) {
+            if (reserva.periodo.any((horario) => horario.gestorReserva == gestorId)) {
+              return reserva;
+            }
+            return null;
+          }).toList();
+          reservasPorEspaco[espaco] = reservasDoGestor;
         }
       });
       return reservasPorEspaco;
@@ -67,9 +76,7 @@ class ReservaFirebaseDataSource {
     try {
       final response = await _database.get();
       List<ReservaEntity?> reservas = response.docs.map((snapshot) {
-        if (snapshot
-            .data()
-            .isNotEmpty) {
+        if (snapshot.data().isNotEmpty) {
           return ReservaDto.fromMap(snapshot.data()).toEntity();
         }
       }).toList();
@@ -113,6 +120,11 @@ class ReservaFirebaseDataSource {
 
   Future<bool> deleteReserva({required String id}) {
     throw UnimplementedError();
+  }
+
+  Future<List<UsuarioEntity>> getAllGestoresReserva() async {
+    final gestoresReservaMap = await _database.where('userRole', isEqualTo: UserRole.gestorReserva.name).get();
+    return gestoresReservaMap.docs.map((usuario) => UsuarioDto.fromMap(usuario.data()).toEntity()).toList();
   }
 
   bool theDayHasNotPassed({required DateTime dia, required DateTime other}) {

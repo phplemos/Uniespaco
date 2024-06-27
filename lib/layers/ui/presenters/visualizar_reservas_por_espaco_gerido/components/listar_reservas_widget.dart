@@ -33,33 +33,36 @@ class ListarReservasWidget extends StatelessWidget {
               child: ListView.builder(
                 itemCount: reservas.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    child: Card(
-                      child: ListTile(
-                        title: Text(
-                          "Titulo: ${reservas[index]!.titulo}",
-                          textAlign: TextAlign.start,
+                  if (reservas[index] != null) {
+                    return InkWell(
+                      child: Card(
+                        child: ListTile(
+                          title: Text(
+                            "Titulo: ${reservas[index]!.titulo}",
+                            textAlign: TextAlign.start,
+                          ),
+                          subtitle: Column(children: [
+                            Text(
+                              'Descricao: ${reservas[index]!.descricao}',
+                              textAlign: TextAlign.start,
+                            ),
+                            Text(
+                              'Situacao: ${reservas[index]!.status}',
+                              textAlign: TextAlign.start,
+                            ),
+                          ]),
                         ),
-                        subtitle: Column(children: [
-                          Text(
-                            'Descricao: ${reservas[index]!.descricao}',
-                            textAlign: TextAlign.start,
-                          ),
-                          Text(
-                            'Situacao: ${reservas[index]!.status}',
-                            textAlign: TextAlign.start,
-                          ),
-                        ]),
                       ),
-                    ),
-                    onTap: () async {
-                      var reserva = reservas[index];
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AvaliarSolicitacaoReservaPage(reserva: reserva!)),
-                      );
-                    },
-                  );
+                      onTap: () async {
+                        var reserva = reservas[index];
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AvaliarSolicitacaoReservaPage(reserva: reserva!)),
+                        );
+                      },
+                    );
+                  }
+                  return Container();
                 },
               ),
             )

@@ -233,4 +233,13 @@ class ReservaRepositoryImpl implements ReservaRepository {
       return Left(Exception('Erro ao atualizar'));
     }
   }
+
+  @override
+  Future<Either<Exception, List<UsuarioEntity?>>> getAllGestoresReserva() async {
+    try {
+      return Right(await reservaDatasource.getAllGestoresReserva());
+    } catch (e) {
+      return Left(Exception('Erro ao listar todos gestores de reserva'));
+    }
+  }
 }

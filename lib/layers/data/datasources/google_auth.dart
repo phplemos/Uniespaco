@@ -8,5 +8,5 @@ abstract class GoogleAuth {
 
   Future<void> logout();
 
-  Future<void> verificarRegistro({required Map<String, dynamic> usuarioInfo});
+  Future<bool> isRegistered({required Map<String, dynamic> usuarioInfo});
 }

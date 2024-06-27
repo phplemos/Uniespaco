@@ -16,7 +16,7 @@ class ProfessorRepositoryImpl implements ProfessorRepository {
   Future<Either<Exception, List<UsuarioEntity?>>> getAll() async {
     try {
       final usuarios = await usuarioDatasource.getAllUsuarios();
-      final professores = usuarios.where((usuario) => usuario!.tipoUsuario == 'professor').toList();
+      final professores = usuarios.where((usuario) => usuario!.userRole.contains(UserRole.professor)).toList();
       return Right(professores);
     } catch (e) {
       throw Exception('Erro ao buscar os setores');

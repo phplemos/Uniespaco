@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uniespaco/layers/ui/presenters/home/components/listar_espacos_favoritos_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/home/components/listar_espacos_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 
@@ -17,8 +18,13 @@ class HomeWidget extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const Center(heightFactor: 2,child: Text('Espacos',),),
-          ListarEspacosWidget(controller: controller)
+          const Center(
+            heightFactor: 2,
+            child: Text(
+              'Espacos Favoritos',
+            ),
+          ),
+          ListarEspacosFavoritosWidget(controller: controller)
         ],
       ),
     );

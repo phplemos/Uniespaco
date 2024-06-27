@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uniespaco/layers/data/datasources/remote/mysql/model.dart';
 import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 
@@ -40,8 +39,14 @@ class UsuarioFirebaseDataSource {
     }
   }
 
-  Future<bool> updateUsuario({required Usuario usuarioEntity}) {
-    throw UnimplementedError();
+  Future<bool> updateUsuario({required UsuarioEntity usuarioEntity}) async {
+    try {
+      final usuarioDto = UsuarioDto.fromEntity(usuarioEntity);
+      await _datasource.doc(usuarioDto.id).set(usuarioDto.toMap());
+      return true;
+    } catch (e) {
+      throw Exception('Erro ao persistir no banco');
+    }
   }
 
   Future<bool> deleteUsuario({required String id}) {

@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/espaco/espaco_firebase_datasource.dart';
 import 'package:uniespaco/layers/data/dto/reserva_dto.dart';
 import 'package:uniespaco/layers/data/dto/servico_dto.dart';
+import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/servico_entity.dart';
+import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 
 class ServicoFirebaseDataSource {
   final _database = FirebaseFirestore.instance.collection('servico');
@@ -12,7 +14,7 @@ class ServicoFirebaseDataSource {
   Future<Map<EspacoEntity, List<ServicoEntity?>>> getAllServicosFromUsuarioGestor({required String solicitanteId}) async {
     try {
       // Variavel que vai armazenar o resultado
-      final Map<EspacoEntity, List<ServicoEntity>> servicosPorEspaco = {};
+      final Map<EspacoEntity, List<ServicoEntity?>> servicosPorEspaco = {};
       // Busca todos os espacos que o usuario é gestor
       final List<EspacoEntity?> espacoGeridos = await _espacoDatasource.getEspacoByGestorServico(gestorId: solicitanteId);
       // Percorre cada espaço, buscando se tem reservas com o espaco Vinculado
@@ -20,9 +22,11 @@ class ServicoFirebaseDataSource {
         if (espaco != null) {
           final responseServico = await _database.where('espacoId', isEqualTo: espaco.id).get();
           // recebe a lista de reservas com base no id do espaco e converte para uma lista de entidade
-          List<ServicoEntity> servicos = responseServico.docs.map((snapshot) => ServicoDto.fromMap(snapshot.data()).toEntity()).toList();
+          List<ServicoEntity> servicosDoEspaco = responseServico.docs.map((snapshot) => ServicoDto.fromMap(snapshot.data()).toEntity()).toList();
           // atualiza o resultado colocando como chave o espaco e como valor a lista de reservas referente ao espaco
-          servicosPorEspaco[espaco] = servicos.where((servico) => theDayHasNotPassed(dia: servico.dia, other: DateTime.now())).toList();
+          var servicosAtuais = servicosDoEspaco.where((servico) => theDayHasNotPassed(dia: servico.dia, other: DateTime.now())).toList();
+          // TODO VERIFICAR COMO PEGAR O SERVICO
+          servicosPorEspaco[espaco] = servicosAtuais;
         }
       });
       return servicosPorEspaco;
@@ -115,6 +119,11 @@ class ServicoFirebaseDataSource {
 
   Future<bool> deleteServico({required String id}) {
     throw UnimplementedError();
+  }
+
+  Future<List<UsuarioEntity>> getAllGestoresServico() async {
+    final gestoresServicoMap = await _database.where('userRole', isEqualTo: UserRole.gestorServico.name).get();
+    return gestoresServicoMap.docs.map((usuario) => UsuarioDto.fromMap(usuario.data()).toEntity()).toList();
   }
 
   bool theDayHasNotPassed({required DateTime dia, required DateTime other}) {

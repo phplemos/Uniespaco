@@ -1,11 +1,14 @@
+import 'package:get_it/get_it.dart';
+import 'package:uniespaco/core/core.dart';
 import 'package:uniespaco/layers/data/datasources/google_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/precadastro/precadastro_firebase_datasource.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/usuario/usuario_firebase_datasource.dart';
 import 'package:uniespaco/layers/data/dto/usuario_dto.dart';
+import 'package:uniespaco/layers/domain/entities/precadastro_usuario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, listEquals;
 
 class GoogleAuthImpl implements GoogleAuth {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -30,7 +33,7 @@ class GoogleAuthImpl implements GoogleAuth {
               await logout();
               return false;
             } else {
-              await verificarRegistro(
+              return await isRegistered(
                 usuarioInfo: {
                   'id': user.uid,
                   'nome': user.displayName,
@@ -40,7 +43,6 @@ class GoogleAuthImpl implements GoogleAuth {
                   'espacosFavoritados': [],
                 },
               );
-              return true;
             }
           }
           await logout();
@@ -55,7 +57,7 @@ class GoogleAuthImpl implements GoogleAuth {
             await logout();
             return false;
           } else {
-            await verificarRegistro(
+            return await isRegistered(
               usuarioInfo: {
                 'id': user.uid,
                 'nome': user.displayName,
@@ -65,7 +67,6 @@ class GoogleAuthImpl implements GoogleAuth {
                 'espacosFavoritados': <String>[],
               },
             );
-            return true;
           }
         }
         await logout();
@@ -79,6 +80,7 @@ class GoogleAuthImpl implements GoogleAuth {
   @override
   Future<void> logout() async {
     await googleSignIn.signOut();
+    await auth.signOut();
   }
 
   Future<User?> _signInWithGoogleApp() async {
@@ -132,23 +134,59 @@ class GoogleAuthImpl implements GoogleAuth {
   }
 
   @override
-  Future<void> verificarRegistro({required Map<String, dynamic> usuarioInfo}) async {
+  Future<bool> isRegistered({required Map<String, dynamic> usuarioInfo}) async {
     try {
+      final Core core = GetIt.instance.get<Core>();
       // Verifica se o usuario ja está cadastrado
-      var responseItemById = await usuarioFirebaseDataSource.getUsuarioById(id: usuarioInfo['id']);
-      if (responseItemById == null) {
-        // Caso seja nulo, vai criar o usuario
-        // Busca email em lista de precadastro
-        var responsePreCadastro = await precadastroFirebaseDataSource.getPrecadastroByEmail(email: usuarioInfo['email']);
-        if (responsePreCadastro.isEmpty) {
-          usuarioInfo.putIfAbsent('tipoUsuario', () => 'comum');
-          final usuario = UsuarioDto.fromMap(usuarioInfo);
-          usuarioFirebaseDataSource.createUsuario(usuarioEntity: usuario.toEntity());
+      var responseUsuarioById = await usuarioFirebaseDataSource.getUsuarioById(id: usuarioInfo['id']);
+      // Busca email em lista de precadastro
+      PreCadastroUsuarioEntity? responsePreCadastro = await precadastroFirebaseDataSource.getPrecadastroByEmail(email: usuarioInfo['email']);
+      // Caso seja nulo, vai criar o usuario
+      if (responseUsuarioById == null) {
+        // Caso não esteja no precadastro, adiciona a lista e adiciona uma role comum
+        if (responsePreCadastro == null) {
+          List<String> userRoles = [UserRole.comum.name];
+          // Adiciona permissão ao usuario, Converte para Map persiste no banco o usuario
+          usuarioInfo.putIfAbsent('userRole', () => userRoles);
+          final usuario = UsuarioDto.fromMap(usuarioInfo).toEntity();
+          var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: usuario);
+          await core.setUserData();
+          return response;
+        } else {
+          usuarioInfo.putIfAbsent('userRole', () => responsePreCadastro.userRole.map((userRole) => userRole.name).toList());
+          final usuario = UsuarioDto.fromMap(usuarioInfo).toEntity();
+          var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: usuario);
+          await core.setUserData();
+          return response;
         }
-        var tipoUsuario = responsePreCadastro.firstWhere((test) => test.containsKey(usuarioInfo['email']));
-        usuarioInfo['tipoUsuario'] = tipoUsuario.entries.first.value;
-        final usuario = UsuarioDto.fromMap(usuarioInfo);
-        usuarioFirebaseDataSource.createUsuario(usuarioEntity: usuario.toEntity());
+      } else {
+        // Caso usuario seja cadastrado, verifica se há um pre cadastro contendo uma nova permissao
+        if (responsePreCadastro != null) {
+          // Verifica se o pre cadastro tem mais roles que o usuario, se sim, identifica qual é e adiciona
+          if (responsePreCadastro.userRole.length > responseUsuarioById.userRole.length) {
+            await Future.forEach(responsePreCadastro.userRole, (userRole) {
+              if (!responseUsuarioById.userRole.contains(userRole)) {
+                responseUsuarioById.userRole.add(userRole);
+              }
+            });
+            var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: responseUsuarioById);
+            await core.setUserData();
+            return response;
+          } else {
+            await Future.forEach(responseUsuarioById.userRole, (userRole) {
+              if (!responsePreCadastro.userRole.contains(userRole)) {
+                responsePreCadastro.userRole.add(userRole);
+              }
+            });
+            await precadastroFirebaseDataSource.createPrecadastro(precadastro: responsePreCadastro);
+            var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: responseUsuarioById);
+            await core.setUserData();
+            return response;
+          }
+        } else {
+          await core.setUserData();
+          return true;
+        }
       }
     } catch (e) {
       throw Exception('Erro ao verificar');

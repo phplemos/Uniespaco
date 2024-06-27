@@ -42,7 +42,7 @@ class VisualizarGestoresReservaVinculadosAosEspacosWidget extends StatelessWidge
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return ListarGestoresWidget(gestores: gestores, espaco: controller.espacos[index]!);
+                            return ListarGestoresReservaWidget(gestores: gestores, espaco: controller.espacos[index]!);
                           });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sem gestores vinculados a esse espaco!')));
