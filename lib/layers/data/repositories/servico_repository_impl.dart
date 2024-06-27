@@ -157,4 +157,13 @@ class ServicoRepositoryImpl implements ServicoRepository {
       return Left(Exception('Erro ao atualizar'));
     }
   }
+
+  @override
+  Future<Either<Exception, List<UsuarioEntity?>>> getAllGestoresServico() async {
+    try {
+      return Right(await servicoDatasource.getAllGestoresServico());
+    } catch (e) {
+      return Left(Exception('Erro ao listar todos gestores de servico'));
+    }
+  }
 }

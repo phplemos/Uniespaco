@@ -4,6 +4,7 @@ import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
 
 class LoginWidget extends StatelessWidget {
   final LoginController controller;
+
   const LoginWidget({
     super.key,
     required this.controller,
@@ -33,6 +34,7 @@ class LoginWidget extends StatelessWidget {
                       if (result) {
                         if (context.mounted) Navigator.pushReplacementNamed(context, '/home');
                       } else {
+                        controller.logout();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Apenas email "@uesb.edu.br"!')),

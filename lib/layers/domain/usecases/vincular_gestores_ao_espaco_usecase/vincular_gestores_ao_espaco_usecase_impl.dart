@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
+import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/repositories/espaco_repository.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_usecase/vincular_gestores_ao_espaco_usecase.dart';
 
@@ -10,7 +11,7 @@ class VincularGestoresAoEspacoUsecaseImpl implements VincularGestoresAoEspacoUse
   VincularGestoresAoEspacoUsecaseImpl({required this.espacoRepository});
 
   @override
-  Future<Either<Exception, bool>> call({required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) {
-    return espacoRepository.vincularGestoresEspaco(espacoEntity: espacoEntity, newAgenda: newAgenda);
+  Future<Either<Exception, bool>> call({required UsuarioEntity usuario, required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) {
+    return espacoRepository.vincularGestoresEspaco(usuario: usuario, espacoEntity: espacoEntity, newAgenda: newAgenda);
   }
 }

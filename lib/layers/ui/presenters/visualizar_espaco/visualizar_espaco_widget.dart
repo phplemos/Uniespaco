@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/components/listar_reservas_widget.dart';
 
 class VisualizarEspacoWidget extends StatefulWidget {
   final EspacoEntity espaco;
+  late final ValueNotifier<Map<DateTime, Map<String, AgendaEntity>>> agenda;
 
-  const VisualizarEspacoWidget({
+  VisualizarEspacoWidget({
     super.key,
     required this.espaco,
-  });
+  }) {
+    agenda = ValueNotifier<Map<DateTime, Map<String, AgendaEntity>>>(espaco.agenda);
+  }
 
   @override
   State<VisualizarEspacoWidget> createState() => _VisualizarEspacoWidgetState();
@@ -24,18 +28,9 @@ class _VisualizarEspacoWidgetState extends State<VisualizarEspacoWidget> {
         child: Column(
           children: [
             ListarReservasWidget(
-              agenda: widget.espaco.agenda,
+              agenda: widget.agenda.value,
               espaco: widget.espaco,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Sair'),
-                  child: const Text('Solicitar Manutenção'),
-                )
-              ],
-            )
           ],
         ),
       ),

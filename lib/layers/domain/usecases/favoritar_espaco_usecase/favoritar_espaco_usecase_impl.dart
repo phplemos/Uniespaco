@@ -10,7 +10,7 @@ class FavoritarEspacoUseCaseImpl implements FavoritarEspacoUseCase {
   FavoritarEspacoUseCaseImpl({required this.espacoRepository});
 
   @override
-  Future<Either<Exception, bool>> call({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity}) {
+  Future<Either<Exception, bool>> call({required List<EspacoEntity?> espacosFavoritados, required UsuarioEntity usuarioEntity}) {
     return espacoRepository.favoritarEspaco(espacosFavoritados: espacosFavoritados, usuarioEntity: usuarioEntity);
   }
 }

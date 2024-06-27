@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/shared/espaco_provider.dart';
+import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco.dart';
 
 class BarradePesquisaWidget extends SearchDelegate {
-
-  final EspacosProvider pesquisaEspacos = GetIt.I.get();
+  final HomeController controller = GetIt.I.get<HomeController>();
 
   @override
   String get searchFieldLabel => 'Busca por pavilhão';
@@ -38,12 +38,12 @@ class BarradePesquisaWidget extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return SuggestionOrResultWidget(espaco: pesquisaEspacos, query: query);
+    return SuggestionOrResultWidget(controller: controller, query: query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return SuggestionOrResultWidget(espaco: pesquisaEspacos, query: query);
+    return SuggestionOrResultWidget(controller: controller, query: query);
   }
 }
 
@@ -52,16 +52,15 @@ class SuggestionOrResultWidget extends StatelessWidget {
   SuggestionOrResultWidget({
     super.key,
     required this.query,
-    required this.espaco,
+    required this.controller,
   });
 
   String? query;
-  final EspacosProvider espaco;
+  final HomeController controller;
 
   @override
   Widget build(BuildContext context) {
-    final List<EspacoEntity?> suggestionList = query!.isEmpty ? [] : espaco.espacos!.where((item) => item!.localizacao.pavilhao.toLowerCase().contains(query!.toLowerCase())).toList();
-
+    final List<EspacoEntity?> suggestionList = query!.isEmpty ? [] : controller.espacos.where((item) => item!.localizacao.pavilhao.toLowerCase().contains(query!.toLowerCase())).toList();
     return StatefulBuilder(
       builder: (context, setState) {
         return ListView.builder(
@@ -69,9 +68,19 @@ class SuggestionOrResultWidget extends StatelessWidget {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: suggestionList[index]!))),
-              child: ListTile(
+              child: CheckboxListTile(
                 title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
                 subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
+                value: controller.espacosFavoritos.contains(suggestionList[index]),
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (value!) {
+                      controller.favoritarEspaco(espaco: suggestionList[index]!);
+                    } else {
+                      controller.desfavoritarEspaco(espaco: suggestionList[index]!);
+                    }
+                  });
+                },
               ),
             );
           },

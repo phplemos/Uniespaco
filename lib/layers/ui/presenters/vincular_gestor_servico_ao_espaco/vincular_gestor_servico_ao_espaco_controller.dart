@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:uniespaco/core/horario_list_initiializer/agenda_initializer.dart';
+import 'package:uniespaco/layers/data/datasources/remote/firebase/precadastro/precadastro_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_reserva_cadastrados_usecase/listar_gestores_reserva_cadastrados_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_servico_cadastrados_usecase/listar_gestores_servico_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_professores_cadastrados_usecase/listar_professores_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_setores_cadastrados_usecase/listar_setores_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_por_campus_usecase/listar_espacos_por_campus.dart';
@@ -74,6 +77,9 @@ class VincularGestorServicoAoEspacoControllerImpl extends VincularGestorServicoA
   final VerInformacaoDoUsuarioUseCase verInformacaoDoUsuarioUseCase;
   final ListarEspacosPorCampusUseCase listarTodosEspacosPorCampusUseCase;
   final VincularGestoresAoEspacoUsecase vincularGestoresAoEspacoUsecase;
+  final ListarGestoresReservaCadastradosUsecase listarGestoresReservaCadastradosUsecase;
+  final ListarGestoresServicoCadastradosUsecase listarGestoresServicoCadastradosUsecase;
+  final PrecadastroFirebaseDataSource precadastroFirebaseDataSource;
 
   VincularGestorServicoAoEspacoControllerImpl({
     required this.listarTodosEspacosUseCase,
@@ -82,6 +88,9 @@ class VincularGestorServicoAoEspacoControllerImpl extends VincularGestorServicoA
     required this.verInformacaoDoUsuarioUseCase,
     required this.listarTodosEspacosPorCampusUseCase,
     required this.vincularGestoresAoEspacoUsecase,
+    required this.listarGestoresReservaCadastradosUsecase,
+    required this.listarGestoresServicoCadastradosUsecase,
+    required this.precadastroFirebaseDataSource,
   });
 
   @override
@@ -89,8 +98,12 @@ class VincularGestorServicoAoEspacoControllerImpl extends VincularGestorServicoA
     List<UsuarioEntity?> gestores = [];
     var responseSetores = await listarSetoresCadastradosUseCase();
     var responseProfessores = await listarProfessoresCadastradosUseCase();
+    var responseGestoresServico = await listarGestoresServicoCadastradosUsecase();
+    var responseGestoresReserva = await listarGestoresReservaCadastradosUsecase();
     responseSetores.fold((error) => [], (success) => gestores.addAll(success));
     responseProfessores.fold((error) => [], (success) => gestores.addAll(success));
+    responseGestoresServico.fold((error) => [], (success) => gestores.addAll(success));
+    responseGestoresReserva.fold((error) => [], (success) => gestores.addAll(success));
     return gestores;
   }
 
@@ -189,7 +202,14 @@ class VincularGestorServicoAoEspacoControllerImpl extends VincularGestorServicoA
       }
       return agenda;
     });
-    final response = await vincularGestoresAoEspacoUsecase(espacoEntity: espaco!, newAgenda: agenda);
+    _gestorServico?.userRole.add(UserRole.gestorServico);
+    var responsePreCadastro = await precadastroFirebaseDataSource.getPrecadastroByEmail(email: _gestorServico!.email);
+
+    if (responsePreCadastro != null) {
+      responsePreCadastro.userRole.add(UserRole.gestorServico);
+      precadastroFirebaseDataSource.updatePrecadastro(precadastro: responsePreCadastro);
+    }
+    final response = await vincularGestoresAoEspacoUsecase(usuario: _gestorServico!, espacoEntity: espaco!, newAgenda: agenda);
     return response.fold((error) => false, (success) => true);
   }
 

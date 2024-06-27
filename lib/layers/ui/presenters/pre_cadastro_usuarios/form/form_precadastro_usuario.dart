@@ -30,17 +30,16 @@ class FormPreCadastroUsuarioWidget extends StatelessWidget {
             ),
             DropdownButton<String>(
                 isExpanded: true,
-                value: controller.tipoUsuario,
+                value: controller.userRole,
                 onChanged: (newValue) {
                   if (newValue != null) {
-                    controller.tipoUsuario = newValue;
+                    controller.userRole = newValue;
                   }
                 },
-                items: ['setor', 'professor'].map((String tipoUsuario) {
-                  return DropdownMenuItem<String>(
-                      value: tipoUsuario, child: Text(tipoUsuario));
+                items: ['gestorReserva', 'gestorServico', 'setor', 'professor'].map((String userRole) {
+                  return DropdownMenuItem<String>(value: userRole, child: Text(userRole));
                 }).toList()),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             ElevatedButton(
@@ -58,8 +57,7 @@ class FormPreCadastroUsuarioWidget extends StatelessWidget {
 
   void confirmarPrecadastro(BuildContext context) {
     controller.save();
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('PreCadastro efetuado com sucesso!')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PreCadastro efetuado com sucesso!')));
     if (context.mounted) {
       Navigator.pushReplacementNamed(context, '/home');
     }

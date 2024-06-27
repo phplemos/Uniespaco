@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_reserva_vinculados_aos_espacos/components/listar_gestores_widget.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_servico_vinculados_aos_espacos/components/listar_gestores_widget.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_gestores_servico_vinculados_aos_espacos/visualizar_gestores_servico_vinculados_aos_espacos_controller.dart';
 
 class VisualizarGestoresServicoVinculadosAosEspacosWidget extends StatelessWidget {
@@ -42,7 +43,7 @@ class VisualizarGestoresServicoVinculadosAosEspacosWidget extends StatelessWidge
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return ListarGestoresWidget(gestores: gestores, espaco: controller.espacos[index]!);
+                            return ListarGestoresServicoWidget(gestores: gestores, espaco: controller.espacos[index]!);
                           });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sem gestores vinculados a esse espaco!')));

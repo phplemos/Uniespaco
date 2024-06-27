@@ -6,7 +6,6 @@ import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/domain/repositories/setor_repository.dart';
 
 class SetorRepositoryImpl implements SetorRepository {
-  
   UsuarioFirebaseDataSource usuarioDatasource;
 
   SetorRepositoryImpl({
@@ -17,7 +16,8 @@ class SetorRepositoryImpl implements SetorRepository {
   Future<Either<Exception, List<UsuarioEntity?>>> getAll() async {
     try {
       final usuarios = await usuarioDatasource.getAllUsuarios();
-      final setores = usuarios.where((usuario) => usuario!.tipoUsuario == 'setor').toList();
+
+      final setores = usuarios.where((usuario) => usuario!.userRole.contains(UserRole.setor)).toList();
       return Right(setores);
     } catch (e) {
       throw Exception('Erro ao buscar os setores');

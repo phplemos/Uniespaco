@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:uniespaco/core/horario_list_initiializer/agenda_initializer.dart';
+import 'package:uniespaco/layers/data/datasources/remote/firebase/precadastro/precadastro_firebase_datasource.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_reserva_cadastrados_usecase/listar_gestores_reserva_cadastrados_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_servico_cadastrados_usecase/listar_gestores_servico_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_professores_cadastrados_usecase/listar_professores_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_setores_cadastrados_usecase/listar_setores_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_por_campus_usecase/listar_espacos_por_campus.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_espacos_usecase/listar_espacos_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/pre_cadastrar_usuario_usecase/pre_cadastrar_usuario_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/ver_informacao_do_usuario_usecase/ver_informacao_do_usuario_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/vincular_gestores_ao_espaco_usecase/vincular_gestores_ao_espaco_usecase.dart';
 
@@ -45,7 +49,6 @@ abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
 
   UsuarioEntity? get gestorReserva => _gestorReserva;
 
-
   Map<String, AgendaEntity>? _agendaTurno;
 
   set agendaTurno(Map<String, AgendaEntity>? agenda) {
@@ -54,7 +57,6 @@ abstract class VincularGestorReservaAoEspacoController extends ChangeNotifier {
   }
 
   Map<String, AgendaEntity>? get agendaTurno => _agendaTurno;
-
 
   Future<UsuarioEntity?> getUsuario();
 
@@ -76,6 +78,9 @@ class VincularGestorReservaAoEspacoControllerImpl extends VincularGestorReservaA
   final VerInformacaoDoUsuarioUseCase verInformacaoDoUsuarioUseCase;
   final ListarEspacosPorCampusUseCase listarTodosEspacosPorCampusUseCase;
   final VincularGestoresAoEspacoUsecase vincularGestoresAoEspacoUsecase;
+  final ListarGestoresReservaCadastradosUsecase listarGestoresReservaCadastradosUsecase;
+  final ListarGestoresServicoCadastradosUsecase listarGestoresServicoCadastradosUsecase;
+  final PrecadastroFirebaseDataSource precadastroFirebaseDataSource;
 
   VincularGestorReservaAoEspacoControllerImpl({
     required this.listarTodosEspacosUseCase,
@@ -84,6 +89,9 @@ class VincularGestorReservaAoEspacoControllerImpl extends VincularGestorReservaA
     required this.verInformacaoDoUsuarioUseCase,
     required this.listarTodosEspacosPorCampusUseCase,
     required this.vincularGestoresAoEspacoUsecase,
+    required this.listarGestoresReservaCadastradosUsecase,
+    required this.listarGestoresServicoCadastradosUsecase,
+    required this.precadastroFirebaseDataSource,
   });
 
   @override
@@ -91,8 +99,12 @@ class VincularGestorReservaAoEspacoControllerImpl extends VincularGestorReservaA
     List<UsuarioEntity?> gestores = [];
     var responseSetores = await listarSetoresCadastradosUseCase();
     var responseProfessores = await listarProfessoresCadastradosUseCase();
+    var responseGestoresServico = await listarGestoresServicoCadastradosUsecase();
+    var responseGestoresReserva = await listarGestoresReservaCadastradosUsecase();
     responseSetores.fold((error) => [], (success) => gestores.addAll(success));
     responseProfessores.fold((error) => [], (success) => gestores.addAll(success));
+    responseGestoresServico.fold((error) => [], (success) => gestores.addAll(success));
+    responseGestoresReserva.fold((error) => [], (success) => gestores.addAll(success));
     return gestores;
   }
 
@@ -191,7 +203,14 @@ class VincularGestorReservaAoEspacoControllerImpl extends VincularGestorReservaA
       }
       return agenda;
     });
-    final response = await vincularGestoresAoEspacoUsecase(espacoEntity: espaco!, newAgenda: agenda);
+    // TODO Verificar se ja tem o gestor de reserva, upgrades futuros
+    _gestorReserva?.userRole.add(UserRole.gestorReserva);
+    var responsePreCadastro = await precadastroFirebaseDataSource.getPrecadastroByEmail(email: _gestorReserva!.email);
+    if (responsePreCadastro != null) {
+      responsePreCadastro.userRole.add(UserRole.gestorReserva);
+      precadastroFirebaseDataSource.updatePrecadastro(precadastro: responsePreCadastro);
+    }
+    final response = await vincularGestoresAoEspacoUsecase(usuario: _gestorReserva!, espacoEntity: espaco!, newAgenda: agenda);
     return response.fold((error) => false, (success) => true);
   }
 

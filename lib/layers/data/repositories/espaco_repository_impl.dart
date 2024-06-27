@@ -58,8 +58,10 @@ class EspacoRepositoryImpl implements EspacoRepository {
       final usuario = await usuarioDatasource.getUsuarioById(id: usuarioId);
       List<EspacoEntity?> espacosFavoritos = [];
       if (usuario != null) {
-        Future.forEach(usuario.espacosFavoritados!, (espacoId) async {
-          espacosFavoritos.add(await espacoDatasource.getEspacoById(id: espacoId));
+        Future.forEach(usuario.espacosFavoritados, (espacoId) async {
+          if (espacoId != null) {
+            espacosFavoritos.add(await espacoDatasource.getEspacoById(id: espacoId));
+          }
         });
         return Right(espacosFavoritos);
       }
@@ -70,13 +72,45 @@ class EspacoRepositoryImpl implements EspacoRepository {
   }
 
   @override
-  Future<Either<Exception, bool>> favoritarEspaco({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity}) async {
-    throw UnimplementedError();
+  Future<Either<Exception, bool>> favoritarEspaco({required List<EspacoEntity?> espacosFavoritados, required UsuarioEntity usuarioEntity}) async {
+    try {
+      final usuario = await usuarioDatasource.getUsuarioById(id: usuarioEntity.id);
+      final List<String> idEspacosFavoritados = [];
+      if (usuario != null) {
+        espacosFavoritados.map((espaco) {
+          if (espaco != null) {
+            idEspacosFavoritados.add(espaco.id);
+          }
+        });
+        usuario.espacosFavoritados?.addAll(idEspacosFavoritados);
+        var response = await usuarioDatasource.updateUsuario(usuarioEntity: usuario);
+        return Right(response);
+      }
+      return const Right(false);
+    } catch (e) {
+      return Left(Exception('Erro ao favoritar espacos'));
+    }
   }
 
   @override
-  Future<Either<Exception, bool>> desfavoritarEspaco({required List<EspacoEntity>? espacosFavoritados, required UsuarioEntity usuarioEntity}) async {
-    throw UnimplementedError();
+  Future<Either<Exception, bool>> desfavoritarEspaco({required List<EspacoEntity?> espacosFavoritados, required UsuarioEntity usuarioEntity}) async {
+    try {
+      final usuario = await usuarioDatasource.getUsuarioById(id: usuarioEntity.id);
+      final List<String> idEspacosFavoritados = [];
+      if (usuario != null) {
+        espacosFavoritados.map((espaco) {
+          if (espaco != null) {
+            idEspacosFavoritados.add(espaco.id);
+          }
+        });
+        usuario.espacosFavoritados?.addAll(idEspacosFavoritados);
+        var response = await usuarioDatasource.updateUsuario(usuarioEntity: usuario);
+        return Right(response);
+      }
+      return const Right(false);
+    } catch (e) {
+      return Left(Exception('Erro ao favoritar espacos'));
+    }
   }
 
   @override
@@ -90,10 +124,11 @@ class EspacoRepositoryImpl implements EspacoRepository {
   }
 
   @override
-  Future<Either<Exception, bool>> vincularGestoresEspaco({required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) async {
+  Future<Either<Exception, bool>> vincularGestoresEspaco({required UsuarioEntity usuario, required EspacoEntity espacoEntity, required Map<DateTime, Map<String, AgendaEntity>> newAgenda}) async {
     try {
       espacoEntity.agenda = newAgenda;
       await espacoDatasource.updateEspaco(espaco: espacoEntity);
+      await usuarioDatasource.updateUsuario(usuarioEntity: usuario);
       return const Right(true);
     } catch (e) {
       return Left(Exception('Erro ao vincular os gestores'));

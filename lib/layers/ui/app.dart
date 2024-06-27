@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login.dart';
+import 'package:uniespaco/layers/ui/presenters/meus_servicos/meus_servicos.dart';
 import 'package:uniespaco/layers/ui/presenters/minhas_reservas/minhas_reservas.dart';
 import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario.dart';
 import 'package:uniespaco/layers/ui/presenters/professores_cadastrados/professores_cadastrados.dart';
@@ -38,7 +39,8 @@ class AppWidget extends StatelessWidget {
         '/visualizar_gestores_servico_vinculados_aos_espacos': (context) => VisualizarGestoresServicoVinculadosAosEspacosPage(),
         '/ver_historico_reserva': (context) => VerHistoricoReservasPorEspacoGeridoPage(),
         '/ver_historico_servico': (context) => VerHistoricoServicosPorEspacoGeridoPage(),
-        '/minhas_reservas': (context) => MinhasReservasPage()
+        '/minhas_reservas': (context) => MinhasReservasPage(),
+        '/meus_servicos': (context) => MeusServicosPage()
       },
     );
   }

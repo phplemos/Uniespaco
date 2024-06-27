@@ -6,9 +6,11 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:uniespaco/core/role_handlers.dart';
 import 'package:uniespaco/layers/domain/entities/agenda_entity.dart';
 import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
+import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico.dart';
 
@@ -314,7 +316,14 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
                   ),
                 ),
               ),
-        _horariosSelecionados.isNotEmpty ? _solicitarReserva() : Container(),
+        _horariosSelecionados.isNotEmpty
+            ? WidgetWithRole(allowedRoles: const [
+                UserRole.professor,
+                UserRole.setor,
+                UserRole.gestorReserva,
+                UserRole.gestorServico,
+              ], child: _solicitarReserva())
+            : Container(),
         _solicitarServico()
       ],
     );

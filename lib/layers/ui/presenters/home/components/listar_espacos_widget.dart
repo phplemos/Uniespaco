@@ -36,7 +36,7 @@ class _ListarEspacosWidgetState extends State<ListarEspacosWidget> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos![index]!)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos[index]!)));
                 },
               );
             },

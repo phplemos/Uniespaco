@@ -13,7 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    late final LoginController controller = GetIt.I.get<LoginController>();
+    final LoginController controller = GetIt.I.get<LoginController>();
 
     return AnimatedBuilder(
       animation: controller,

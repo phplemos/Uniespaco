@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:uniespaco/core/core.dart';
 import 'package:uniespaco/layers/data/datasources/google_auth.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/firestore_datasource.dart';
 import 'package:uniespaco/layers/data/datasources/remote/firebase/google_auth_impl.dart';
@@ -26,6 +27,8 @@ import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadast
 import 'package:uniespaco/layers/domain/usecases/cadastrar_espaco_usecase/cadastrar_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/cancelar_reserva_usecase/cancelar_reserva_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/cancelar_reserva_usecase/cancelar_reserva_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/cancelar_servico_usecase/cancelar_servico_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/cancelar_servico_usecase/cancelar_servico_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase.dart';
@@ -46,6 +49,10 @@ import 'package:uniespaco/layers/domain/usecases/listar_gestores_de_reserva_vinc
 import 'package:uniespaco/layers/domain/usecases/listar_gestores_de_reserva_vinculados_aos_espacos_usecase/listar_gestores_de_reserva_vinculados_aos_espacos_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_gestores_de_servico_vinculados_aos_espacos_usecase/listar_gestores_de_servico_vinculados_aos_espacos_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_gestores_de_servico_vinculados_aos_espacos_usecase/listar_gestores_de_servico_vinculados_aos_espacos_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_reserva_cadastrados_usecase/listar_gestores_reserva_cadastrados_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_reserva_cadastrados_usecase/listar_gestores_reserva_cadastrados_usecase_impl.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_servico_cadastrados_usecase/listar_gestores_servico_cadastrados_usecase.dart';
+import 'package:uniespaco/layers/domain/usecases/listar_gestores_servico_cadastrados_usecase/listar_gestores_servico_cadastrados_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_professores_cadastrados_usecase/listar_professores_cadastrados_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_professores_cadastrados_usecase/listar_professores_cadastrados_usecase_impl.dart';
 import 'package:uniespaco/layers/domain/usecases/listar_reservas_usuario_por_dia_usecase/listar_reservas_usuario_por_dia_usecase.dart';
@@ -89,6 +96,7 @@ import 'package:uniespaco/layers/ui/presenters/avaliar_solicitacao_servico/avali
 import 'package:uniespaco/layers/ui/presenters/cadastro_espaco/cadastro_espaco_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/login/login_controller.dart';
+import 'package:uniespaco/layers/ui/presenters/meus_servicos/meus_servicos_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/minhas_reservas/minhas_reservas_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/pre_cadastro_usuarios/pre_cadastro_usuario_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/professores_cadastrados/professores_cadastrados_controller.dart';
@@ -107,11 +115,13 @@ import 'package:uniespaco/layers/ui/presenters/visualizar_servicos_por_espaco_ge
 class Inject {
   static void init() {
     GetIt getIt = GetIt.instance;
-    //datasources
+    // DataSources
     getIt.registerLazySingleton<FirestoreDataSource>(() => FirestoreDataSource());
     getIt.registerLazySingleton<UsuarioFirebaseDataSource>(() => UsuarioFirebaseDataSource());
     getIt.registerLazySingleton<PrecadastroFirebaseDataSource>(() => PrecadastroFirebaseDataSource());
     getIt.registerLazySingleton<GoogleAuth>(() => GoogleAuthImpl(usuarioFirebaseDataSource: getIt(), precadastroFirebaseDataSource: getIt()));
+    // Core
+    getIt.registerLazySingleton<Core>(() => Core(googleAuth: getIt(), usuarioFirebaseDataSource: getIt()));
     //repositories
     getIt.registerLazySingleton<EspacoRepository>(() => EspacoRepositoryImpl());
     getIt.registerLazySingleton<UsuarioRepository>(() => UsuarioRepositoryImpl(
@@ -123,7 +133,8 @@ class Inject {
 
     getIt.registerLazySingleton<ReservaRepository>(() => ReservaRepositoryImpl());
     getIt.registerLazySingleton<ServicoRepository>(() => ServicoRepositoryImpl());
-    //usecases
+    // Core
+    // UseCases
     getIt.registerLazySingleton<CadastrarEspacoUseCase>(() => CadastrarEspacoUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<ConsultarEspacoUseCase>(() => ConsultarEspacoUseCaseImpl(espacoRepository: getIt()));
     getIt.registerLazySingleton<EfetuarLoginUseCase>(() => EfetuarLoginUseCaseImpl(usuarioRepository: getIt()));
@@ -151,11 +162,14 @@ class Inject {
     getIt.registerLazySingleton<BuscarUsuarioPeloIdUsecase>(() => BuscarUsuarioPeloIdUsecaseImpl(usuarioRepository: getIt()));
     getIt.registerLazySingleton<AlterarSituacaoReservaUsecase>(() => AlterarSituacaoReservaUsecaseImpl(reservaRepository: getIt()));
     getIt.registerLazySingleton<AlterarSituacaoServicoUsecase>(() => AlterarSituacaoServicoUsecaseImpl(servicoRepository: getIt()));
-    getIt.registerFactory<VerHistoricoServicosPorEspacoUseCase>(() => VerHistoricoServicosPorEspacoUseCaseImpl(servicoRepository: getIt()));
-    getIt.registerFactory<VerHistoricoReservasPorEspacoUseCase>(() => VerHistoricoReservasPorEspacoUseCaseImpl(reservaRepository: getIt()));
-    getIt.registerFactory<ListarTodasReservasVinculadasAoUsuarioUseCase>(() => ListarTodasReservasVinculadasAoUsuarioUseCaseImpl(reservaRepository: getIt()));
-    getIt.registerFactory<ListarTodosServicosVinculadosAoUsuarioUsecase>(() => ListarTodosServicosVinculadosAoUsuarioUsecaseImpl(servicoRepository: getIt()));
-    getIt.registerFactory<CancelarReservaUseCase>(() => CancelarReservaUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<VerHistoricoServicosPorEspacoUseCase>(() => VerHistoricoServicosPorEspacoUseCaseImpl(servicoRepository: getIt()));
+    getIt.registerLazySingleton<VerHistoricoReservasPorEspacoUseCase>(() => VerHistoricoReservasPorEspacoUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ListarTodasReservasVinculadasAoUsuarioUseCase>(() => ListarTodasReservasVinculadasAoUsuarioUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ListarTodosServicosVinculadosAoUsuarioUsecase>(() => ListarTodosServicosVinculadosAoUsuarioUsecaseImpl(servicoRepository: getIt()));
+    getIt.registerLazySingleton<CancelarReservaUseCase>(() => CancelarReservaUseCaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ListarGestoresReservaCadastradosUsecase>(() => ListarGestoresReservaCadastradosUsecaseImpl(reservaRepository: getIt()));
+    getIt.registerLazySingleton<ListarGestoresServicoCadastradosUsecase>(() => ListarGestoresServicoCadastradosUsecaseImpl(servicoRepository: getIt()));
+    getIt.registerLazySingleton<CancelarServicoUseCase>(() => CancelarServicoUseCaseImpl(servicoRepository: getIt()));
 
     //providers
     getIt.registerLazySingleton<UsuarioProvider>(
@@ -163,9 +177,7 @@ class Inject {
     getIt.registerLazySingleton<EspacosProvider>(() => EspacosProvider(
           listarTodosEspacosPorCampusUseCase: getIt(),
           listarTodosEspacosUseCase: getIt(),
-          favoritarEspacoUseCase: getIt(),
           verInformacaoDoUsuarioUseCase: getIt(),
-          desfavoritarEspacoUseCase: getIt(),
         ));
     getIt.registerLazySingleton<ReservaProvider>(() => ReservaProvider(listarTodasReservasUsuarioUseCase: getIt(), verInformacaoDoUsuarioUseCase: getIt()));
     //controllers
@@ -173,7 +185,8 @@ class Inject {
           efetuarLoginUseCase: getIt(),
           efetuarLogoutUseCase: getIt(),
         ));
-    getIt.registerFactory<HomeController>(() => HomeControllerImpl(espacoProvider: getIt(), usuarioProvider: getIt()));
+    // Singleton pois vai ser usado durante o ciclo de vida da aplicação
+    getIt.registerLazySingleton<HomeController>(() => HomeControllerImpl(espacoProvider: getIt(), usuarioProvider: getIt()));
     getIt.registerFactory<CadastroEspacoController>(() => CadastroEspacoControllerImpl(
           cadastrarEspacoUseCase: getIt(),
           listarProfessoresCadastradosUseCase: getIt(),
@@ -186,6 +199,9 @@ class Inject {
           verInformacaoDoUsuarioUseCase: getIt(),
           listarTodosEspacosPorCampusUseCase: getIt(),
           vincularGestoresAoEspacoUsecase: getIt(),
+          listarGestoresReservaCadastradosUsecase: getIt(),
+          listarGestoresServicoCadastradosUsecase: getIt(),
+          precadastroFirebaseDataSource: getIt(),
         ));
     getIt.registerFactory<VincularGestorServicoAoEspacoController>(() => VincularGestorServicoAoEspacoControllerImpl(
           listarTodosEspacosUseCase: getIt(),
@@ -194,6 +210,9 @@ class Inject {
           verInformacaoDoUsuarioUseCase: getIt(),
           listarTodosEspacosPorCampusUseCase: getIt(),
           vincularGestoresAoEspacoUsecase: getIt(),
+          listarGestoresReservaCadastradosUsecase: getIt(),
+          listarGestoresServicoCadastradosUsecase: getIt(),
+          precadastroFirebaseDataSource: getIt(),
         ));
     getIt.registerFactory<PreCadastroUsuarioController>(() => PreCadastroUsuarioControllerImpl(cadastrarUsuarioUseCase: getIt()));
     getIt.registerFactory<ListarReservasController>(() => ListarReservasControllerImpl());
@@ -220,5 +239,6 @@ class Inject {
     // getIt.registerFactory<VerHistoricoServicosPorEspacoController>(() => VerHistoricoServicosPorEspacoControllerImpl());
     getIt.registerFactory<MinhasReservasController>(
         () => MinhasReservasControllerImpl(listarTodasReservasVinculadasAoUsuarioUseCase: getIt(), usuarioProvider: getIt(), cancelarReservaUseCase: getIt()));
+    getIt.registerFactory<MeusServicosController>(() => MeusServicosControllerImpl(listarTodosServicosVinculadosAoUsuarioUsecase: getIt(), usuarioProvider: getIt(), cancelarServicoUseCase: getIt()));
   }
 }

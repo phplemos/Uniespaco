@@ -24,4 +24,6 @@ abstract class ReservaRepository {
   Future<Either<Exception, Map<EspacoEntity, List<ReservaEntity?>>>> getHistoryReservaPorEspaco({required String gestorId});
 
   Future<Either<Exception, bool>> cancelarReserva({required String reservaId});
+
+  Future<Either<Exception, List<UsuarioEntity?>>> getAllGestoresReserva();
 }
