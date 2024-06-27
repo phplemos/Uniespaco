@@ -66,23 +66,45 @@ class SuggestionOrResultWidget extends StatelessWidget {
         return ListView.builder(
           itemCount: suggestionList.length,
           itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: suggestionList[index]!))),
-              child: CheckboxListTile(
-                title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
-                subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
-                value: controller.espacosFavoritos.contains(suggestionList[index]),
-                onChanged: (bool? value) {
+            bool isFavorited = controller.espacosFavoritos.any((espaco) => espaco?.id == suggestionList[index]?.id);
+            return ListTile(
+              title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
+              subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
+              trailing: InkWell(
+                onTap: () {
                   setState(() {
-                    if (value!) {
-                      controller.favoritarEspaco(espaco: suggestionList[index]!);
+                    if (!isFavorited) {
+                      controller.favoritarEspaco(espacoEntity: suggestionList[index]!);
+                      isFavorited = controller.espacosFavoritos.any((espaco) => espaco?.id == suggestionList[index]?.id);
                     } else {
-                      controller.desfavoritarEspaco(espaco: suggestionList[index]!);
+                      controller.desfavoritarEspaco(espacoEntity: suggestionList[index]!);
+                      isFavorited = controller.espacosFavoritos.any((espaco) => espaco?.id == suggestionList[index]?.id);
                     }
                   });
                 },
+                child: isFavorited
+                    ? const Icon(
+                        Icons.favorite_rounded,
+                        color: Colors.red,
+                      )
+                    : const Icon(Icons.favorite_outline),
               ),
             );
+
+            // return CheckboxListTile(
+            //   title: Text('Numero: ${suggestionList[index]!.localizacao.numero}'),
+            //   subtitle: Text('Campus: ${suggestionList[index]!.localizacao.campus}, Pavilhão ${suggestionList[index]!.localizacao.pavilhao}'),
+            //   value: controller.espacosFavoritos.any((espaco) => espaco?.id == suggestionList[index]?.id),
+            //   onChanged: (bool? value) {
+            //     setState(() {
+            //       if (value!) {
+            //         controller.favoritarEspaco(espacoEntity: suggestionList[index]!);
+            //       } else {
+            //         controller.desfavoritarEspaco(espacoEntity: suggestionList[index]!);
+            //       }
+            //     });
+            //   },
+            // );
           },
         );
       },
@@ -90,6 +112,7 @@ class SuggestionOrResultWidget extends StatelessWidget {
   }
 }
 
+// () => Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: ValueNotifier<EspacoEntity>(suggestionList[index]!))))
 class NoResultWidget extends StatelessWidget {
   const NoResultWidget({super.key});
 

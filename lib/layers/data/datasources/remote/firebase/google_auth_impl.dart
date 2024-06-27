@@ -162,28 +162,13 @@ class GoogleAuthImpl implements GoogleAuth {
       } else {
         // Caso usuario seja cadastrado, verifica se há um pre cadastro contendo uma nova permissao
         if (responsePreCadastro != null) {
-          // Verifica se o pre cadastro tem mais roles que o usuario, se sim, identifica qual é e adiciona
-          if (responsePreCadastro.userRole.length > responseUsuarioById.userRole.length) {
-            await Future.forEach(responsePreCadastro.userRole, (userRole) {
-              if (!responseUsuarioById.userRole.contains(userRole)) {
-                responseUsuarioById.userRole.add(userRole);
-              }
-            });
-            var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: responseUsuarioById);
-            await core.setUserData();
-            return response;
-          } else {
-            await Future.forEach(responseUsuarioById.userRole, (userRole) {
-              if (!responsePreCadastro.userRole.contains(userRole)) {
-                responsePreCadastro.userRole.add(userRole);
-              }
-            });
-            await precadastroFirebaseDataSource.createPrecadastro(precadastro: responsePreCadastro);
-            var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: responseUsuarioById);
-            await core.setUserData();
-            return response;
-          }
+          // Verifica se o pre cadastro tem mais roles que o usuario, se sim, adiciona a que tem menos e atualiza
+          responseUsuarioById.userRole = responsePreCadastro.userRole;
+          var response = await usuarioFirebaseDataSource.createUsuario(usuarioEntity: responseUsuarioById);
+          await core.setUserData();
+          return response;
         } else {
+          await precadastroFirebaseDataSource.createPrecadastro(precadastro: PreCadastroUsuarioEntity(email: responseUsuarioById.email, userRole: responseUsuarioById.userRole));
           await core.setUserData();
           return true;
         }

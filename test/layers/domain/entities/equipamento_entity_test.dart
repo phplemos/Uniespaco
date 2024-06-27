@@ -1,13 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uniespaco/layers/domain/entities/equipamento_entity.dart';
+import 'package:uuid/uuid.dart';
 
 main() {
-  test('Testar se o objeto vem nulo', () {
-    var equipamento = EquipamentoEntity(
-        id: '1', nome: 'Televisão', tipo: 'Eletronico', numTombo: '23132');
+  const uuid = Uuid();
 
-    expect(equipamento, isNotNull);
+  test('Valida criação de entidade com todos atributos', () {
+    var id = uuid.v4();
+    EquipamentoEntity equipamento = EquipamentoEntity(id: id, nome: 'lampada', tipo: 'vidro', numTombo: '123');
+
+    expect(EquipamentoEntity(id: id, nome: 'lampada', tipo: 'vidro', numTombo: '123'), equipamento);
   });
 
-  //Elaborar melhor as regras de negocio
+  test('Valida criação de entidade com sem alguns', () {
+    var id = uuid.v4();
+    expect(EquipamentoEntity(id: id, nome: '', tipo: 'vidro', numTombo: '321'), EquipamentoEntity(id: id, nome: '', tipo: 'vidro', numTombo: '321'));
+  });
 }

@@ -11,6 +11,14 @@ class MeusServicosWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const Center(
+          heightFactor: 2,
+          child: Text(
+            "Servicos que solicitei",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        const Divider(),
         Expanded(
           child: ListView.builder(
             itemCount: controller.servicos.length,

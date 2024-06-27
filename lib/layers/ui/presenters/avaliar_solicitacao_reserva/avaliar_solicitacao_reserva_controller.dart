@@ -8,6 +8,7 @@ import 'package:uniespaco/layers/domain/usecases/alterar_situacao_reserva_usecas
 import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_reserva_usecase/consultar_reserva_usecase.dart';
+import 'package:uniespaco/layers/shared/espaco_provider.dart';
 
 abstract class AvaliarSolicitacaoReservaController extends ChangeNotifier {
   final loading = ValueNotifier<bool>(true);
@@ -45,12 +46,14 @@ abstract class AvaliarSolicitacaoReservaController extends ChangeNotifier {
 }
 
 class AvaliarSolicitacaoReservaControllerImpl extends AvaliarSolicitacaoReservaController {
+  final EspacosProvider espacosProvider;
   final ConsultarEspacoUseCase consultarEspacoUseCase;
   final BuscarUsuarioPeloIdUsecase buscarUsuarioPeloIdUsecase;
   final ConsultarReservaUseCase consultarReservaUseCase;
   final AlterarSituacaoReservaUsecase alterarSituacaoReservaUsecase;
 
   AvaliarSolicitacaoReservaControllerImpl({
+    required this.espacosProvider,
     required this.consultarReservaUseCase,
     required this.buscarUsuarioPeloIdUsecase,
     required this.consultarEspacoUseCase,
@@ -72,6 +75,7 @@ class AvaliarSolicitacaoReservaControllerImpl extends AvaliarSolicitacaoReservaC
   @override
   Future<bool> atualizarSituacao({required String idReserva, required Situacao situacao}) async {
     var response = await alterarSituacaoReservaUsecase(reservaId: idReserva, situacao: situacao);
+    espacosProvider.init();
     return response.fold((error) => false, (success) => true);
   }
 }

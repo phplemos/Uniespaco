@@ -9,6 +9,7 @@ import 'package:uniespaco/layers/domain/usecases/alterar_situacao_servico_usecas
 import 'package:uniespaco/layers/domain/usecases/buscar_usuario_pelo_id_usecase/buscar_usuario_pelo_id_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_espaco_usecase/consultar_espaco_usecase.dart';
 import 'package:uniespaco/layers/domain/usecases/consultar_servico_usecase/consultar_servico_usecase.dart';
+import 'package:uniespaco/layers/shared/espaco_provider.dart';
 
 abstract class AvaliarSolicitacaoServicoController extends ChangeNotifier {
   final loading = ValueNotifier<bool>(true);
@@ -70,8 +71,10 @@ class AvaliarSolicitacaoServicoControllerImpl extends AvaliarSolicitacaoServicoC
   final BuscarUsuarioPeloIdUsecase buscarUsuarioPeloIdUsecase;
   final ConsultarServicoUsecase consultarServicoUseCase;
   final AlterarSituacaoServicoUsecase alterarSituacaoServicoUsecase;
+  final EspacosProvider espacosProvider;
 
   AvaliarSolicitacaoServicoControllerImpl({
+    required this.espacosProvider,
     required this.consultarServicoUseCase,
     required this.buscarUsuarioPeloIdUsecase,
     required this.consultarEspacoUseCase,
@@ -94,6 +97,7 @@ class AvaliarSolicitacaoServicoControllerImpl extends AvaliarSolicitacaoServicoC
   Future<bool> atualizarSituacao({required String idServico, required Situacao situacao}) async {
     dia = servico!.dia;
     var response = await alterarSituacaoServicoUsecase(servicoId: idServico, situacao: situacao, periodo: horariosSelecionados, dia: dia);
+    espacosProvider.init();
     return response.fold((error) => false, (success) => true);
   }
 }

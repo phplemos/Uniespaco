@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/layers/domain/entities/espaco_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/home/home_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco.dart';
 
@@ -25,18 +26,25 @@ class _ListarEspacosWidgetState extends State<ListarEspacosWidget> {
         children: [
           Expanded(
               child: ListView.builder(
-            itemCount: widget.controller.espacos?.length ?? 0,
+            itemCount: widget.controller.espacos.length ?? 0,
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
                 child: Card(
                   child: ListTile(
                     leading: const Icon(Icons.add_alert),
-                    title: Text("Numero: ${widget.controller.espacos![index]!.localizacao.numero}"),
-                    subtitle: Text('Modulo: ${widget.controller.espacos![index]!.localizacao.pavilhao}'),
+                    title: Text("Numero: ${widget.controller.espacos[index]!.localizacao.numero}"),
+                    subtitle: Text('Modulo: ${widget.controller.espacos[index]!.localizacao.pavilhao}'),
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => VisualizarEspacoPage(espacoEntity: widget.controller.espacos[index]!)));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VisualizarEspacoPage(
+                        idEspaco: widget.controller.espacos[index]!.id,
+                      ),
+                    ),
+                  );
                 },
               );
             },

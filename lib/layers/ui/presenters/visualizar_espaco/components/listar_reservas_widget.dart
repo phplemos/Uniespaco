@@ -13,15 +13,14 @@ import 'package:uniespaco/layers/domain/entities/horario_entity.dart';
 import 'package:uniespaco/layers/domain/entities/usuario_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_reserva/solicitar_reserva.dart';
 import 'package:uniespaco/layers/ui/presenters/solicitar_servico/solicitar_servico.dart';
+import 'package:uniespaco/layers/ui/presenters/visualizar_espaco/visualizar_espaco_controller.dart';
 
 class ListarReservasWidget extends StatefulWidget {
-  final EspacoEntity espaco;
-  final Map<DateTime, Map<String, AgendaEntity>> agenda;
+  final VisualizarEspacoController controller;
 
   const ListarReservasWidget({
     super.key,
-    required this.agenda,
-    required this.espaco,
+    required this.controller,
   });
 
   @override
@@ -52,7 +51,7 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
     _kLastDay = DateTime(_kToday.year, _kToday.month + 3, _kToday.day);
     final formatedDate = DateFormat('yyyy-MM-dd').format(_focusedDay);
     _selectedDay = dateFormat.parse(formatedDate);
-    _groupReservas(widget.agenda);
+    _groupReservas(widget.controller.espacoEntity!);
     horariosChecked.addListener(() {});
   }
 
@@ -64,268 +63,273 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TableCalendar<HorarioEntity>(
-          locale: 'pt_BR',
-          firstDay: _kFirstDay,
-          lastDay: _kLastDay,
-          focusedDay: _focusedDay,
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-          rangeStartDay: _rangeStart,
-          rangeEndDay: _rangeEnd,
-          calendarFormat: _calendarFormat,
-          rangeSelectionMode: _rangeSelectionMode,
-          eventLoader: _getReservasForDay,
-          startingDayOfWeek: StartingDayOfWeek.monday,
-          calendarStyle: const CalendarStyle(
-            selectedDecoration: BoxDecoration(
-              color: Colors.blueAccent,
-              shape: BoxShape.rectangle,
-            ),
-            //Style do texto selecionado
-            selectedTextStyle: TextStyle(color: Color.fromRGBO(238, 230, 226, 1)),
-            //Cor do dia de hoje
-            todayDecoration: BoxDecoration(
-              color: Colors.grey,
-              shape: BoxShape.rectangle,
-            ),
-            //Texto do dia de hoje
-            todayTextStyle: TextStyle(color: Colors.black54),
-            outsideDaysVisible: false,
-          ),
-          availableCalendarFormats: const {
-            CalendarFormat.month: 'mês',
-            CalendarFormat.twoWeeks: '2 Semanas',
-            CalendarFormat.week: 'Semana',
-          },
-          headerStyle: const HeaderStyle(
-            titleCentered: true,
-            formatButtonVisible: false,
-            formatButtonShowsNext: false,
-          ),
-          calendarBuilders: CalendarBuilders(
-            dowBuilder: (context, day) {
-              String text;
-              if (day.weekday == DateTime.sunday) {
-                text = 'dom';
-              } else if (day.weekday == DateTime.monday) {
-                text = 'seg';
-              } else if (day.weekday == DateTime.tuesday) {
-                text = 'ter';
-              } else if (day.weekday == DateTime.wednesday) {
-                text = 'qua';
-              } else if (day.weekday == DateTime.thursday) {
-                text = 'qui';
-              } else if (day.weekday == DateTime.friday) {
-                text = 'sex';
-              } else if (day.weekday == DateTime.saturday) {
-                text = 'sab';
-              } else {
-                text = 'err';
-              }
-              return Center(
-                child: Text(
-                  text,
-                  style: const TextStyle(color: Colors.blueGrey),
+    return AnimatedBuilder(
+      animation: widget.controller,
+      builder: (context, child) {
+        return Column(
+          children: [
+            TableCalendar<HorarioEntity>(
+              locale: 'pt_BR',
+              firstDay: _kFirstDay,
+              lastDay: _kLastDay,
+              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              rangeStartDay: _rangeStart,
+              rangeEndDay: _rangeEnd,
+              calendarFormat: _calendarFormat,
+              rangeSelectionMode: _rangeSelectionMode,
+              eventLoader: _getReservasForDay,
+              startingDayOfWeek: StartingDayOfWeek.monday,
+              calendarStyle: const CalendarStyle(
+                selectedDecoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  shape: BoxShape.rectangle,
                 ),
-              );
-            },
-            markerBuilder: (context, day, horarios) {
-              bool hasHorarioFree = horarios.any((element) => element.isReserved == false);
-              if (hasHorarioFree) {
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                        bottom: 2.0,
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
-                        ))
-                  ],
-                );
-              } else {
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                        bottom: 2.0,
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
-                        ))
-                  ],
-                );
-              }
-            },
-          ),
-          onDaySelected: _onDaySelected,
-          onRangeSelected: _onRangeSelected,
-          onPageChanged: (focusedDay) {
-            _focusedDay = focusedDay;
-          },
-        ),
-        const SizedBox(height: 36.0),
-        const Center(
-          child: Text(
-            'Disponibilidade de reserva do espaço',
-            style: TextStyle(fontSize: 18),
-          ),
-        ),
-        const SizedBox(height: 16.0),
-        ListTile(
-          titleAlignment: ListTileTitleAlignment.center,
-          title: const Text('Selecione o turno', textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
-          subtitle: Center(
-            child: DropdownButton(
-              value: _turnoSelecionado.value,
-              items: ['manha', 'tarde', 'noite'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (value) {
-                if (value != _turnoSelecionado.value) {
-                  setState(() {
-                    _turnoSelecionado.value = value!;
-                  });
-                }
+                //Style do texto selecionado
+                selectedTextStyle: TextStyle(color: Color.fromRGBO(238, 230, 226, 1)),
+                //Cor do dia de hoje
+                todayDecoration: BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.rectangle,
+                ),
+                //Texto do dia de hoje
+                todayTextStyle: TextStyle(color: Colors.black54),
+                outsideDaysVisible: false,
+              ),
+              availableCalendarFormats: const {
+                CalendarFormat.month: 'mês',
+                CalendarFormat.twoWeeks: '2 Semanas',
+                CalendarFormat.week: 'Semana',
+              },
+              headerStyle: const HeaderStyle(
+                titleCentered: true,
+                formatButtonVisible: false,
+                formatButtonShowsNext: false,
+              ),
+              calendarBuilders: CalendarBuilders(
+                dowBuilder: (context, day) {
+                  String text;
+                  if (day.weekday == DateTime.sunday) {
+                    text = 'dom';
+                  } else if (day.weekday == DateTime.monday) {
+                    text = 'seg';
+                  } else if (day.weekday == DateTime.tuesday) {
+                    text = 'ter';
+                  } else if (day.weekday == DateTime.wednesday) {
+                    text = 'qua';
+                  } else if (day.weekday == DateTime.thursday) {
+                    text = 'qui';
+                  } else if (day.weekday == DateTime.friday) {
+                    text = 'sex';
+                  } else if (day.weekday == DateTime.saturday) {
+                    text = 'sab';
+                  } else {
+                    text = 'err';
+                  }
+                  return Center(
+                    child: Text(
+                      text,
+                      style: const TextStyle(color: Colors.blueGrey),
+                    ),
+                  );
+                },
+                markerBuilder: (context, day, horarios) {
+                  bool hasHorarioFree = horarios.any((element) => element.isReserved == false);
+                  if (hasHorarioFree) {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                            bottom: 2.0,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
+                            ))
+                      ],
+                    );
+                  } else {
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                            bottom: 2.0,
+                            child: Container(
+                              width: 10,
+                              height: 10,
+                              decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.rectangle, borderRadius: BorderRadius.all(Radius.circular(15))),
+                            ))
+                      ],
+                    );
+                  }
+                },
+              ),
+              onDaySelected: _onDaySelected,
+              onRangeSelected: _onRangeSelected,
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
               },
             ),
-          ),
-        ),
-        _getReservasForDay(_selectedDay!).isNotEmpty
-            ? SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
-                child: GridView.count(
-                  crossAxisCount: 1,
-                  childAspectRatio: 30 / 9,
-                  children: [
-                    ..._getReservasForDay(_selectedDay!).map(
-                      (horario) {
-                        Widget? title;
-                        if (horario.isReserved && horario.reservaId != null) {
-                          title = Text(
-                            "Inicio: ${horario.inicio} - Reservado",
-                            style: const TextStyle(color: Colors.redAccent),
-                          );
-                        } else if (horario.isReserved && horario.servicoId != null) {
-                          title = Text(
-                            "Inicio: ${horario.inicio} - Reservado para manutenção",
-                            style: const TextStyle(color: Colors.redAccent),
-                          );
-                        } else {
-                          title = Text("Inicio: ${horario.inicio}", style: const TextStyle(color: Colors.black));
-                        }
-
-                        Widget? subtitle =
-                            horario.isReserved ? Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.red)) : Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.black));
-
-                        if (!horariosChecked.value.containsKey(horario.inicio)) {
-                          horariosChecked.value[horario.inicio] = false;
-                          return SizedBox(
-                              width: MediaQuery.of(context).size.width - 100,
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: horario.isReserved ? Colors.redAccent : Colors.greenAccent),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ), //BoxDecoration
-
-                                    /** CheckboxListTile Widget **/
-                                    child: !horario.isReserved
-                                        ? CheckboxListTile(
-                                            title: title,
-                                            subtitle: subtitle,
-                                            secondary: const Icon(Icons.schedule),
-                                            autofocus: false,
-                                            activeColor: horario.isReserved ? Colors.redAccent : Colors.greenAccent,
-                                            checkColor: Colors.white,
-                                            selected: horariosChecked.value[horario.inicio]!,
-                                            value: horariosChecked.value[horario.inicio]!,
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                horariosChecked.value.update(horario.inicio, (oldValue) => value!);
-                                                if (horariosChecked.value[horario.inicio]!) {
-                                                  _horariosSelecionados.add(horario);
-                                                } else {
-                                                  _horariosSelecionados.removeWhere((horarioSelecionado) => horarioSelecionado.inicio == horario.inicio);
-                                                }
-                                              });
-                                            },
-                                          )
-                                        : ListTile(
-                                            title: title,
-                                            subtitle: subtitle,
-                                          ),
-                                  ),
-                                ),
-                              ));
-                        }
-                        return SizedBox(
-                            width: MediaQuery.of(context).size.width - 100,
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: horario.isReserved ? Colors.redAccent : Colors.greenAccent),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: !horario.isReserved
-                                      ? CheckboxListTile(
-                                          title: title,
-                                          subtitle: subtitle,
-                                          secondary: const Icon(Icons.schedule),
-                                          autofocus: false,
-                                          activeColor: horario.isReserved ? Colors.redAccent : Colors.greenAccent,
-                                          checkColor: Colors.white,
-                                          selected: horariosChecked.value[horario.inicio]!,
-                                          value: horariosChecked.value[horario.inicio]!,
-                                          onChanged: (bool? value) {
-                                            setState(() {
-                                              horariosChecked.value.update(horario.inicio, (oldValue) => value!);
-                                              if (horariosChecked.value[horario.inicio]!) {
-                                                _horariosSelecionados.add(horario);
-                                              } else {
-                                                _horariosSelecionados.removeWhere((horarioSelecionado) => horarioSelecionado.inicio == horario.inicio);
-                                              }
-                                            });
-                                          },
-                                        )
-                                      : ListTile(
-                                          title: title,
-                                          subtitle: subtitle,
-                                        ), //CheckboxListTile
-                                ), //Container
-                              ), //Padding
-                            ));
-                      },
-                    )
-                  ],
-                ),
-              )
-            : const Card(
-                color: Colors.redAccent,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Fora do período de reserva",
-                    style: TextStyle(color: Colors.white),
-                  ),
+            const SizedBox(height: 36.0),
+            const Center(
+              child: Text(
+                'Disponibilidade de reserva do espaço',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            ListTile(
+              titleAlignment: ListTileTitleAlignment.center,
+              title: const Text('Selecione o turno', textAlign: TextAlign.center, style: TextStyle(fontSize: 14)),
+              subtitle: Center(
+                child: DropdownButton(
+                  value: _turnoSelecionado.value,
+                  items: ['manha', 'tarde', 'noite'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                  onChanged: (value) {
+                    if (value != _turnoSelecionado.value) {
+                      setState(() {
+                        _turnoSelecionado.value = value!;
+                      });
+                    }
+                  },
                 ),
               ),
-        _horariosSelecionados.isNotEmpty
-            ? WidgetWithRole(allowedRoles: const [
-                UserRole.professor,
-                UserRole.setor,
-                UserRole.gestorReserva,
-                UserRole.gestorServico,
-              ], child: _solicitarReserva())
-            : Container(),
-        _solicitarServico()
-      ],
+            ),
+            _getReservasForDay(_selectedDay!).isNotEmpty
+                ? SizedBox(
+                    height: MediaQuery.of(context).size.height - 200,
+                    child: GridView.count(
+                      crossAxisCount: 1,
+                      childAspectRatio: 30 / 9,
+                      children: [
+                        ..._getReservasForDay(_selectedDay!).map(
+                          (horario) {
+                            Widget? title;
+                            if (horario.isReserved && horario.reservaId != null) {
+                              title = Text(
+                                "Inicio: ${horario.inicio} - Reservado",
+                                style: const TextStyle(color: Colors.redAccent),
+                              );
+                            } else if (horario.isReserved && horario.servicoId != null) {
+                              title = Text(
+                                "Inicio: ${horario.inicio} - Reservado para manutenção",
+                                style: const TextStyle(color: Colors.redAccent),
+                              );
+                            } else {
+                              title = Text("Inicio: ${horario.inicio}", style: const TextStyle(color: Colors.black));
+                            }
+
+                            Widget? subtitle =
+                                horario.isReserved ? Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.red)) : Text("fim: ${horario.fim}", style: const TextStyle(color: Colors.black));
+
+                            if (!horariosChecked.value.containsKey(horario.inicio)) {
+                              horariosChecked.value[horario.inicio] = false;
+                              return SizedBox(
+                                  width: MediaQuery.of(context).size.width - 100,
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: horario.isReserved ? Colors.redAccent : Colors.greenAccent),
+                                          borderRadius: BorderRadius.circular(20),
+                                        ), //BoxDecoration
+
+                                        /** CheckboxListTile Widget **/
+                                        child: !horario.isReserved
+                                            ? CheckboxListTile(
+                                                title: title,
+                                                subtitle: subtitle,
+                                                secondary: const Icon(Icons.schedule),
+                                                autofocus: false,
+                                                activeColor: horario.isReserved ? Colors.redAccent : Colors.greenAccent,
+                                                checkColor: Colors.white,
+                                                selected: horariosChecked.value[horario.inicio]!,
+                                                value: horariosChecked.value[horario.inicio]!,
+                                                onChanged: (bool? value) {
+                                                  setState(() {
+                                                    horariosChecked.value.update(horario.inicio, (oldValue) => value!);
+                                                    if (horariosChecked.value[horario.inicio]!) {
+                                                      _horariosSelecionados.add(horario);
+                                                    } else {
+                                                      _horariosSelecionados.removeWhere((horarioSelecionado) => horarioSelecionado.inicio == horario.inicio);
+                                                    }
+                                                  });
+                                                },
+                                              )
+                                            : ListTile(
+                                                title: title,
+                                                subtitle: subtitle,
+                                              ),
+                                      ),
+                                    ),
+                                  ));
+                            }
+                            return SizedBox(
+                                width: MediaQuery.of(context).size.width - 100,
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: horario.isReserved ? Colors.redAccent : Colors.greenAccent),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: !horario.isReserved
+                                          ? CheckboxListTile(
+                                              title: title,
+                                              subtitle: subtitle,
+                                              secondary: const Icon(Icons.schedule),
+                                              autofocus: false,
+                                              activeColor: horario.isReserved ? Colors.redAccent : Colors.greenAccent,
+                                              checkColor: Colors.white,
+                                              selected: horariosChecked.value[horario.inicio]!,
+                                              value: horariosChecked.value[horario.inicio]!,
+                                              onChanged: (bool? value) {
+                                                setState(() {
+                                                  horariosChecked.value.update(horario.inicio, (oldValue) => value!);
+                                                  if (horariosChecked.value[horario.inicio]!) {
+                                                    _horariosSelecionados.add(horario);
+                                                  } else {
+                                                    _horariosSelecionados.removeWhere((horarioSelecionado) => horarioSelecionado.inicio == horario.inicio);
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : ListTile(
+                                              title: title,
+                                              subtitle: subtitle,
+                                            ), //CheckboxListTile
+                                    ), //Container
+                                  ), //Padding
+                                ));
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                : const Card(
+                    color: Colors.redAccent,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "Fora do período de reserva",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+            _horariosSelecionados.isNotEmpty
+                ? WidgetWithRole(allowedRoles: const [
+                    UserRole.professor,
+                    UserRole.setor,
+                    UserRole.gestorReserva,
+                    UserRole.gestorServico,
+                  ], child: _solicitarReserva())
+                : Container(),
+            _solicitarServico()
+          ],
+        );
+      },
     );
   }
 
@@ -337,7 +341,7 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
             builder: (context) {
               return SolicitarReservaPage(
                 horariosParaReservar: _horariosSelecionados,
-                espacoEntity: widget.espaco,
+                espacoEntity: widget.controller.espacoEntity!,
                 selectedDay: _selectedDay!,
               );
             },
@@ -353,8 +357,8 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
             context: context,
             builder: (context) {
               return SolicitarServicoPage(
-                horariosParaReservar: [],
-                espacoEntity: widget.espaco,
+                horariosParaReservar: _horariosSelecionados,
+                espacoEntity: widget.controller.espacoEntity!,
                 selectedDay: _selectedDay!,
               );
             },
@@ -400,9 +404,9 @@ class _ListarReservasWidgetState extends State<ListarReservasWidget> {
     //}
   }
 
-  void _groupReservas(Map<DateTime, Map<String, AgendaEntity>> agenda) {
+  void _groupReservas(EspacoEntity espaco) {
     _groupedReservas = LinkedHashMap(equals: isSameDay, hashCode: getHashCode);
-    agenda.entries.forEach((element) {
+    espaco.agenda.entries.forEach((element) {
       DateTime date = DateTime.utc(element.key.year, element.key.month, element.key.day, 12);
       if (_groupedReservas![date] == null) _groupedReservas![date] = {};
       _groupedReservas![date] = element.value.map((key, value) => MapEntry(key, value.horarios));

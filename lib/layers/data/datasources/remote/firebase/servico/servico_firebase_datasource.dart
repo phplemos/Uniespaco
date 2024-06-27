@@ -59,7 +59,7 @@ class ServicoFirebaseDataSource {
 
   Future<List<ServicoEntity?>> getAllServicosFromUsuario({required String solicitanteId}) async {
     try {
-      final response = await _database.where(('solicitanteId', isEqualTo: solicitanteId)).get();
+      final response = await _database.where('solicitanteId', isEqualTo: solicitanteId).get();
       List<ServicoEntity?> servicos = response.docs.map((snapshot) {
         if (snapshot.data().isNotEmpty) {
           return ServicoDto.fromMap(snapshot.data()).toEntity();

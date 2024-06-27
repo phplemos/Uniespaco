@@ -9,6 +9,7 @@ class EspacoFirebaseDataSource {
   final _database = FirebaseFirestore.instance.collection('espaco');
   final _usuarioDatasource = UsuarioFirebaseDataSource();
 
+
   Future<Map<EspacoEntity, List<UsuarioEntity?>>> getAllGestoresReservaPorEspaco() async {
     try {
       // Variavel que vai armazenar o resultado

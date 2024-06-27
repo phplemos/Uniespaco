@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uniespaco/layers/domain/entities/reserva_entity.dart';
 import 'package:uniespaco/layers/ui/presenters/ver_historico_reservas_por_espaco_gerido/ver_historico_reservas_por_espaco_gerido_controller.dart';
 import 'package:uniespaco/layers/ui/presenters/visualizar_reservas_por_espaco_gerido/components/listar_reservas_widget.dart';
 
@@ -17,7 +18,10 @@ class VerHistoricoReservasPorEspacoGeridoWidget extends StatelessWidget {
         children: [
           const Center(
             heightFactor: 2,
-            child: Text("Historico de reserva dos espacos",style: TextStyle(fontWeight: FontWeight.bold),),
+            child: Text(
+              "Historico de reserva dos espacos",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           Divider(),
           Expanded(
@@ -33,11 +37,11 @@ class VerHistoricoReservasPorEspacoGeridoWidget extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    final reservas = controller.reservasPorEspaco[controller.espacos[index]]!;
+                    final ValueNotifier<List<ReservaEntity?>> reservas = ValueNotifier(controller.reservasPorEspaco[controller.espacos[index]]!);
                     showDialog(
                       context: context,
                       builder: (context) => ListarReservasWidget(
-                        reservas: reservas,
+                        reservas: reservas.value,
                         espaco: controller.espacos[index]!,
                       ),
                     );

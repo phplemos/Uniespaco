@@ -82,7 +82,7 @@ class ServicoRepositoryImpl implements ServicoRepository {
       if (situacao == Situacao.HOMOLOGADO) {
         // Acessa o dia do servico para alterar a situação dos horarios, tornando o servico valido
         // e bloqueando o horario para possiveis novas reservas ou solicitações de servico
-        espaco?.agenda[servico.dia] = espaco.agenda[servico.dia]!.map((key, value) {
+        espaco?.agenda[dia] = espaco.agenda[dia]!.map((key, value) {
           value.horarios = value.horarios.map((horario) {
             periodo.forEach((cadaPeriodo) {
               if (cadaPeriodo?.inicio == horario.inicio) {
